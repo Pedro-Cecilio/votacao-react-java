@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -26,6 +27,7 @@ public class Autenticacao {
     @Column(nullable = false)
     private String senha;
 
+    @Setter
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
