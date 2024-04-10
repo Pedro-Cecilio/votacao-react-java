@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
-import com.dbserver.votacaoBackend.domain.usuario.UsuarioService;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping(value = "/usuario")
 public class UsuarioController {
-    private UsuarioService usuarioService;
-    public UsuarioController(UsuarioService usuarioService) {
+    private IUsuarioService usuarioService;
+    public UsuarioController(IUsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 

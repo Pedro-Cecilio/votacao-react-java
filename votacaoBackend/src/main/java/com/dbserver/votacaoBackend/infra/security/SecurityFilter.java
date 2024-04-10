@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
-import com.dbserver.votacaoBackend.domain.autenticacao.AutenticacaoRepository;
+import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.infra.exeptions.novas.RespostaErro;
 import com.dbserver.votacaoBackend.infra.exeptions.novas.ValidarJwtExeption;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
