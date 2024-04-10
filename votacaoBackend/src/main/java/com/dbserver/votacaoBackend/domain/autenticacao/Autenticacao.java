@@ -31,7 +31,6 @@ public class Autenticacao {
     private String senha;
 
     @Setter
-    @NonNull
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
