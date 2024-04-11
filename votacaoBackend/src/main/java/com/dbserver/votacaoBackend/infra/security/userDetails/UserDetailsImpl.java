@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 
-import jakarta.annotation.Nonnull;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -19,7 +18,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @NonNull
     private Usuario usuario;
-    @Nonnull
+    @NonNull
     private Autenticacao autenticacao;
 
     public UserDetailsImpl(Autenticacao autenticacao) {
