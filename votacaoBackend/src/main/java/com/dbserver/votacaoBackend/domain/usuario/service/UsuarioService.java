@@ -58,6 +58,6 @@ public class UsuarioService implements IUsuarioService{
 
     @Override
     public List<Usuario> buscarTodosUsuarios(Pageable pageable) {
-        return this.usuarioRepository.buscarTodosUsuarios(pageable).toList();
+        return this.usuarioRepository.findAll(pageable).toList();
     }
 }
