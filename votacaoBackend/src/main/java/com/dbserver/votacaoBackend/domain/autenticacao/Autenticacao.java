@@ -47,7 +47,7 @@ public class Autenticacao {
     }
 
     public void setEmail(String email) {
-        if(!Utils.validarRegex(Utils.REGEX_EMAIL, email.trim())){
+        if(email == null || !Utils.validarRegex(Utils.REGEX_EMAIL, email.trim())){
             throw new IllegalArgumentException("Email com formato inválido");
         }
         this.email = email.trim();
