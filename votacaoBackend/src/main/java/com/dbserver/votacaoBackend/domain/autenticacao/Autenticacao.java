@@ -41,6 +41,10 @@ public class Autenticacao {
         setEmail(dto.email());
         setSenha(dto.senha());
     }
+    public Autenticacao(String email, String senha) {
+        setEmail(email);
+        setSenha(senha);
+    }
 
     public void setEmail(String email) {
         if(!Utils.validarRegex(Utils.REGEX_EMAIL, email.trim())){
