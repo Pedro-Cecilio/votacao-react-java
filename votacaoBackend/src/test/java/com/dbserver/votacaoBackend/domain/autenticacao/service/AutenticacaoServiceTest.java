@@ -39,7 +39,7 @@ class AutenticacaoServiceTest {
 
     @BeforeEach
     void configurar(){
-        this.usuarioMock = new Usuario(1L, "João", "Silva", "123.456.789-00", false);
+        this.usuarioMock = new Usuario(1L, "João", "Silva", "12345678900", false);
         this.autenticacaoMock = new Autenticacao("example@example.com", "senha123");
     }
     @AfterEach

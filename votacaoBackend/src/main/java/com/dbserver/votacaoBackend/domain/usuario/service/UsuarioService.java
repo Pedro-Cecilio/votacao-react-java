@@ -27,7 +27,7 @@ public class UsuarioService implements IUsuarioService{
     @Transactional
     public Usuario criarUsuario(Usuario usuario, Autenticacao autenticacao) {
         Usuario usuarioCriado = this.usuarioRepository.save(usuario);
-        this.autenticacaoService.criarAutenticacao(autenticacao, usuario);
+        this.autenticacaoService.criarAutenticacao(autenticacao, usuarioCriado);
         return usuarioCriado;
     }
 
