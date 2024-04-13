@@ -60,7 +60,7 @@ public class Usuario {
         this.sobrenome = sobrenome.trim();
     }
     public void setCpf(String cpf){
-        if(!Utils.validarRegex(Utils.REGEX_CPF, cpf.trim())){
+        if(cpf == null || !Utils.validarRegex(Utils.REGEX_CPF, cpf.trim())){
             throw new IllegalArgumentException("Cpf deve conter somente 11 caracteres numéricos");
         }
         this.cpf = cpf.trim();
