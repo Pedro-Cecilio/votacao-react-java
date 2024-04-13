@@ -24,4 +24,16 @@ public class DadosTestesParametrizados {
             Arguments.of((String)null)
         );
     }
+    public static Stream<Arguments> dadosInvalidosParaAtualizarUsuario() {
+        return Stream.of(
+            Arguments.of(null, "NovoSobrenome"),
+            Arguments.of(" ", "NovoSobrenome"),
+            Arguments.of("no", "NovoSobrenome"),
+            Arguments.of("NomeMuitoGrandeParaSerUsado", "NovoSobrenome"),
+            Arguments.of("NovoNome", null),
+            Arguments.of("NovoNome", " "),
+            Arguments.of("NovoNome", "s"),
+            Arguments.of("NovoNome", "SobrenomeMuitoGrandeParaSerUsado")
+        );
+    }
 }
