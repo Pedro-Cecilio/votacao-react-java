@@ -26,7 +26,7 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<CriarUsuarioRespostaDto> criarUsuario(@RequestBody CriarUsuarioDto dto) {
         Usuario usuario = new Usuario(dto);
-        Autenticacao autenticacao = new Autenticacao(dto.criarAutenticacaoDto());
+        Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto());
         Usuario novoUsuario = usuarioService.criarUsuario(usuario, autenticacao);
         CriarUsuarioRespostaDto resposta = new CriarUsuarioRespostaDto(novoUsuario, autenticacao);
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);

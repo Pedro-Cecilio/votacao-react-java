@@ -1,6 +1,6 @@
 package com.dbserver.votacaoBackend.domain.usuario.dto;
 
-import com.dbserver.votacaoBackend.domain.autenticacao.dto.CriarAutenticacaoDto;
+import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutenticacaoDto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 public record CriarUsuarioDto(
 
     @NotNull
-    CriarAutenticacaoDto criarAutenticacaoDto,
+    AutenticacaoDto autenticacaoDto,
     
     @NotEmpty
     String nome,

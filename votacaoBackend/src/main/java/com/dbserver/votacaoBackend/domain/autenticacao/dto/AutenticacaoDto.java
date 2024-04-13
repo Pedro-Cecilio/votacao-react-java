@@ -3,13 +3,13 @@ package com.dbserver.votacaoBackend.domain.autenticacao.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
-public record CriarAutenticacaoDto(
+public record AutenticacaoDto(
 
-        @NotEmpty
-        @Email
+        @NotEmpty(message = "Email deve ser informado.")
+        @Email(message = "Email com formato inválido.")
         String email,
 
-        @NotEmpty 
+        @NotEmpty(message = "Senha deve ser informada.")
         String senha
 ) {
 
