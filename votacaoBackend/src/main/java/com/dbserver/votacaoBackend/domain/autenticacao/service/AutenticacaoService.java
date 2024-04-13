@@ -6,13 +6,20 @@ import java.util.NoSuchElementException;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.infra.security.token.TokenService;
+import com.dbserver.votacaoBackend.utils.Utils;
+
 
 @Service
-public class AutenticacaoService implements IAutenticacaoService{
+public class AutenticacaoService implements IAutenticacaoService {
     private AutenticacaoRepository autenticacaoRepository;
+    private Utils utils;
+    private TokenService tokenService;
 
-    public AutenticacaoService(AutenticacaoRepository autenticacaoRepository) {
+    public AutenticacaoService(AutenticacaoRepository autenticacaoRepository, Utils utils, TokenService tokenService) {
         this.autenticacaoRepository = autenticacaoRepository;
+        this.utils = utils;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -26,5 +33,14 @@ public class AutenticacaoService implements IAutenticacaoService{
         Autenticacao autenticacao = this.autenticacaoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
         this.autenticacaoRepository.delete(autenticacao);
+    }
+
+    @Override
+    public String autenticar(String email, String senha) {
+        Autenticacao autenticacao = this.autenticacaoRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("Dados de autenticação invalidos."));
+        if(!utils.validarSenha(senha, autenticacao.getSenha())){
+            throw new IllegalArgumentException("Dados de autenticação invalidos.");
+        }
+        return tokenService.gerarToken(autenticacao);
     }
 }
