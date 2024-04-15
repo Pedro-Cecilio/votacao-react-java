@@ -11,4 +11,5 @@ public interface IUsuarioService {
     public void deletarUsuario(Long usuarioId);
     public Usuario buscarUsuarioPorId(Long usuarioId);
     public List<Usuario> buscarTodosUsuarios(Pageable pageable);
+    public Usuario buscarUsuarioLogado();
 }

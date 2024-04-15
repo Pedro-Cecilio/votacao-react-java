@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
@@ -59,5 +61,10 @@ public class UsuarioService implements IUsuarioService{
     @Override
     public List<Usuario> buscarTodosUsuarios(Pageable pageable) {
         return this.usuarioRepository.findAll(pageable).toList();
+    }
+
+    public Usuario buscarUsuarioLogado() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (Usuario) authentication.getPrincipal();
     }
 }

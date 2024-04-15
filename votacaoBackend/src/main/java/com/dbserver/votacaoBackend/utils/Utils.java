@@ -3,13 +3,9 @@ package com.dbserver.votacaoBackend.utils;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 
 @Component
 public class Utils {
@@ -39,8 +35,4 @@ public class Utils {
         return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
     }
 
-    public Usuario pegarUsuarioLogado() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (Usuario) authentication.getPrincipal();
-    }
 }
