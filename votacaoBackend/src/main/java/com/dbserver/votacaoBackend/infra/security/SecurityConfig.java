@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .csrf(csfr -> csfr.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/pauta").hasAuthority("ADMIN")
                         .anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(this.corsConfigurationSource()))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
@@ -40,7 +41,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173/**"));
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
