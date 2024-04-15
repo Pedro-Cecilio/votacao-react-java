@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/pauta").hasAuthority("ADMIN")
+                        .requestMatchers("/usuario/usuarioLogado").authenticated()
                         .anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(this.corsConfigurationSource()))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
