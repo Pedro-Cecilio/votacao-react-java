@@ -1,10 +1,11 @@
 package com.dbserver.votacaoBackend.domain.pauta.dto;
 
-import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 
 public record RespostaPautaDto(
     Long id, 
-    String nome,
+    String assunto,
+    Categoria categoria,
     Long usuario_id
 
 ) {

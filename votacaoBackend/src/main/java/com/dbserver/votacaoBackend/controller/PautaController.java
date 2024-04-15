@@ -29,9 +29,9 @@ public class PautaController {
     @PostMapping
     public ResponseEntity<RespostaPautaDto> postMethodName(@RequestBody CriarPautaDto dto) {
         Usuario usuario = utils.pegarUsuarioLogado();
-        Pauta pauta = new Pauta(dto.nome(), usuario);
+        Pauta pauta = new Pauta(dto.assunto(), dto.categoria(), usuario);
         this.pautaService.criarPauta(pauta);
-        RespostaPautaDto resposta = new RespostaPautaDto(pauta.getId(), pauta.getNome(), pauta.getUsuario().getId());
+        RespostaPautaDto resposta = new RespostaPautaDto(pauta.getId(), pauta.getAssunto(), pauta.getCategoria(), pauta.getUsuario().getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 

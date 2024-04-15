@@ -4,7 +4,10 @@ import jakarta.validation.constraints.NotEmpty;
 
 public record CriarPautaDto(
         @NotEmpty
-        String nome
+        String assunto,
+
+        @NotEmpty
+        String categoria
         
     ) {
 
