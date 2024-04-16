@@ -1,5 +1,8 @@
 package com.dbserver.votacaoBackend.domain.pauta.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
@@ -18,6 +21,16 @@ public class PautaService implements IPautaService{
     @Override
     public Pauta criarPauta(Pauta pauta) {
         return this.pautaRepository.save(pauta);
+    }
+
+    @Override
+    public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Pageable pageable) {
+        return this.pautaRepository.findAllByUsuarioId(usuarioId, pageable).toList();
+    }
+
+    @Override
+    public List<Pauta> buscarTodasPautas(Pageable pageable) {
+        return this.pautaRepository.findAll(pageable).toList();
     }
     
 }
