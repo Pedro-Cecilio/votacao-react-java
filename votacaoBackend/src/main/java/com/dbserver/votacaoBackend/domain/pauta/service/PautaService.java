@@ -6,13 +6,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
+import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class PautaService implements IPautaService{
+public class PautaService implements IPautaService {
     private PautaRepository pautaRepository;
+
     public PautaService(PautaRepository pautaRepository) {
         this.pautaRepository = pautaRepository;
     }
@@ -25,12 +27,14 @@ public class PautaService implements IPautaService{
 
     @Override
     public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Pageable pageable) {
-        return this.pautaRepository.findAllByUsuarioId(usuarioId, pageable).toList();
+        return this.pautaRepository.findAllByUsuarioId(usuarioId, pageable);
     }
 
     @Override
-    public List<Pauta> buscarTodasPautas(Pageable pageable) {
+    public List<Pauta> buscarPautas(Pageable pageable, Categoria categoria) {
+        if(categoria != null){
+            return this.pautaRepository.findAllByCategoria(categoria, pageable);
+        }
         return this.pautaRepository.findAll(pageable).toList();
     }
-    
 }

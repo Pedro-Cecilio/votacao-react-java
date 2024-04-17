@@ -1,11 +1,12 @@
 package com.dbserver.votacaoBackend.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.dto.CriarPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
+import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.pauta.service.IPautaService;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
@@ -55,8 +56,10 @@ public class PautaController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<RespostaPautaDto>> listarTodasPautas(Pageable pageable) {
-        List<Pauta> pautas = this.pautaService.buscarTodasPautas(pageable);
+    public ResponseEntity<List<RespostaPautaDto>> listarPautas(
+            @RequestParam(name = "categoria", required = false) final Categoria categoria,
+            Pageable pageable) {
+        List<Pauta> pautas = this.pautaService.buscarPautas(pageable, categoria);
         List<RespostaPautaDto> resposta = pautas.stream().map(RespostaPautaDto::new).toList();
         return ResponseEntity.ok().body(resposta);
     }
