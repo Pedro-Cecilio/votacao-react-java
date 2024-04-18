@@ -9,6 +9,6 @@ import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 
 public interface IPautaService {
     public Pauta criarPauta(Pauta pauta);
-    public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Pageable pageable);
-    public List<Pauta> buscarPautas(Pageable pageable, Categoria categoria);
+    public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Categoria categoria, Pageable pageable);
+    public List<Pauta> buscarPautasAtivas(Pageable pageable, Categoria categoria);
 }

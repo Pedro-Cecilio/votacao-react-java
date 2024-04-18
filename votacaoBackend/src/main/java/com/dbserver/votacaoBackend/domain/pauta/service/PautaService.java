@@ -1,5 +1,6 @@
 package com.dbserver.votacaoBackend.domain.pauta.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -26,15 +27,20 @@ public class PautaService implements IPautaService {
     }
 
     @Override
-    public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Pageable pageable) {
+    public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Categoria categoria, Pageable pageable) {
+        if(categoria != null){
+            return this.pautaRepository.findAllByUsuarioIdAndCategoria(usuarioId, categoria, pageable);
+        }
         return this.pautaRepository.findAllByUsuarioId(usuarioId, pageable);
     }
 
     @Override
-    public List<Pauta> buscarPautas(Pageable pageable, Categoria categoria) {
+    public List<Pauta> buscarPautasAtivas(Pageable pageable, Categoria categoria) {
+        LocalDateTime dataAtual = LocalDateTime.now();
+
         if(categoria != null){
-            return this.pautaRepository.findAllByCategoria(categoria, pageable);
+            return this.pautaRepository.findAllByCategoriaAndSessaoVotacaoAtiva(categoria, dataAtual, pageable);
         }
-        return this.pautaRepository.findAll(pageable).toList();
-    }
+        return this.pautaRepository.findAllBySessaoVotacaoAtiva(dataAtual, pageable);
+    }    
 }

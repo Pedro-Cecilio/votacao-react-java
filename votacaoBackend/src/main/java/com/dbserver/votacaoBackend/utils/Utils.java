@@ -1,5 +1,6 @@
 package com.dbserver.votacaoBackend.utils;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,19 +8,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.dbserver.votacaoBackend.domain.pauta.Pauta;
+import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacao;
+
 @Component
 public class Utils {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public Utils(PasswordEncoder passwordeEncoder){
+    public Utils(PasswordEncoder passwordeEncoder) {
         this.passwordEncoder = passwordeEncoder;
     }
 
-    public Utils(){
+    public Utils() {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
-    
+
     public static final String REGEX_CPF = "\\d{11}";
     public static final String REGEX_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
@@ -27,12 +32,21 @@ public class Utils {
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(conteudo).matches();
     }
-    public String encriptarSenha(String senha){
+
+    public String encriptarSenha(String senha) {
         return this.passwordEncoder.encode(senha);
     }
 
-    public boolean validarSenha(String senhaEsperada, String senhaEncriptada){
+    public boolean validarSenha(String senhaEsperada, String senhaEncriptada) {
         return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
     }
 
+    public List<RespostaPautaDto> criarListaRespostaPautaDto(List<Pauta> pautas) {
+        return pautas.stream().map((pauta) -> {
+            if (pauta.getSessaoVotacao() == null) {
+                return new RespostaPautaDto(pauta, null);
+            }
+            return new RespostaPautaDto(pauta, new RespostaSessaoVotacao(pauta.getSessaoVotacao()));
+        }).toList();
+    }
 }
