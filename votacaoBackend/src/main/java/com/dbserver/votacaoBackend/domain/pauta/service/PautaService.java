@@ -1,15 +1,21 @@
 package com.dbserver.votacaoBackend.domain.pauta.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
+import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class PautaService implements IPautaService{
+public class PautaService implements IPautaService {
     private PautaRepository pautaRepository;
+
     public PautaService(PautaRepository pautaRepository) {
         this.pautaRepository = pautaRepository;
     }
@@ -19,5 +25,22 @@ public class PautaService implements IPautaService{
     public Pauta criarPauta(Pauta pauta) {
         return this.pautaRepository.save(pauta);
     }
-    
+
+    @Override
+    public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Categoria categoria, Pageable pageable) {
+        if(categoria != null){
+            return this.pautaRepository.findAllByUsuarioIdAndCategoria(usuarioId, categoria, pageable);
+        }
+        return this.pautaRepository.findAllByUsuarioId(usuarioId, pageable);
+    }
+
+    @Override
+    public List<Pauta> buscarPautasAtivas(Pageable pageable, Categoria categoria) {
+        LocalDateTime dataAtual = LocalDateTime.now();
+
+        if(categoria != null){
+            return this.pautaRepository.findAllByCategoriaAndSessaoVotacaoAtiva(categoria, dataAtual, pageable);
+        }
+        return this.pautaRepository.findAllBySessaoVotacaoAtiva(dataAtual, pageable);
+    }    
 }

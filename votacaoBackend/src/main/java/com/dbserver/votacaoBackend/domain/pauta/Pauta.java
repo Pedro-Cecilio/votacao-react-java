@@ -1,6 +1,7 @@
 package com.dbserver.votacaoBackend.domain.pauta;
 
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 
 import jakarta.persistence.Column;
@@ -10,10 +11,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,6 +35,11 @@ public class Pauta {
     @Column(nullable = false)
     private Categoria categoria;
 
+    @Setter
+    @OneToOne
+    @JoinColumn(nullable = true)
+    private SessaoVotacao sessaoVotacao;
+    
     @ManyToOne
     private Usuario usuario;
 

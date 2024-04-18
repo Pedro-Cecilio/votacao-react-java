@@ -3,6 +3,7 @@ package com.dbserver.votacaoBackend.infra.security;
 import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,7 +32,8 @@ public class SecurityConfig {
                 .csrf(csfr -> csfr.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/pauta").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/pauta").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/pauta").authenticated()
                         .requestMatchers("/usuario/usuarioLogado").authenticated()
                         .anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(this.corsConfigurationSource()))
