@@ -8,7 +8,6 @@ import com.dbserver.votacaoBackend.domain.pauta.dto.CriarPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.pauta.service.IPautaService;
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;

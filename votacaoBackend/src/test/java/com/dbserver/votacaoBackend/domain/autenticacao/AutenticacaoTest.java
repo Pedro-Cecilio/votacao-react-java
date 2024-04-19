@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.dbserver.votacaoBackend.utils.Utils;
@@ -21,11 +22,11 @@ class AutenticacaoTest {
     private String emailValido;
     private String senhaValida;
     
+    @Autowired
     private Utils utils;
 
     @BeforeEach
     void configurar(){
-        this.utils = new Utils();
         this.autenticacaoMock = new Autenticacao("example@example.com", "senha123");
         this.emailValido = "test@example.com";
         this.senhaValida = "password123";

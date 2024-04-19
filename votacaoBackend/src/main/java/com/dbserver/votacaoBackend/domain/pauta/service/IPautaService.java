@@ -11,4 +11,5 @@ public interface IPautaService {
     public Pauta criarPauta(Pauta pauta);
     public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Categoria categoria, Pageable pageable);
     public List<Pauta> buscarPautasAtivas(Pageable pageable, Categoria categoria);
+    public Pauta buscarPautaPorIdEUsuarioId(Long pautaId, Long usuarioId);
 }
