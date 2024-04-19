@@ -49,7 +49,7 @@ public class PautaService implements IPautaService {
     }
 
     public Pauta buscarPautaAtivaPorId(Long pautaId) {
-        return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, LocalDateTime.now()).orElseThrow(()-> new IllegalArgumentException("Pauta informada não está ativa."));
+        return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, LocalDateTime.now()).orElseThrow(()-> new IllegalArgumentException("Pauta informada não possui sessão ativa."));
     }
 
     

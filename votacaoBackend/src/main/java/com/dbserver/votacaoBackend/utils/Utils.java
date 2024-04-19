@@ -45,7 +45,7 @@ public class Utils {
     }
 
     public List<RespostaPautaDto> criarListaRespostaPautaDto(List<Pauta> pautas) {
-        return pautas.stream().map((pauta) -> {
+        return pautas.stream().map(pauta -> {
             if (pauta.getSessaoVotacao() == null) {
                 return new RespostaPautaDto(pauta, null);
             }
