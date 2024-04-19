@@ -1,5 +1,6 @@
 package com.dbserver.votacaoBackend.utils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -11,14 +12,17 @@ import org.springframework.stereotype.Component;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacaoDto;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.service.SessaoVotacaoService;
 
 @Component
 public class Utils {
     private PasswordEncoder passwordEncoder;
+    private SessaoVotacaoService sessaoVotacaoService;
 
     @Autowired
-    public Utils(PasswordEncoder passwordeEncoder) {
+    public Utils(PasswordEncoder passwordeEncoder, SessaoVotacaoService sessaoVotacaoService) {
         this.passwordEncoder = passwordeEncoder;
+        this.sessaoVotacaoService = sessaoVotacaoService;
     }
 
     public Utils() {
@@ -46,7 +50,8 @@ public class Utils {
             if (pauta.getSessaoVotacao() == null) {
                 return new RespostaPautaDto(pauta, null);
             }
-            return new RespostaPautaDto(pauta, new RespostaSessaoVotacaoDto(pauta.getSessaoVotacao()));
+            boolean sessaoEstaAtiva = this.sessaoVotacaoService.verificarSeSessaoVotacaoEstaAtiva(pauta.getSessaoVotacao());
+            return new RespostaPautaDto(pauta, new RespostaSessaoVotacaoDto(pauta.getSessaoVotacao(), sessaoEstaAtiva));
         }).toList();
     }
 }

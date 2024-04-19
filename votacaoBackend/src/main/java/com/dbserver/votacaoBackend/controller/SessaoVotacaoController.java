@@ -39,7 +39,7 @@ public class SessaoVotacaoController {
         LocalDateTime dataFechamento = dataAbertura.plusMinutes(dto.minutos());
         SessaoVotacao sessaoVotacao = new SessaoVotacao(pauta, dataAbertura, dataFechamento);
         this.sessaoVotacaoService.abrirVotacao(sessaoVotacao);
-        RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao);
+        RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao, false);
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 }
