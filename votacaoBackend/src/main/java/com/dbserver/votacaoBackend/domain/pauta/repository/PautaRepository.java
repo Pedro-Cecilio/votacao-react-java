@@ -22,4 +22,7 @@ public interface PautaRepository extends JpaRepository<Pauta, Long> {
 
     @Query("SELECT p FROM Pauta p WHERE p.sessaoVotacao.dataFechamento > :dataAtual")
     List<Pauta> findAllBySessaoVotacaoAtiva(LocalDateTime dataAtual);
+
+    @Query("SELECT p FROM Pauta p WHERE p.id = :id AND p.sessaoVotacao.dataFechamento > :dataAtual")
+    Optional<Pauta> findByIdAndSessaoVotacaoAtiva(Long id, LocalDateTime dataAtual);
 }
