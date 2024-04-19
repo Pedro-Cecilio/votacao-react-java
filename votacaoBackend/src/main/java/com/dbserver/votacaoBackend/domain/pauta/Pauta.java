@@ -4,6 +4,7 @@ import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,7 +12,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
@@ -36,8 +36,7 @@ public class Pauta {
     private Categoria categoria;
 
     @Setter
-    @OneToOne
-    @JoinColumn(nullable = true)
+    @OneToOne(mappedBy = "pauta", optional = true, cascade = CascadeType.ALL)
     private SessaoVotacao sessaoVotacao;
     
     @ManyToOne
