@@ -13,7 +13,7 @@ import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.service.IPautaService;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.AbrirVotacaoDto;
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacao;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacaoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.service.ISessaoVotacaoService;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
@@ -31,15 +31,15 @@ public class SessaoVotacaoController {
         this.sessaoVotacaoService = sessaoVotacaoService;
     }
 
-    @PostMapping
-    public ResponseEntity<RespostaSessaoVotacao> abrirSessaoVotacao(@RequestBody AbrirVotacaoDto dto){
+    @PostMapping("/abrir")
+    public ResponseEntity<RespostaSessaoVotacaoDto> abrirSessaoVotacao(@RequestBody AbrirVotacaoDto dto){
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
-        Pauta pauta = this.pautaService.buscarPautaPorIdEUsuarioId(dto.pauta_id(), usuario.getId());
+        Pauta pauta = this.pautaService.buscarPautaPorIdEUsuarioId(dto.pautaId(), usuario.getId());
         LocalDateTime dataAbertura = LocalDateTime.now();
         LocalDateTime dataFechamento = dataAbertura.plusMinutes(dto.minutos());
         SessaoVotacao sessaoVotacao = new SessaoVotacao(pauta, dataAbertura, dataFechamento);
         this.sessaoVotacaoService.abrirVotacao(sessaoVotacao);
-        RespostaSessaoVotacao resposta = new RespostaSessaoVotacao(sessaoVotacao);
+        RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao);
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 }

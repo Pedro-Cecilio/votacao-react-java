@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacao;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacaoDto;
 
 @Component
 public class Utils {
@@ -46,7 +46,7 @@ public class Utils {
             if (pauta.getSessaoVotacao() == null) {
                 return new RespostaPautaDto(pauta, null);
             }
-            return new RespostaPautaDto(pauta, new RespostaSessaoVotacao(pauta.getSessaoVotacao()));
+            return new RespostaPautaDto(pauta, new RespostaSessaoVotacaoDto(pauta.getSessaoVotacao()));
         }).toList();
     }
 }

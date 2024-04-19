@@ -2,7 +2,7 @@ package com.dbserver.votacaoBackend.domain.pauta.dto;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacao;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacaoDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
 
 public record RespostaPautaDto(
@@ -10,9 +10,9 @@ public record RespostaPautaDto(
     String assunto,
     Categoria categoria,
     UsuarioRespostaDto usuario,
-    RespostaSessaoVotacao sessaoVotacao
+    RespostaSessaoVotacaoDto sessaoVotacao
 ) {
-    public RespostaPautaDto(Pauta pauta, RespostaSessaoVotacao respostaSessaoVotacao){
+    public RespostaPautaDto(Pauta pauta, RespostaSessaoVotacaoDto respostaSessaoVotacao){
         this(pauta.getId(), pauta.getAssunto(), pauta.getCategoria(), new UsuarioRespostaDto(pauta.getUsuario()), respostaSessaoVotacao);
     }
 }
