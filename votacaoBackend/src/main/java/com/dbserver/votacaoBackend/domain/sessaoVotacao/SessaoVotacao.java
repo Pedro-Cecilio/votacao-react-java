@@ -29,7 +29,7 @@ public class SessaoVotacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = { CascadeType.REFRESH })
+    @OneToOne(cascade = { CascadeType.REFRESH }, optional = false)
     @JoinColumn(name = "pauta_id")
     private Pauta pauta;
 
@@ -77,4 +77,16 @@ public class SessaoVotacao {
         }
         this.dataFechamento = dataFechamento;
     }
+
+    public void setVotosPositivos(Usuario usuario) {
+        if(usuario == null) throw new IllegalArgumentException("Usuario não deve ser nulo.");
+        this.votosPositivos.add(usuario);
+    }
+
+    public void setVotosNegativos(Usuario usuario) {
+        if(usuario == null) throw new IllegalArgumentException("Usuario não deve ser nulo.");
+        this.votosNegativos.add(usuario);
+    }
+
+    
 }
