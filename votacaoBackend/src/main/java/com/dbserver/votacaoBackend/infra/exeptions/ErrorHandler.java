@@ -38,6 +38,11 @@ public class ErrorHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RespostaErro(e.getMessage()));
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<RespostaErro> handleIllegalStateException(IllegalStateException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RespostaErro(e.getMessage()));
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<RespostaErro> handleErrorAuthentication(AuthenticationException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new RespostaErro(e.getMessage()));
