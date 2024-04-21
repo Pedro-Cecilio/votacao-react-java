@@ -47,7 +47,7 @@ public class SessaoVotacaoController {
 
     @PatchMapping("/votar")
     public ResponseEntity<RespostaSessaoVotacaoDto> votar(@RequestBody InserirVotoDto dto){
-        Usuario usuario = this.usuarioService.buscarUsuarioLogado();
+        Usuario usuario = this.usuarioService.buscarUsuarioPorId(dto.usuarioId());
         Pauta pauta = this.pautaService.buscarPautaAtivaPorId(dto.pautaId());
         SessaoVotacao sessaoVotacao = pauta.getSessaoVotacao();
         this.sessaoVotacaoService.inserirVoto(sessaoVotacao, dto.tipoDeVoto(), usuario);
