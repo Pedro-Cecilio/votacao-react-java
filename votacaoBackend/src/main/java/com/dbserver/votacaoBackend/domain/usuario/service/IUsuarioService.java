@@ -12,4 +12,5 @@ public interface IUsuarioService {
     public Usuario buscarUsuarioPorId(Long usuarioId);
     public List<Usuario> buscarTodosUsuarios(Pageable pageable);
     public Usuario buscarUsuarioLogado();
+    public Usuario buscarUsuarioPorCpf(String cpf);
 }

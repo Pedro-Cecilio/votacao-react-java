@@ -63,8 +63,14 @@ public class UsuarioService implements IUsuarioService{
         return this.usuarioRepository.findAll(pageable).toList();
     }
 
+    @Override
     public Usuario buscarUsuarioLogado() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Usuario) authentication.getPrincipal();
+    }
+    
+    @Override
+    public Usuario buscarUsuarioPorCpf(String cpf){
+        return this.usuarioRepository.findByCpf(cpf).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
     }
 }
