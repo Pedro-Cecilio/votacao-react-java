@@ -35,11 +35,13 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
             throw new IllegalArgumentException("SessaoVotacao não deve ser nula");
         return sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now());
     }
+
     @Override
     public void verificarSeUsuarioPodeVotarSessaoVotacao(SessaoVotacao sessaoVotacao, Usuario usuario){
         if(usuario == null) throw new IllegalArgumentException("Usuário deve ser informado.");
         if (!this.verificarSeSessaoVotacaoEstaAtiva(sessaoVotacao))
             throw new IllegalStateException("Sessão de votação não está ativa.");
+        if(sessaoVotacao.getPauta().getUsuario().equals(usuario)) throw new IllegalArgumentException("O criador não pode votar na pauta criada.");
         List<Usuario> todosVotantes = new ArrayList<>(sessaoVotacao.getVotosPositivos());
         todosVotantes.addAll(sessaoVotacao.getVotosNegativos());
         if(todosVotantes.contains(usuario)) throw new IllegalStateException("Não é possível votar duas vezes.");
