@@ -52,7 +52,7 @@ public class SessaoVotacaoController {
         SessaoVotacao sessaoVotacao = pauta.getSessaoVotacao();
         this.sessaoVotacaoService.inserirVoto(sessaoVotacao, dto.tipoDeVoto(), usuario);
         boolean sessaoEstaAtiva = sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now());
-        RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao, sessaoEstaAtiva );
+        RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao, sessaoEstaAtiva);
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 }

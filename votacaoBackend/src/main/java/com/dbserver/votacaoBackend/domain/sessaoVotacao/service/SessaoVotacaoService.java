@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.TipoDeVotoEnum;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.repository.SessaoVotacaoRepository;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
@@ -51,5 +52,16 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
         if(tipoDeVoto == TipoDeVotoEnum.VOTO_POSITIVO) sessaoVotacao.setVotosPositivos(usuario);
         
         return this.sessaoVotacaoRepository.save(sessaoVotacao);
+    }
+    @Override
+    public StatusSessaoVotacao obterStatusSessaoVotacao(SessaoVotacao sessaoVotacao) {
+        if(sessaoVotacao == null) throw new IllegalArgumentException("SessaoVotacao não deve ser nula.");
+        if(sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now())){
+            return StatusSessaoVotacao.EM_ANDAMENTO;
+        }
+        if(sessaoVotacao.getVotosPositivos().size() > sessaoVotacao.getVotosNegativos().size()){
+            return StatusSessaoVotacao.APROVADA;
+        }
+        return StatusSessaoVotacao.REPROVADA;
     }
 }
