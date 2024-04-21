@@ -2,6 +2,7 @@ package com.dbserver.votacaoBackend.domain.pauta.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -45,13 +46,17 @@ public class PautaService implements IPautaService {
     
     @Override
     public Pauta buscarPautaPorIdEUsuarioId(Long pautaId, Long usuarioId) {
-        return this.pautaRepository.findByIdAndUsuarioId(pautaId, usuarioId).orElseThrow(()-> new IllegalArgumentException("Usuário não possui essa pauta."));
+        return this.pautaRepository.findByIdAndUsuarioId(pautaId, usuarioId).orElseThrow(()-> new NoSuchElementException("Pauta não encontrada."));
     }
 
+    @Override
     public Pauta buscarPautaAtivaPorId(Long pautaId) {
         return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, LocalDateTime.now()).orElseThrow(()-> new IllegalArgumentException("Pauta informada não possui sessão ativa."));
     }
 
-    
+    @Override
+    public Pauta buscarPautaPorIdEUsuarioIdComSessaoVotacaoNaoNula(Long pautaId, Long usuarioId) {
+        return this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(pautaId, usuarioId).orElseThrow(()-> new NoSuchElementException("Pauta não encontrada."));
+    }
     
 }
