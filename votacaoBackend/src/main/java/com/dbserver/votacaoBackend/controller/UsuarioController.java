@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping(value = "/usuario")
@@ -40,6 +40,12 @@ public class UsuarioController {
         UsuarioRespostaDto resposta = new UsuarioRespostaDto(usuario);
         return ResponseEntity.ok().body(resposta);
     }
-    
-    
+
+    @GetMapping
+    public ResponseEntity<UsuarioRespostaDto> buscarUsuarioPorCpf(@RequestParam(name = "cpf", required = true) final String cpf) {
+        Usuario usuario = this.usuarioService.buscarUsuarioPorCpf(cpf);
+        UsuarioRespostaDto resposta = new UsuarioRespostaDto(usuario);
+        return ResponseEntity.ok().body(resposta);
+    }
+
 }
