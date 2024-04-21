@@ -72,6 +72,22 @@ public class PautaController {
         return ResponseEntity.ok().body(resposta);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<RespostaPautaDto> buscarPautaAtivaPorId(@PathVariable("id") String id) {
+        try {
+            Long pautaId = Long.parseLong(id);
+            Pauta pauta = this.pautaService.buscarPautaAtivaPorId(pautaId);
+            UsuarioRespostaDto usuarioRespostaDto = new UsuarioRespostaDto(pauta.getUsuario());
+            boolean sessaoAtiva = pauta.getSessaoVotacao().getDataFechamento().isAfter(LocalDateTime.now());
+            RespostaSessaoVotacaoDto respostaSessaoDto = new RespostaSessaoVotacaoDto(pauta.getSessaoVotacao(), sessaoAtiva);
+            RespostaPautaDto resposta = new RespostaPautaDto(pauta.getId(), pauta.getAssunto(), pauta.getCategoria(),
+                usuarioRespostaDto, respostaSessaoDto);
+            return ResponseEntity.ok().body(resposta);
+        } catch (Exception e) {
+            throw new NoSuchElementException("Pauta não encontrada.");
+        }       
+    }
+
     @GetMapping("/detalhes/{id}")
     public ResponseEntity<DetalhesPautaDto> buscarDetalhesPautaSessaoEncerrada(@PathVariable("id") String id) {
         try {
