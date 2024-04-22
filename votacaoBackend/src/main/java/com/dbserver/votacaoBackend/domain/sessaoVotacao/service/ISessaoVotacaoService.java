@@ -3,7 +3,6 @@ package com.dbserver.votacaoBackend.domain.sessaoVotacao.service;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.TipoDeVotoEnum;
-import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 
 public interface ISessaoVotacaoService {
