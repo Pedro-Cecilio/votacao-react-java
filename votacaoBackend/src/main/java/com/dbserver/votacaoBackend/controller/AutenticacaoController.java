@@ -28,11 +28,7 @@ public class AutenticacaoController {
     
     @PostMapping("/login")
     public ResponseEntity<AutenticacaoRespostaDto> autenticarUsuario(@RequestBody @Valid AutenticacaoDto dto) {
-        boolean autenticacaoValida = this.autenticacaoService.validarDadosAutenticacao(dto.email(), dto.senha());
-        if(!autenticacaoValida){
-            throw new BadCredentialsException("Dados de login inválidos.");
-        }
-        Autenticacao autenticacao = this.autenticacaoService.buscarAutenticacaoPeloEmail(dto.email());
+        Autenticacao autenticacao = this.autenticacaoService.buscarAutenticacaoPorEmailESenha(dto.email(), dto.senha());
         String token = this.tokenService.gerarToken(autenticacao);
         AutenticacaoRespostaDto resposta = new AutenticacaoRespostaDto(token, autenticacao.getUsuario().isAdmin());
         return ResponseEntity.status(HttpStatus.OK).body(resposta);

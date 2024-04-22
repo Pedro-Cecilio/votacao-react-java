@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
+import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoService;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
@@ -20,15 +21,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/usuario")
 public class UsuarioController {
     private IUsuarioService usuarioService;
+    private AutenticacaoService autenticacaoService;
 
-    public UsuarioController(IUsuarioService usuarioService) {
+    public UsuarioController(IUsuarioService usuarioService, AutenticacaoService autenticacaoService) {
         this.usuarioService = usuarioService;
+        this.autenticacaoService = autenticacaoService;
     }
 
     @PostMapping
     public ResponseEntity<CriarUsuarioRespostaDto> criarUsuario(@RequestBody CriarUsuarioDto dto) {
         Usuario usuario = new Usuario(dto);
-        Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto());
+        String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
+        Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto().email(), senhaEncriptada);
         Usuario novoUsuario = usuarioService.criarUsuario(usuario, autenticacao);
         CriarUsuarioRespostaDto resposta = new CriarUsuarioRespostaDto(novoUsuario, autenticacao);
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);

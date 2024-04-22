@@ -1,22 +1,22 @@
 package com.dbserver.votacaoBackend.domain.autenticacao.service;
 
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
-import com.dbserver.votacaoBackend.utils.Utils;
 
 @Service
 public class AutenticacaoService implements IAutenticacaoService {
+    private PasswordEncoder passwordEncoder;
     private AutenticacaoRepository autenticacaoRepository;
-    private Utils utils;
 
-    public AutenticacaoService(AutenticacaoRepository autenticacaoRepository, Utils utils) {
+    public AutenticacaoService(AutenticacaoRepository autenticacaoRepository, PasswordEncoder passwordEncoder) {
         this.autenticacaoRepository = autenticacaoRepository;
-        this.utils = utils;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -33,16 +33,28 @@ public class AutenticacaoService implements IAutenticacaoService {
     }
 
     @Override
-    public boolean validarDadosAutenticacao(String email, String senha) {
-        Optional<Autenticacao> autenticacao = this.autenticacaoRepository.findByEmail(email);
-        if(autenticacao.isPresent()){
-            return utils.validarSenha(senha, autenticacao.get().getSenha());
+    public Autenticacao buscarAutenticacaoPorEmailESenha(String email, String senha) {
+        Autenticacao autenticacao = this.autenticacaoRepository.findByEmail(email)
+                .orElseThrow(() -> new BadCredentialsException("Dados de login inválidos."));
+
+        boolean senhaValida = this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
+        if(!senhaValida) {
+            throw new BadCredentialsException("Dados de login inválidos.");
         }
-        return false;
+        return autenticacao;
+        
+    }
+    
+    @Override
+    public boolean validarSenhaDaAutenticacao(String senhaEsperada, String senhaEncriptada) {
+        return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
+    }
+    @Override
+    public String encriptarSenhaDaAutenticacao(String senha) {
+        if(senha == null) throw new IllegalArgumentException("Senha não deve ser nula");
+        return this.passwordEncoder.encode(senha);
     }
 
-    @Override
-    public Autenticacao buscarAutenticacaoPeloEmail(String email) {
-        return this.autenticacaoRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("Autenticação não encontrada."));
-    }
+
+   
 }

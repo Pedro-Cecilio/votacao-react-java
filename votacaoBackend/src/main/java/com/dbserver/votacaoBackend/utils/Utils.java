@@ -3,9 +3,6 @@ package com.dbserver.votacaoBackend.utils;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
@@ -15,17 +12,10 @@ import com.dbserver.votacaoBackend.domain.sessaoVotacao.service.SessaoVotacaoSer
 
 @Component
 public class Utils {
-    private PasswordEncoder passwordEncoder;
     private SessaoVotacaoService sessaoVotacaoService;
 
-    @Autowired
-    public Utils(PasswordEncoder passwordeEncoder, SessaoVotacaoService sessaoVotacaoService) {
-        this.passwordEncoder = passwordeEncoder;
+    public Utils(SessaoVotacaoService sessaoVotacaoService) {
         this.sessaoVotacaoService = sessaoVotacaoService;
-    }
-
-    public Utils() {
-        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     public static final String REGEX_CPF = "\\d{11}";
@@ -34,14 +24,6 @@ public class Utils {
     public static boolean validarRegex(String regex, String conteudo) {
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(conteudo).matches();
-    }
-
-    public String encriptarSenha(String senha) {
-        return this.passwordEncoder.encode(senha);
-    }
-
-    public boolean validarSenha(String senhaEsperada, String senhaEncriptada) {
-        return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
     }
 
     public List<RespostaPautaDto> criarListaRespostaPautaDto(List<Pauta> pautas) {
