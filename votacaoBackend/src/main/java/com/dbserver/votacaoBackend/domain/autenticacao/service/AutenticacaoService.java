@@ -42,9 +42,8 @@ public class AutenticacaoService implements IAutenticacaoService {
             throw new BadCredentialsException("Dados de login inválidos.");
         }
         return autenticacao;
-        
     }
-    
+        
     @Override
     public boolean validarSenhaDaAutenticacao(String senhaEsperada, String senhaEncriptada) {
         return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
@@ -55,6 +54,10 @@ public class AutenticacaoService implements IAutenticacaoService {
         return this.passwordEncoder.encode(senha);
     }
 
+    public boolean validarAutenticacaoPorCpfESenha(String cpf, String senha){
+        Autenticacao autenticacao = this.autenticacaoRepository.findByCpf(cpf).orElseThrow(()-> new NoSuchElementException("Autenticacao não encontrada."));
+        return this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
+    }
 
    
 }

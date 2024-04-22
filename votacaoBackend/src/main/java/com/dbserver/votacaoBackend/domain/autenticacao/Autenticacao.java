@@ -1,6 +1,5 @@
 package com.dbserver.votacaoBackend.domain.autenticacao;
 
-import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutenticacaoDto;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.utils.Utils;
 
@@ -37,10 +36,6 @@ public class Autenticacao {
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private Usuario usuario;
 
-    // public Autenticacao(AutenticacaoDto dto) {
-    //     setEmail(dto.email());
-    //     setSenha(dto.senha());
-    // }
     public Autenticacao(String email, String senha) {
         setEmail(email);
         setSenha(senha);

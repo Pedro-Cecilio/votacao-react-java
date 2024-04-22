@@ -9,4 +9,5 @@ public interface IAutenticacaoService {
     public Autenticacao buscarAutenticacaoPorEmailESenha(String email, String senha);
     public boolean validarSenhaDaAutenticacao(String senhaEsperada, String senhaEncriptada);
     public String encriptarSenhaDaAutenticacao(String senha);
+    public boolean validarAutenticacaoPorCpfESenha(String cpf, String senha);
 }
