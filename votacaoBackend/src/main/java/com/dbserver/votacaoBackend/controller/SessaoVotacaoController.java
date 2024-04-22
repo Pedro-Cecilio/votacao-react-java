@@ -14,11 +14,13 @@ import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.service.IPautaService;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.AbrirVotacaoDto;
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoDto;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoExternoDto;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoInternoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacaoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.service.ISessaoVotacaoService;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
+import com.dbserver.votacaoBackend.domain.voto.Voto;
 
 @RestController
 @RequestMapping(value = "/votacao")
@@ -45,12 +47,24 @@ public class SessaoVotacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 
-    @PatchMapping("/votar")
-    public ResponseEntity<RespostaSessaoVotacaoDto> votar(@RequestBody InserirVotoDto dto){
-        Usuario usuario = this.usuarioService.buscarUsuarioPorId(dto.usuarioId());
+    @PatchMapping("/votoInterno")
+    public ResponseEntity<RespostaSessaoVotacaoDto> votoInterno(@RequestBody InserirVotoInternoDto dto){
+        Usuario usuario = this.usuarioService.buscarUsuarioLogado();
         Pauta pauta = this.pautaService.buscarPautaAtivaPorId(dto.pautaId());
         SessaoVotacao sessaoVotacao = pauta.getSessaoVotacao();
-        this.sessaoVotacaoService.inserirVoto(sessaoVotacao, dto.tipoDeVoto(), usuario);
+        Voto voto = new Voto(usuario.getCpf(), usuario);
+        this.sessaoVotacaoService.inserirVoto(sessaoVotacao, dto.tipoDeVoto(), voto);
+        boolean sessaoEstaAtiva = sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now());
+        RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao, sessaoEstaAtiva);
+        return ResponseEntity.status(HttpStatus.OK).body(resposta);
+    }
+    @PatchMapping("/votoExterno")
+    public ResponseEntity<RespostaSessaoVotacaoDto> votoExterno(@RequestBody InserirVotoExternoDto dto){
+        Usuario usuario = this.usuarioService.buscarUsuarioPorCpfSeHouver(dto.cpf());
+        Pauta pauta = this.pautaService.buscarPautaAtivaPorId(dto.pautaId());
+        SessaoVotacao sessaoVotacao = pauta.getSessaoVotacao();
+        Voto voto = new Voto(dto.cpf(), usuario);
+        this.sessaoVotacaoService.inserirVoto(sessaoVotacao, dto.tipoDeVoto(), voto);
         boolean sessaoEstaAtiva = sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now());
         RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao, sessaoEstaAtiva);
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
