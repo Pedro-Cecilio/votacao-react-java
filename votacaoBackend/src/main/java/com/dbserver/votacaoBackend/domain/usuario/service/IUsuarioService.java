@@ -12,4 +12,7 @@ public interface IUsuarioService {
     public Usuario buscarUsuarioPorId(Long usuarioId);
     public List<Usuario> buscarTodosUsuarios(Pageable pageable);
     public Usuario buscarUsuarioLogado();
+    public boolean verificarSeExisteUsuárioPorCpf(String cpf);
+    public Usuario buscarUsuarioPorCpfSeHouver(String cpf);
+
 }

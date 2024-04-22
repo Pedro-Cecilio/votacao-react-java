@@ -63,8 +63,17 @@ public class UsuarioService implements IUsuarioService{
         return this.usuarioRepository.findAll(pageable).toList();
     }
 
+    @Override
     public Usuario buscarUsuarioLogado() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (Usuario) authentication.getPrincipal();
+    }
+    
+    @Override
+    public boolean verificarSeExisteUsuárioPorCpf(String cpf){
+        return this.usuarioRepository.findByCpf(cpf).isPresent();
+    }
+    public Usuario buscarUsuarioPorCpfSeHouver(String cpf){
+        return this.usuarioRepository.findByCpf(cpf).orElse(null);
     }
 }

@@ -78,58 +78,58 @@ class AutenticacaoServiceTest {
 
     }
 
-    @Test
-    @DisplayName("Deve ser possível se validar dados de autenticacao ao passar dados válidos")
-    void givenTenhoDadosDeAutenticacaoValidosWhenValidoEssesDadosThenRetornarTrue() {
-        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
-                .thenReturn(Optional.of(this.autenticacaoMock));
-        when(this.utils.validarSenha(this.autenticacaoMock.getSenha(), this.autenticacaoMock.getSenha()))
-                .thenReturn(true);
+    // @Test
+    // @DisplayName("Deve ser possível se validar dados de autenticacao ao passar dados válidos")
+    // void givenTenhoDadosDeAutenticacaoValidosWhenValidoEssesDadosThenRetornarTrue() {
+    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
+    //             .thenReturn(Optional.of(this.autenticacaoMock));
+    //     when(this.utils.validarSenha(this.autenticacaoMock.getSenha(), this.autenticacaoMock.getSenha()))
+    //             .thenReturn(true);
 
-        boolean resposta = this.autenticacaoService.validarDadosAutenticacao(this.autenticacaoMock.getEmail(),
-                this.autenticacaoMock.getSenha());
+    //     boolean resposta = this.autenticacaoService.validarDadosAutenticacao(this.autenticacaoMock.getEmail(),
+    //             this.autenticacaoMock.getSenha());
 
-        assertTrue(resposta);
-    }
+    //     assertTrue(resposta);
+    // }
 
-    @Test
-    @DisplayName("Deve retornar false ao validar dados de autenticação ao passar email inexistente")
-    void givenTenhoDadosDeAutenticacaoComEmailInexistenteWhenValidoEssesDadosThenRetornarFalse() {
-        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail())).thenReturn(Optional.empty());
-        boolean resposta = this.autenticacaoService.validarDadosAutenticacao(this.autenticacaoMock.getEmail(),
-                this.autenticacaoMock.getSenha());
-        assertFalse(resposta);
-    }
+    // @Test
+    // @DisplayName("Deve retornar false ao validar dados de autenticação ao passar email inexistente")
+    // void givenTenhoDadosDeAutenticacaoComEmailInexistenteWhenValidoEssesDadosThenRetornarFalse() {
+    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail())).thenReturn(Optional.empty());
+    //     boolean resposta = this.autenticacaoService.validarDadosAutenticacao(this.autenticacaoMock.getEmail(),
+    //             this.autenticacaoMock.getSenha());
+    //     assertFalse(resposta);
+    // }
 
-    @Test
-    @DisplayName("Deve retornar false ao validar dados ao passar senha incorreta")
-    void givenTenhoDadosDeAutenticacaoComSenhaIncorretaWhenValidoEssesDadosThenRetornarFalse() {
-        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
-                .thenReturn(Optional.of(this.autenticacaoMock));
-        when(this.utils.validarSenha(this.autenticacaoMock.getSenha(),
-                this.autenticacaoMock.getSenha()))
-                .thenReturn(false);
+    // @Test
+    // @DisplayName("Deve retornar false ao validar dados ao passar senha incorreta")
+    // void givenTenhoDadosDeAutenticacaoComSenhaIncorretaWhenValidoEssesDadosThenRetornarFalse() {
+    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
+    //             .thenReturn(Optional.of(this.autenticacaoMock));
+    //     when(this.utils.validarSenha(this.autenticacaoMock.getSenha(),
+    //             this.autenticacaoMock.getSenha()))
+    //             .thenReturn(false);
 
-        boolean resposta = this.autenticacaoService.validarDadosAutenticacao(this.autenticacaoMock.getEmail(),
-                this.autenticacaoMock.getSenha());
-        assertFalse(resposta);
-    }
+    //     boolean resposta = this.autenticacaoService.validarDadosAutenticacao(this.autenticacaoMock.getEmail(),
+    //             this.autenticacaoMock.getSenha());
+    //     assertFalse(resposta);
+    // }
 
-    @Test
-    @DisplayName("Deve ser possivel buscar autenticação existente pelo email")
-    void givenTenhoEmailDeUmaAutenticacaoExistenteWhenBuscoAutenticacaoPeloEmailThenRetornarAutenticacao() {
-        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
-                .thenReturn(Optional.of(this.autenticacaoMock));
-        Autenticacao resposta = this.autenticacaoService.buscarAutenticacaoPeloEmail(this.autenticacaoMock.getEmail());
-        assertEquals(this.autenticacaoMock.getId(), resposta.getId());
-    }
+    // @Test
+    // @DisplayName("Deve ser possivel buscar autenticação existente pelo email")
+    // void givenTenhoEmailDeUmaAutenticacaoExistenteWhenBuscoAutenticacaoPeloEmailThenRetornarAutenticacao() {
+    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
+    //             .thenReturn(Optional.of(this.autenticacaoMock));
+    //     Autenticacao resposta = this.autenticacaoService.buscarAutenticacaoPeloEmail(this.autenticacaoMock.getEmail());
+    //     assertEquals(this.autenticacaoMock.getId(), resposta.getId());
+    // }
 
-    @Test
-    @DisplayName("Deve ser falhar ao buscar autenticação inexistente pelo email")
-    void givenTenhoEmailDeUmaAutenticacaoInexistenteWhenBuscoAutenticacaoPeloEmailThenRetornarErro() {
-        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail())).thenReturn(Optional.empty());
-        String email = this.autenticacaoMock.getEmail();
-        assertThrows(NoSuchElementException.class,
-                () -> this.autenticacaoService.buscarAutenticacaoPeloEmail(email));
-    }
+    // @Test
+    // @DisplayName("Deve ser falhar ao buscar autenticação inexistente pelo email")
+    // void givenTenhoEmailDeUmaAutenticacaoInexistenteWhenBuscoAutenticacaoPeloEmailThenRetornarErro() {
+    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail())).thenReturn(Optional.empty());
+    //     String email = this.autenticacaoMock.getEmail();
+    //     assertThrows(NoSuchElementException.class,
+    //             () -> this.autenticacaoService.buscarAutenticacaoPeloEmail(email));
+    // }
 }

@@ -3,10 +3,10 @@ package com.dbserver.votacaoBackend.domain.pauta.dto;
 import jakarta.validation.constraints.NotEmpty;
 
 public record CriarPautaDto(
-        @NotEmpty
+        @NotEmpty(message = "Assunto deve ser informado.")
         String assunto,
 
-        @NotEmpty
+        @NotEmpty(message = "Categoria deve ser informada.")
         String categoria
         
     ) {

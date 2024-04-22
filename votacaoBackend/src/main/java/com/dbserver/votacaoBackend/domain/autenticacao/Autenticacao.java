@@ -1,6 +1,5 @@
 package com.dbserver.votacaoBackend.domain.autenticacao;
 
-import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutenticacaoDto;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.utils.Utils;
 
@@ -37,10 +36,6 @@ public class Autenticacao {
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private Usuario usuario;
 
-    public Autenticacao(AutenticacaoDto dto) {
-        setEmail(dto.email());
-        setSenha(dto.senha());
-    }
     public Autenticacao(String email, String senha) {
         setEmail(email);
         setSenha(senha);
@@ -54,15 +49,13 @@ public class Autenticacao {
     }
 
     public void setSenha(String senha) {
-        Utils utils = new Utils();
-        if (utils.validarSenha(senha, this.senha))
-            return;
+        
         if (senha == null)
             throw new IllegalArgumentException("Senha deve ser informada");
         if (senha.trim().length() < 8)
             throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo");
 
-        this.senha = utils.encriptarSenha(senha);
+        this.senha = senha;
     }
     
 

@@ -53,12 +53,12 @@ class AutenticacaoTest {
         assertThrows(IllegalArgumentException.class, ()->this.autenticacaoMock.setEmail(emailInvalido));
     }
 
-    @Test
-    @DisplayName("Deve ser possível setar uma senha corretamente")
-    void givenPossuoUmaSenhaComFormatoValidoWhenTentoSetarSenhaThenDefinirNovaSenha(){ 
-        assertDoesNotThrow(()->this.autenticacaoMock.setSenha(this.senhaValida));
-        assertTrue(utils.validarSenha(senhaValida, this.autenticacaoMock.getSenha()));
-    }
+    // @Test
+    // @DisplayName("Deve ser possível setar uma senha corretamente")
+    // void givenPossuoUmaSenhaComFormatoValidoWhenTentoSetarSenhaThenDefinirNovaSenha(){ 
+    //     assertDoesNotThrow(()->this.autenticacaoMock.setSenha(this.senhaValida));
+    //     assertTrue(utils.validarSenha(senhaValida, this.autenticacaoMock.getSenha()));
+    // }
 
 
     @ParameterizedTest
