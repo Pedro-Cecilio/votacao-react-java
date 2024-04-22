@@ -70,7 +70,10 @@ public class UsuarioService implements IUsuarioService{
     }
     
     @Override
-    public Usuario buscarUsuarioPorCpf(String cpf){
-        return this.usuarioRepository.findByCpf(cpf).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
+    public boolean verificarSeExisteUsuárioPorCpf(String cpf){
+        return this.usuarioRepository.findByCpf(cpf).isPresent();
+    }
+    public Usuario buscarUsuarioPorCpfSeHouver(String cpf){
+        return this.usuarioRepository.findByCpf(cpf).orElse(null);
     }
 }

@@ -9,6 +9,7 @@ import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,10 +46,10 @@ public class UsuarioController {
         return ResponseEntity.ok().body(resposta);
     }
 
-    @GetMapping
-    public ResponseEntity<UsuarioRespostaDto> buscarUsuarioPorCpf(@RequestParam(name = "cpf", required = true) final String cpf) {
-        Usuario usuario = this.usuarioService.buscarUsuarioPorCpf(cpf);
-        UsuarioRespostaDto resposta = new UsuarioRespostaDto(usuario);
+    @GetMapping("/existe")
+    public ResponseEntity<VerificarSeUsuarioExisteRespostaDto> verificarSeUsuarioExistePorCpf(@RequestParam(name = "cpf", required = true) final String cpf) {
+        boolean existe = this.usuarioService.verificarSeExisteUsuárioPorCpf(cpf);
+        VerificarSeUsuarioExisteRespostaDto resposta = new VerificarSeUsuarioExisteRespostaDto(existe);
         return ResponseEntity.ok().body(resposta);
     }
 
