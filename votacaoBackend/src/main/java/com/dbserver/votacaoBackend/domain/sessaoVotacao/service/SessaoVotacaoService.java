@@ -9,7 +9,7 @@ import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.TipoDeVotoEnum;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.repository.SessaoVotacaoRepository;
-import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.domain.voto.Voto;
 
 @Service
 public class SessaoVotacaoService implements ISessaoVotacaoService {
@@ -37,21 +37,21 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
     }
 
     @Override
-    public void verificarSeUsuarioPodeVotarSessaoVotacao(SessaoVotacao sessaoVotacao, Usuario usuario){
-        if(usuario == null) throw new IllegalArgumentException("Usuário deve ser informado.");
+    public void verificarSeUsuarioPodeVotarSessaoVotacao(SessaoVotacao sessaoVotacao, Voto voto){
+        if(voto == null) throw new IllegalArgumentException("Voto deve ser informado.");
         if (!this.verificarSeSessaoVotacaoEstaAtiva(sessaoVotacao))
             throw new IllegalStateException("Sessão de votação não está ativa.");
-        if(sessaoVotacao.getPauta().getUsuario().equals(usuario)) throw new IllegalArgumentException("O criador não pode votar na pauta criada.");
-        List<Usuario> todosVotantes = new ArrayList<>(sessaoVotacao.getVotosPositivos());
+        if(sessaoVotacao.getPauta().getUsuario().getCpf().equals(voto.getCpf())) throw new IllegalArgumentException("O criador não pode votar na pauta criada.");
+        List<Voto> todosVotantes = new ArrayList<>(sessaoVotacao.getVotosPositivos());
         todosVotantes.addAll(sessaoVotacao.getVotosNegativos());
-        if(todosVotantes.contains(usuario)) throw new IllegalStateException("Não é possível votar duas vezes.");
+        if(todosVotantes.contains(voto)) throw new IllegalStateException("Não é possível votar duas vezes.");
     }
     @Override
-    public SessaoVotacao inserirVoto(SessaoVotacao sessaoVotacao, TipoDeVotoEnum tipoDeVoto, Usuario usuario) {
-        this.verificarSeUsuarioPodeVotarSessaoVotacao(sessaoVotacao, usuario);
+    public SessaoVotacao inserirVoto(SessaoVotacao sessaoVotacao, TipoDeVotoEnum tipoDeVoto, Voto voto) {
+        this.verificarSeUsuarioPodeVotarSessaoVotacao(sessaoVotacao, voto);
         if (tipoDeVoto == null) throw new IllegalArgumentException("O tipo do voto deve ser informado.");
-        if(tipoDeVoto == TipoDeVotoEnum.VOTO_NEGATIVO) sessaoVotacao.setVotosNegativos(usuario);
-        if(tipoDeVoto == TipoDeVotoEnum.VOTO_POSITIVO) sessaoVotacao.setVotosPositivos(usuario);
+        if(tipoDeVoto == TipoDeVotoEnum.VOTO_NEGATIVO) sessaoVotacao.setVotosNegativos(voto);
+        if(tipoDeVoto == TipoDeVotoEnum.VOTO_POSITIVO) sessaoVotacao.setVotosPositivos(voto);
         
         return this.sessaoVotacaoRepository.save(sessaoVotacao);
     }

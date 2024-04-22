@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
-import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.domain.voto.Voto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -33,11 +33,11 @@ public class SessaoVotacao {
     @JoinColumn(name = "pauta_id")
     private Pauta pauta;
 
-    @ManyToMany
-    private List<Usuario> votosPositivos = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Voto> votosPositivos = new ArrayList<>();
 
-    @ManyToMany
-    private List<Usuario> votosNegativos = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Voto> votosNegativos = new ArrayList<>();
 
     @Column
     private LocalDateTime dataAbertura;
@@ -78,14 +78,14 @@ public class SessaoVotacao {
         this.dataFechamento = dataFechamento;
     }
 
-    public void setVotosPositivos(Usuario usuario) {
-        if(usuario == null) throw new IllegalArgumentException("Usuario não deve ser nulo.");
-        this.votosPositivos.add(usuario);
+    public void setVotosPositivos(Voto voto) {
+        if(voto == null) throw new IllegalArgumentException("Voto deve ser informado.");
+        this.votosPositivos.add(voto);
     }
 
-    public void setVotosNegativos(Usuario usuario) {
-        if(usuario == null) throw new IllegalArgumentException("Usuario não deve ser nulo.");
-        this.votosNegativos.add(usuario);
+    public void setVotosNegativos(Voto voto) {
+        if(voto == null) throw new IllegalArgumentException("Voto deve ser informado.");
+        this.votosNegativos.add(voto);
     }
 
     
