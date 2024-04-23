@@ -22,10 +22,10 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String nome;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String sobrenome;
 
     @Column(nullable = false, unique = true)
