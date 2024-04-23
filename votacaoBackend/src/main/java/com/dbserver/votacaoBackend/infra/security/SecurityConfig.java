@@ -36,12 +36,11 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/pauta").hasAuthority(AUTORIDADE_ADMIN)
                         .requestMatchers(HttpMethod.GET, "/pauta/usuarioLogado", "/pauta/detalhes/**").hasAuthority(AUTORIDADE_ADMIN)
-                        .requestMatchers(HttpMethod.GET, "/pauta", "/pauta/ativas").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/pauta/ativas").authenticated()
 
-                        .requestMatchers(HttpMethod.POST, "/usuario/usuarioLogado").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/usuario/usuarioLogado").authenticated()
                         .requestMatchers(HttpMethod.POST, "/usuario").hasAuthority(AUTORIDADE_ADMIN)
                         
-                        .requestMatchers(HttpMethod.POST, "/votacao/abrir").hasAuthority(AUTORIDADE_ADMIN)
                         .requestMatchers(HttpMethod.POST, "/votacao/abrir").hasAuthority(AUTORIDADE_ADMIN)
 
                         .requestMatchers(HttpMethod.GET, "/votacao/votoInterno").authenticated()

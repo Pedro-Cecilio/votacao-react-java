@@ -22,6 +22,8 @@ import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping(value = "/votacao")
 public class SessaoVotacaoController {
@@ -35,6 +37,7 @@ public class SessaoVotacaoController {
         this.sessaoVotacaoService = sessaoVotacaoService;
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @PostMapping("/abrir")
     public ResponseEntity<RespostaSessaoVotacaoDto> abrirSessaoVotacao(@RequestBody AbrirVotacaoDto dto){
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
@@ -47,6 +50,7 @@ public class SessaoVotacaoController {
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @PatchMapping("/votoInterno")
     public ResponseEntity<RespostaSessaoVotacaoDto> votoInterno(@RequestBody InserirVotoInternoDto dto){
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
