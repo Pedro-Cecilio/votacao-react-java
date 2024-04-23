@@ -1,39 +1,41 @@
 ### Votacao Backend ###
 
-votacaoBackend/HELP.md
-votacaoBackend/.gradle
-votacaoBackend/build/
-!votacaoBackend/gradle/wrapper/gradle-wrapper.jar
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 ### STS ###
-votacaoBackend/.apt_generated
-votacaoBackend/.classpath
-votacaoBackend/.factorypath
-votacaoBackend/.project
-votacaoBackend/.settings
-votacaoBackend/.springBeans
-votacaoBackend/.sts4-cache
-votacaoBackend/bin/
-votacaoBackend/!**/src/main/**/bin/
-votacaoBackend/!**/src/test/**/bin/
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-votacaoBackend/.idea
-votacaoBackend/*.iws
-votacaoBackend/*.iml
-votacaoBackend/*.ipr
-votacaoBackend/out/
-votacaoBackend/!**/src/main/**/out/
-votacaoBackend/!**/src/test/**/out/
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
 ### NetBeans ###
-votacaoBackend/nbproject/private/
-votacaoBackend/nbbuild/
-votacaoBackend/dist/
-votacaoBackend/nbdist/
-votacaoBackend/.nb-gradle/
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
 
 ### VS Code ###
-votacaoBackend/.vscode/
+.vscode/
+
+.env
