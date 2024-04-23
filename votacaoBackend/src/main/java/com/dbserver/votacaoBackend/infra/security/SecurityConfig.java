@@ -21,6 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
     private SecurityFilter securityFilter;
+    private static final String AUTORIDADE_ADMIN = "ADMIN";
 
     public SecurityConfig(SecurityFilter securityFilter) {
         this.securityFilter = securityFilter;
@@ -32,9 +33,19 @@ public class SecurityConfig {
                 .csrf(csfr -> csfr.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/pauta").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/pauta").authenticated()
-                        .requestMatchers("/usuario/usuarioLogado").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/pauta").hasAuthority(AUTORIDADE_ADMIN)
+                        .requestMatchers(HttpMethod.GET, "/pauta/usuarioLogado", "/pauta/detalhes/**").hasAuthority(AUTORIDADE_ADMIN)
+                        .requestMatchers(HttpMethod.GET, "/pauta", "/pauta/ativas").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/usuario/usuarioLogado").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/usuario").hasAuthority(AUTORIDADE_ADMIN)
+                        
+                        .requestMatchers(HttpMethod.POST, "/votacao/abrir").hasAuthority(AUTORIDADE_ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/votacao/abrir").hasAuthority(AUTORIDADE_ADMIN)
+
+                        .requestMatchers(HttpMethod.GET, "/votacao/votoInterno").authenticated()
+
                         .anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(this.corsConfigurationSource()))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
