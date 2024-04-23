@@ -16,6 +16,9 @@ import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
 import com.dbserver.votacaoBackend.utils.Utils;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.time.LocalDateTime;
@@ -42,6 +45,7 @@ public class PautaController {
         this.sessaoVotacaoService = sessaoVotacaoService;
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @PostMapping
     public ResponseEntity<RespostaPautaDto> criarPauta(@RequestBody CriarPautaDto dto) {
         Usuario usuario = usuarioService.buscarUsuarioLogado();
@@ -53,6 +57,7 @@ public class PautaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @GetMapping("/usuarioLogado")
     public ResponseEntity<List<RespostaPautaDto>> listarTodasPautasDoUsuario(
             @RequestParam(name = "categoria", required = false) final Categoria categoria,
@@ -63,6 +68,7 @@ public class PautaController {
         return ResponseEntity.ok().body(resposta);
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @GetMapping("/ativas")
     public ResponseEntity<List<RespostaPautaDto>> listarPautas(
             @RequestParam(name = "categoria", required = false) final Categoria categoria,
@@ -88,6 +94,7 @@ public class PautaController {
         }       
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @GetMapping("/detalhes/{id}")
     public ResponseEntity<DetalhesPautaDto> buscarDetalhesPautaSessaoEncerrada(@PathVariable("id") String id) {
         try {

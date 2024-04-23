@@ -11,6 +11,9 @@ import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +32,7 @@ public class UsuarioController {
         this.autenticacaoService = autenticacaoService;
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @PostMapping
     public ResponseEntity<CriarUsuarioRespostaDto> criarUsuario(@RequestBody CriarUsuarioDto dto) {
         Usuario usuario = new Usuario(dto);
@@ -39,6 +43,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @GetMapping("/usuarioLogado")
     public ResponseEntity<UsuarioRespostaDto> buscarUsuarioLogado() {
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
