@@ -1,9 +1,8 @@
 package com.dbserver.votacaoBackend.domain.autenticacao.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
@@ -38,13 +39,20 @@ class AutenticacaoServiceTest {
     @Mock
     private Utils utils;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private Usuario usuarioMock;
     private Autenticacao autenticacaoMock;
+    private String senhaInvalida;
+    private String senhaValida = "senha123";
+    private String senhaValidaEncriptada = "$2a$10$/Y8PKwHdSFWafmyWpJDgHu2wFJ8ShhLGEJtfVAz15ZerS3O1rW8cm";
 
     @BeforeEach
     void configurar() {
         this.usuarioMock = new Usuario(1L, "João", "Silva", "12345678900", false);
-        this.autenticacaoMock = new Autenticacao("example@example.com", "senha123");
+        this.autenticacaoMock = new Autenticacao("example@example.com", senhaValida);
+        this.senhaInvalida = "senhaInvalida";
     }
 
     @AfterEach
@@ -58,8 +66,22 @@ class AutenticacaoServiceTest {
     @DisplayName("Deve ser possível criar uma autenticacao")
     void givenTenhoUmUsuarioCadastradoEDadosDeAutenticacaoWhenTentoCriarAutenticacaoThenRetornarAutenticacaoCriada() {
         when(this.autenticacaoRepository.save(this.autenticacaoMock)).thenReturn(this.autenticacaoMock);
-        this.autenticacaoService.criarAutenticacao(autenticacaoMock, usuarioMock);
+        this.autenticacaoService.criarAutenticacao(this.autenticacaoMock, this.usuarioMock);
         verify(this.autenticacaoRepository, times(1)).save(this.autenticacaoMock);
+    }
+
+    @Test
+    @DisplayName("Não deve ser possível criar uma autenticacao ao passar usuario nulo")
+    void givenTenhoUmUsuarioNuloEDadosDeAutenticacaoWhenTentoCriarAutenticacaoThenRetornarErro() {
+        assertThrows(IllegalArgumentException.class,
+                () -> this.autenticacaoService.criarAutenticacao(this.autenticacaoMock, null));
+    }
+
+    @Test
+    @DisplayName("Não deve ser possível criar uma autenticacao ao passar autenticacao nula")
+    void givenTenhoUmUsuarioEDadosDeAutenticacaoNuloWhenTentoCriarAutenticacaoThenRetornarErro() {
+        assertThrows(IllegalArgumentException.class,
+                () -> this.autenticacaoService.criarAutenticacao(null, this.usuarioMock));
     }
 
     @Test
@@ -75,61 +97,113 @@ class AutenticacaoServiceTest {
     void givenTenhoUmaAutenticacaoIdInexistenteWhenTentoDeletarAutenticacaoThenRetornarUmaExcecao() {
         when(this.autenticacaoRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(NoSuchElementException.class, () -> this.autenticacaoService.deletarAutenticacao(1L));
-
     }
 
-    // @Test
-    // @DisplayName("Deve ser possível se validar dados de autenticacao ao passar dados válidos")
-    // void givenTenhoDadosDeAutenticacaoValidosWhenValidoEssesDadosThenRetornarTrue() {
-    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
-    //             .thenReturn(Optional.of(this.autenticacaoMock));
-    //     when(this.utils.validarSenha(this.autenticacaoMock.getSenha(), this.autenticacaoMock.getSenha()))
-    //             .thenReturn(true);
+    @Test
+    @DisplayName("Não deve ser possível deletar uma autenticacao inexistente")
+    void givenTenhoUmaAutenticacaoIdNuloWhenTentoDeletarAutenticacaoThenRetornarUmaExcecao() {
+        assertThrows(IllegalArgumentException.class, () -> this.autenticacaoService.deletarAutenticacao(null));
+    }
 
-    //     boolean resposta = this.autenticacaoService.validarDadosAutenticacao(this.autenticacaoMock.getEmail(),
-    //             this.autenticacaoMock.getSenha());
+    @Test
+    @DisplayName("Deve ser possível buscar autenticação por email e senha")
+    void givenTenhoUmEmailEUmSenhaValidosWhenTentoBuscarPorEmailESenhaThenRetornarAutenticacao() {
+        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
+                .thenReturn(Optional.of(this.autenticacaoMock));
+        when(this.passwordEncoder.matches(this.autenticacaoMock.getSenha(), this.autenticacaoMock.getSenha()))
+                .thenReturn(true);
+        Autenticacao autenticacao = this.autenticacaoService
+                .buscarAutenticacaoPorEmailESenha(this.autenticacaoMock.getEmail(), this.autenticacaoMock.getSenha());
+        assertEquals(this.autenticacaoMock.getEmail(), autenticacao.getEmail());
+        assertEquals(this.autenticacaoMock.getSenha(), autenticacao.getSenha());
+    }
 
-    //     assertTrue(resposta);
-    // }
+    @Test
+    @DisplayName("Não deve ser possível buscar autenticação com email inexistente")
+    void givenTenhoUmEmailInexistenteWhenTentoBuscarPorEmailESenhaThenRetornarAutenticacao() {
+        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail())).thenReturn(Optional.empty());
+        String email = this.autenticacaoMock.getEmail();
+        String senha = this.autenticacaoMock.getSenha();
+        assertThrows(BadCredentialsException.class, () -> this.autenticacaoService
+                .buscarAutenticacaoPorEmailESenha(email, senha));
+    }
 
-    // @Test
-    // @DisplayName("Deve retornar false ao validar dados de autenticação ao passar email inexistente")
-    // void givenTenhoDadosDeAutenticacaoComEmailInexistenteWhenValidoEssesDadosThenRetornarFalse() {
-    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail())).thenReturn(Optional.empty());
-    //     boolean resposta = this.autenticacaoService.validarDadosAutenticacao(this.autenticacaoMock.getEmail(),
-    //             this.autenticacaoMock.getSenha());
-    //     assertFalse(resposta);
-    // }
+    @Test
+    @DisplayName("Não deve ser possível buscar autenticação com senha invalida")
+    void givenTenhoUmaSenhaInvalidaWhenTentoBuscarPorEmailESenhaThenRetornarAutenticacao() {
+        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
+                .thenReturn(Optional.of(this.autenticacaoMock));
+        when(this.autenticacaoService.validarSenhaDaAutenticacao(this.senhaInvalida, this.autenticacaoMock.getSenha()))
+                .thenReturn(false);
+        String email = this.autenticacaoMock.getEmail();
+        String senha = this.senhaInvalida;
+        assertThrows(BadCredentialsException.class, () -> this.autenticacaoService
+                .buscarAutenticacaoPorEmailESenha(email, senha));
+    }
 
-    // @Test
-    // @DisplayName("Deve retornar false ao validar dados ao passar senha incorreta")
-    // void givenTenhoDadosDeAutenticacaoComSenhaIncorretaWhenValidoEssesDadosThenRetornarFalse() {
-    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
-    //             .thenReturn(Optional.of(this.autenticacaoMock));
-    //     when(this.utils.validarSenha(this.autenticacaoMock.getSenha(),
-    //             this.autenticacaoMock.getSenha()))
-    //             .thenReturn(false);
+    @Test
+    @DisplayName("Deve ser possível validar senha da autenticação")
+    void givenTenhoSenhasCompativeisWhenTentoValidarSenhaThenValidarCorretamente() {
+        when(this.passwordEncoder.matches(this.senhaValida, this.senhaValidaEncriptada))
+                .thenReturn(true);
+        this.autenticacaoService.validarSenhaDaAutenticacao(this.senhaValida, this.senhaValidaEncriptada);
+        verify(this.passwordEncoder).matches(this.senhaValida, this.senhaValidaEncriptada);
+    }
 
-    //     boolean resposta = this.autenticacaoService.validarDadosAutenticacao(this.autenticacaoMock.getEmail(),
-    //             this.autenticacaoMock.getSenha());
-    //     assertFalse(resposta);
-    // }
+    @Test
+    @DisplayName("Deve ser possível encriptar senha da autenticação ao passar senha válida")
+    void givenTenhoUmaSenhaValidaWhenTentoEncriptarSenhaThenRetornarSenhaEncriptada() {
+        when(this.passwordEncoder.encode(this.senhaValida)).thenReturn(this.senhaValidaEncriptada);
+        this.autenticacaoService.encriptarSenhaDaAutenticacao(senhaInvalida);
+        verify(this.passwordEncoder).encode(this.senhaValida);
+    }
 
-    // @Test
-    // @DisplayName("Deve ser possivel buscar autenticação existente pelo email")
-    // void givenTenhoEmailDeUmaAutenticacaoExistenteWhenBuscoAutenticacaoPeloEmailThenRetornarAutenticacao() {
-    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
-    //             .thenReturn(Optional.of(this.autenticacaoMock));
-    //     Autenticacao resposta = this.autenticacaoService.buscarAutenticacaoPeloEmail(this.autenticacaoMock.getEmail());
-    //     assertEquals(this.autenticacaoMock.getId(), resposta.getId());
-    // }
+    @Test
+    @DisplayName("Não deve ser possível encriptar senha da autenticação ao passar senha nula")
+    void givenTenhoUmaSenhaNulaWhenTentoEncriptarSenhaThenRetornarErro() {
+        assertThrows(IllegalArgumentException.class, () -> this.autenticacaoService.encriptarSenhaDaAutenticacao(null));
+    }
 
-    // @Test
-    // @DisplayName("Deve ser falhar ao buscar autenticação inexistente pelo email")
-    // void givenTenhoEmailDeUmaAutenticacaoInexistenteWhenBuscoAutenticacaoPeloEmailThenRetornarErro() {
-    //     when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail())).thenReturn(Optional.empty());
-    //     String email = this.autenticacaoMock.getEmail();
-    //     assertThrows(NoSuchElementException.class,
-    //             () -> this.autenticacaoService.buscarAutenticacaoPeloEmail(email));
-    // }
+    @Test
+    @DisplayName("Não deve ser possível encriptar senha da autenticação ao passar senha vazia")
+    void givenTenhoUmaSenhaVaziaWhenTentoEncriptarSenhaThenRetornarErro() {
+        assertThrows(IllegalArgumentException.class,
+                () -> this.autenticacaoService.encriptarSenhaDaAutenticacao("   "));
+    }
+
+    @Test
+    @DisplayName("Deve ser possível validar autenticação ao passar cpf e senha validos")
+    void givenTenhoUmCpfEUmaSenhaValidosWhenTentoValidarAutenticacaoPorCpfESenhaThenExecutarSemErros() {
+        when(this.autenticacaoRepository.findByCpf(this.usuarioMock.getCpf()))
+                .thenReturn(Optional.of(this.autenticacaoMock));
+        when(this.autenticacaoService.validarSenhaDaAutenticacao(this.senhaValida, autenticacaoMock.getSenha()))
+                .thenReturn(true);
+
+        assertDoesNotThrow(() -> this.autenticacaoService.validarAutenticacaoPorCpfESenha(this.usuarioMock.getCpf(),
+                this.senhaValida));
+    }
+
+    @Test
+    @DisplayName("Não deve ser possível validar autenticação ao passar cpf não cadastrado")
+    void givenTenhoUmCpfNaoCadastradoWhenTentoValidarAutenticacaoPorCpfESenhaThenRetornarErro() {
+        String cpf = this.usuarioMock.getCpf();
+
+        when(this.autenticacaoRepository.findByCpf(cpf))
+                .thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class,
+                () -> this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, this.senhaValida));
+    }
+
+    @Test
+    @DisplayName("Não deve ser possível validar autenticação ao passar senha incompatível")
+    void givenTenhoSenhaIncompativelWhenTentoValidarAutenticacaoPorCpfESenhaThenRetornarErro() {
+        String cpf = this.usuarioMock.getCpf();
+
+        when(this.autenticacaoRepository.findByCpf(this.usuarioMock.getCpf()))
+                .thenReturn(Optional.of(this.autenticacaoMock));
+        when(this.autenticacaoService.validarSenhaDaAutenticacao(this.senhaInvalida, autenticacaoMock.getSenha()))
+                .thenReturn(false);
+        assertThrows(IllegalArgumentException.class,
+                () -> this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, this.senhaInvalida));
+    }
 }

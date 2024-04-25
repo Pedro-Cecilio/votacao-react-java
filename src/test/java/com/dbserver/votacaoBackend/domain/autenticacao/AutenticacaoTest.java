@@ -3,17 +3,14 @@ package com.dbserver.votacaoBackend.domain.autenticacao;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.dbserver.votacaoBackend.utils.Utils;
 
 @SpringBootTest
 class AutenticacaoTest {
@@ -21,9 +18,6 @@ class AutenticacaoTest {
     private Autenticacao autenticacaoMock;
     private String emailValido;
     private String senhaValida;
-    
-    @Autowired
-    private Utils utils;
 
     @BeforeEach
     void configurar(){
@@ -53,12 +47,12 @@ class AutenticacaoTest {
         assertThrows(IllegalArgumentException.class, ()->this.autenticacaoMock.setEmail(emailInvalido));
     }
 
-    // @Test
-    // @DisplayName("Deve ser possível setar uma senha corretamente")
-    // void givenPossuoUmaSenhaComFormatoValidoWhenTentoSetarSenhaThenDefinirNovaSenha(){ 
-    //     assertDoesNotThrow(()->this.autenticacaoMock.setSenha(this.senhaValida));
-    //     assertTrue(utils.validarSenha(senhaValida, this.autenticacaoMock.getSenha()));
-    // }
+    @Test
+    @DisplayName("Deve ser possível setar uma senha corretamente")
+    void givenPossuoUmaSenhaComFormatoValidoWhenTentoSetarSenhaThenDefinirNovaSenha(){ 
+        assertDoesNotThrow(()->this.autenticacaoMock.setSenha(this.senhaValida));
+        assertEquals(this.senhaValida, this.autenticacaoMock.getSenha());
+    }
 
 
     @ParameterizedTest

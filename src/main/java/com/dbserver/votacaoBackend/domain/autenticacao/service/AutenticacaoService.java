@@ -21,12 +21,15 @@ public class AutenticacaoService implements IAutenticacaoService {
 
     @Override
     public Autenticacao criarAutenticacao(Autenticacao autenticacao, Usuario usuarioSalvo) {
+        if(usuarioSalvo == null) throw new IllegalArgumentException("Usuario não deve ser nulo.");
+        if(autenticacao == null) throw new IllegalArgumentException("Autenticação não deve ser nula.");
         autenticacao.setUsuario(usuarioSalvo);
         return this.autenticacaoRepository.save(autenticacao);
     }
 
     @Override
     public void deletarAutenticacao(Long id) {
+        if(id == null) throw new IllegalArgumentException("Id não deve ser nulo.");
         Autenticacao autenticacao = this.autenticacaoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
         this.autenticacaoRepository.delete(autenticacao);
@@ -50,7 +53,7 @@ public class AutenticacaoService implements IAutenticacaoService {
     }
     @Override
     public String encriptarSenhaDaAutenticacao(String senha) {
-        if(senha == null) throw new IllegalArgumentException("Senha não deve ser nula");
+        if(senha == null || senha.trim().isEmpty())throw new IllegalArgumentException("Senha não deve ser nula");
         return this.passwordEncoder.encode(senha);
     }
 
