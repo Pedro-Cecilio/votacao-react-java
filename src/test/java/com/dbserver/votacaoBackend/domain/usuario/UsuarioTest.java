@@ -21,7 +21,7 @@ class UsuarioTest {
 
     @BeforeEach
     void configurar(){
-        this.usuarioMock = new Usuario(1L, "João", "Silva", "12345678900", false);
+        this.usuarioMock = new Usuario(1L, "João", "Silva", "12345678900", true);
         this.nomeValido = "Pedro";
         this.sobrenomeValido = "Cecilio";
         this.cpfValido = "12345678910";

@@ -28,39 +28,12 @@ public class UsuarioService implements IUsuarioService{
     @Override
     @Transactional
     public Usuario criarUsuario(Usuario usuario, Autenticacao autenticacao) {
+        if(usuario == null) throw new IllegalArgumentException("Usuario não deve ser nulo.");
+        if(autenticacao == null) throw new IllegalArgumentException("Autenticação não deve ser nula.");
+
         Usuario usuarioCriado = this.usuarioRepository.save(usuario);
         this.autenticacaoService.criarAutenticacao(autenticacao, usuarioCriado);
         return usuarioCriado;
-    }
-
-    @Override
-    @Transactional
-    public Usuario atualizarUsuario(Long usuarioId, String nome, String sobrenome) {
-        Usuario usuarioASerAtualizado = this.usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
-        usuarioASerAtualizado.setNome(nome);
-        usuarioASerAtualizado.setSobrenome(sobrenome);
-        return this.usuarioRepository.save(usuarioASerAtualizado);
-    }
-
-    @Override
-    @Transactional
-    public void deletarUsuario(Long usuarioId) {
-        Usuario usuario = this.usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
-        this.autenticacaoService.deletarAutenticacao(usuario.getId());
-        this.usuarioRepository.delete(usuario);
-    }
-
-    @Override
-    public Usuario buscarUsuarioPorId(Long usuarioId) {
-        return this.usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
-    }
-
-    @Override
-    public List<Usuario> buscarTodosUsuarios(Pageable pageable) {
-        return this.usuarioRepository.findAll(pageable).toList();
     }
 
     @Override
@@ -70,9 +43,11 @@ public class UsuarioService implements IUsuarioService{
     }
     
     @Override
-    public boolean verificarSeExisteUsuárioPorCpf(String cpf){
+    public boolean verificarSeExisteUsuarioPorCpf(String cpf){
         return this.usuarioRepository.findByCpf(cpf).isPresent();
     }
+
+    @Override
     public Usuario buscarUsuarioPorCpfSeHouver(String cpf){
         return this.usuarioRepository.findByCpf(cpf).orElse(null);
     }

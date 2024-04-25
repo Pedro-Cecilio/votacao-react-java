@@ -1,28 +1,28 @@
 package com.dbserver.votacaoBackend.domain.usuario.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import java.util.Optional;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.autenticacao.service.IAutenticacaoService;
@@ -42,6 +42,13 @@ class UsuarioServiceTest {
     private AutenticacaoRepository autenticacaoRepository;
     @Mock
     private Pageable pageable;
+
+    @Mock
+    private SecurityContextHolder securityContextHolder;
+    @Mock
+    private SecurityContext securityContext;
+    @Mock
+    private Authentication securityAuthenticationMock;
 
     private Usuario usuarioMock;
     private Autenticacao autenticacaoMock;
@@ -72,70 +79,57 @@ class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deve ser possível atualizar um Usuario corretamente")
-    void givenTenhoUmUsuarioIdEDadosParaAtualizarWhenTentoAtualizarUsuarioThenRetornarUsuarioAtualizado() {
-        when(this.usuarioRepository.findById(this.usuarioMock.getId())).thenReturn(Optional.of(this.usuarioMock));
-        this.usuarioService.atualizarUsuario(this.usuarioMock.getId(), "NovoNome", "NovoSobrenome");
-        verify(this.usuarioRepository, times(1)).save(this.usuarioMock);
-    }
-
-    @Test
-    @DisplayName("Não deve ser possível atualizar um Usuario inexistente")
-    void givenTenhoUmUsuarioIdInexistenteEDadosParaAtualizarWhenTentoAtualizarUsuarioThenRetornarUmErro() {
-        when(this.usuarioRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class,
-                () -> this.usuarioService.atualizarUsuario(1L, "NovoNome", "NovoSobrenome"));
-    }
-
-    @ParameterizedTest
-    @MethodSource("com.dbserver.votacaoBackend.testUtils.DadosTestesParametrizados#dadosInvalidosParaAtualizarUsuario")
-    @DisplayName("Não deve ser possível atualizar um Usuario com dados inválidos")
-    void givenTenhoUmUsuarioIdExistenteEDadosInvalidosParaAtualizarWhenTentoAtualizarUsuarioThenRetornarUmErro(String nome, String sobrenome) {
-        when(this.usuarioRepository.findById(1L)).thenReturn(Optional.of(this.usuarioMock));
+    @DisplayName("Não deve ser possível criar um Usuario passando usuario nulo")
+    void givenTenhoUmUsuarioNuloWhenTentoCriarUsuarioThenRetornarUmErro() {
         assertThrows(IllegalArgumentException.class,
-                () -> this.usuarioService.atualizarUsuario(1L, nome, sobrenome));
+                () -> this.usuarioService.criarUsuario(null, this.autenticacaoMock));
     }
 
     @Test
-    @DisplayName("Deve ser possível deletar um Usuario corretamente")
-    void givenTenhoUmUsuarioIdExistenteWhenTentoDeletarUsuarioThenDeletarUsuario() {
-        when(this.usuarioRepository.findById(this.usuarioMock.getId())).thenReturn(Optional.of(this.usuarioMock));
-        this.usuarioService.deletarUsuario(this.usuarioMock.getId());
-        verify(this.autenticacaoService, times(1)).deletarAutenticacao(this.usuarioMock.getId());
-        verify(this.usuarioRepository, times(1)).delete(this.usuarioMock);
+    @DisplayName("Não deve ser possível criar um Usuario passando autenticação nula")
+    void givenTenhoUmaAutenticacaoNulaWhenTentoCriarUsuarioThenRetornarUmErro() {
+        assertThrows(IllegalArgumentException.class, () -> this.usuarioService.criarUsuario(this.usuarioMock, null));
     }
 
     @Test
-    @DisplayName("Não deve ser possível deletar um Usuario inexistente")
-    void givenTenhoUmUsuarioIdInexistenteWhenTentoDeletarUsuarioThenRetornarUmErro() {
-        when(this.usuarioRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class,
-                () -> this.usuarioService.deletarUsuario(1L));
+    @DisplayName("Deve ser possível buscar o usuário logado")
+    void givenTenhoUmUsuarioLogadoWhenTentoBuscarUsuarioLogadoThenRetornarUsuarioLogado() {
+        SecurityContextHolder.setContext(this.securityContext);
+        when(this.securityContext.getAuthentication()).thenReturn(this.securityAuthenticationMock);
+        when(securityAuthenticationMock.getPrincipal()).thenReturn(this.usuarioMock);
+        Usuario usuarioLogado = this.usuarioService.buscarUsuarioLogado();
+        assertEquals(this.usuarioMock.getId(), usuarioLogado.getId());
     }
 
     @Test
-    @DisplayName("Deve ser possível buscar um Usuario corretamente")
-    void givenTenhoUmUsuarioIdExistenteWhenTentoBuscarUsuarioThenRetornarUsuario() {
-        when(this.usuarioRepository.findById(this.usuarioMock.getId())).thenReturn(Optional.of(this.usuarioMock));
-        Usuario resposta = this.usuarioService.buscarUsuarioPorId(this.usuarioMock.getId());
+    @DisplayName("Deve retornar true ao verificar se existe usuário ao passar cpf existente")
+    void givenTenhoUmCpfExistenteWhenTentoVerificarSeExisteUsuarioPorCpfThenRetornarTrue() {
+        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+        boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
+        assertTrue(resposta);
+    }
+    @Test
+    @DisplayName("Deve retornar false ao verificar se existe usuário ao passar cpf inexistente")
+    void givenTenhoUmCpfInexistenteWhenTentoVerificarSeExisteUsuarioPorCpfThenRetornarFalse() {
+        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+        boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
+        assertFalse(resposta);
+    }
+
+    @Test
+    @DisplayName("Deve retornar usuário ao buscar usuario com cpf existete")
+    void givenTenhoUmCpfExistenteWhenTentoBuscarUsuarioPorCpfThenRetornarUsuario() {
+        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+        Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(this.usuarioMock.getCpf());
         assertEquals(this.usuarioMock.getId(), resposta.getId());
     }
 
     @Test
-    @DisplayName("Não deve ser possível buscar um Usuario inexistente")
-    void givenTenhoUmUsuarioIdInexistenteWhenTentoBuscarUsuarioThenRetornarUmErro() {
-        when(this.usuarioRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class,
-                () -> this.usuarioService.buscarUsuarioPorId(1L));
-    }
-
-    @Test
-    @DisplayName("Deve ser possível buscar todos usuarios corretamente")
-    void givenTenhoUmPageableWhenTentoBuscarTodosUsuariosThenRetornarListaDeUsuarios() {
-        List<Usuario> listaDeUsuarios = List.of(this.usuarioMock);
-        when(this.usuarioRepository.findAll(this.pageable)).thenReturn(new PageImpl<>(listaDeUsuarios));
-        List<Usuario> resposta = this.usuarioService.buscarTodosUsuarios(this.pageable);
-        assertEquals(listaDeUsuarios.size(), resposta.size());
+    @DisplayName("Deve retornar null ao buscar usuario com cpf inexistente")
+    void givenTenhoUmCpfInexistenteWhenTentoBuscarUsuarioPorCpfThenRetornarNull() {
+        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+        Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(this.usuarioMock.getCpf());
+        assertNull(resposta);
     }
 
 }

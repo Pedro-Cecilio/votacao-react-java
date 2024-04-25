@@ -53,7 +53,7 @@ public class UsuarioController {
 
     @GetMapping("/existe")
     public ResponseEntity<VerificarSeUsuarioExisteRespostaDto> verificarSeUsuarioExistePorCpf(@RequestParam(name = "cpf", required = true) final String cpf) {
-        boolean existe = this.usuarioService.verificarSeExisteUsuárioPorCpf(cpf);
+        boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
         VerificarSeUsuarioExisteRespostaDto resposta = new VerificarSeUsuarioExisteRespostaDto(existe);
         return ResponseEntity.ok().body(resposta);
     }
