@@ -85,7 +85,7 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
     }
 
     public void verificarSePodeVotarExternamente(String cpf, String senha) {
-        boolean existe = this.usuarioService.verificarSeExisteUsuárioPorCpf(cpf);
+        boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
         if (existe)
             this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, senha);
 
