@@ -15,8 +15,8 @@ import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 
 @Repository
 public interface PautaRepository extends JpaRepository<Pauta, Long> {
-    List<Pauta> findAllByUsuarioId(Long usuarioId, Pageable pageable);
-    List<Pauta> findAllByUsuarioIdAndCategoria(Long usuarioId, Categoria categoria, Pageable pageable);
+    List<Pauta> findAllByUsuarioId(Long usuarioId);
+    List<Pauta> findAllByUsuarioIdAndCategoria(Long usuarioId, Categoria categoria);
     Optional<Pauta> findByIdAndUsuarioId(Long id, Long usuarioId);
     @Query("SELECT p FROM Pauta p WHERE p.categoria = :categoria AND p.sessaoVotacao.dataFechamento > :dataAtual")
     List<Pauta> findAllByCategoriaAndSessaoVotacaoAtiva(@Param("categoria") Categoria categoria, @Param("dataAtual") LocalDateTime dataAtual);

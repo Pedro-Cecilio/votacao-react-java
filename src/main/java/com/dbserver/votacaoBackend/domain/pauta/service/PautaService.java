@@ -23,21 +23,21 @@ public class PautaService implements IPautaService {
     @Transactional
     @Override
     public Pauta criarPauta(Pauta pauta) {
+        if(pauta == null) throw new IllegalArgumentException("Pauta não deve ser nula.");
         return this.pautaRepository.save(pauta);
     }
 
     @Override
-    public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Categoria categoria, Pageable pageable) {
+    public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Categoria categoria) {
+        if(usuarioId == null) throw new IllegalArgumentException("Id do usuário não deve ser nulo.");
         if (categoria != null) {
-            return this.pautaRepository.findAllByUsuarioIdAndCategoria(usuarioId, categoria, pageable);
+            return this.pautaRepository.findAllByUsuarioIdAndCategoria(usuarioId, categoria);
         }
-        return this.pautaRepository.findAllByUsuarioId(usuarioId, pageable);
+        return this.pautaRepository.findAllByUsuarioId(usuarioId);
     }
 
     @Override
-    public List<Pauta> buscarPautasAtivas(Pageable pageable, Categoria categoria) {
-        LocalDateTime dataAtual = LocalDateTime.now();
-
+    public List<Pauta> buscarPautasAtivas(Categoria categoria, LocalDateTime dataAtual) {
         if (categoria != null) {
             return this.pautaRepository.findAllByCategoriaAndSessaoVotacaoAtiva(categoria, dataAtual);
         }
@@ -50,8 +50,8 @@ public class PautaService implements IPautaService {
     }
 
     @Override
-    public Pauta buscarPautaAtivaPorId(Long pautaId) {
-        return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, LocalDateTime.now()).orElseThrow(()-> new IllegalArgumentException("Pauta informada não possui sessão ativa."));
+    public Pauta buscarPautaAtivaPorId(Long pautaId, LocalDateTime dataAtual) {
+        return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, dataAtual).orElseThrow(()-> new IllegalArgumentException("Pauta informada não possui sessão ativa."));
     }
 
     @Override
