@@ -35,8 +35,8 @@ public class AutenticacaoController {
 
     @PostMapping("/votoExterno")
     public ResponseEntity<ValidarVotoExternoRespostaDto> validarUsuarioVotoExterno(@RequestBody ValidarVotoExternoDto dto) {
-        boolean valido = this.autenticacaoService.validarAutenticacaoPorCpfESenha(dto.cpf(), dto.senha());
-        ValidarVotoExternoRespostaDto resposta = new ValidarVotoExternoRespostaDto(valido);
+        this.autenticacaoService.validarAutenticacaoPorCpfESenha(dto.cpf(), dto.senha());
+        ValidarVotoExternoRespostaDto resposta = new ValidarVotoExternoRespostaDto(true);
         return ResponseEntity.ok(resposta);
     }
     

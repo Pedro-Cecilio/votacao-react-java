@@ -14,7 +14,9 @@ public record InserirVotoExternoDto(
     TipoDeVotoEnum tipoDeVoto,
 
     @Pattern(regexp = Utils.REGEX_CPF, message = "Cpf deve conter 11 caracteres numéricos.")
-    String cpf
+    String cpf,
+
+    String senha
 ) {
     
 }

@@ -16,4 +16,5 @@ public interface ISessaoVotacaoService {
 
     public StatusSessaoVotacao obterStatusSessaoVotacao(SessaoVotacao sessaoVotacao);
 
+    public void verificarSePodeVotarExternamente(String cpf, String senha);
 }

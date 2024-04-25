@@ -64,6 +64,7 @@ public class SessaoVotacaoController {
     }
     @PatchMapping("/votoExterno")
     public ResponseEntity<RespostaSessaoVotacaoDto> votoExterno(@RequestBody InserirVotoExternoDto dto){
+        this.sessaoVotacaoService.verificarSePodeVotarExternamente(dto.cpf(), dto.senha());
         Usuario usuario = this.usuarioService.buscarUsuarioPorCpfSeHouver(dto.cpf());
         Pauta pauta = this.pautaService.buscarPautaAtivaPorId(dto.pautaId());
         SessaoVotacao sessaoVotacao = pauta.getSessaoVotacao();
