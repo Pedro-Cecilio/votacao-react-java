@@ -54,9 +54,10 @@ public class AutenticacaoService implements IAutenticacaoService {
         return this.passwordEncoder.encode(senha);
     }
 
-    public boolean validarAutenticacaoPorCpfESenha(String cpf, String senha){
+    public void validarAutenticacaoPorCpfESenha(String cpf, String senha){
         Autenticacao autenticacao = this.autenticacaoRepository.findByCpf(cpf).orElseThrow(()-> new NoSuchElementException("Autenticacao não encontrada."));
-        return this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
+        boolean valido = this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
+        if(!valido) throw new IllegalArgumentException("Dados de autenticação inválidos.");
     }
 
    
