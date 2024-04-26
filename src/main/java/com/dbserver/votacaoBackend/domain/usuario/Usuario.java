@@ -1,6 +1,5 @@
 package com.dbserver.votacaoBackend.domain.usuario;
 
-import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 import jakarta.persistence.Column;

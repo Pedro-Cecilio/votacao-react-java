@@ -66,7 +66,6 @@ class AutenticacaoControllerTest {
         this.autenticacao.setUsuario(usuario);
         this.autenticacaoRepository.save(this.autenticacao);
         this.autenticacaoDto = null;
-
     }
 
     @AfterEach

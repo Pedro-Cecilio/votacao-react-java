@@ -51,9 +51,14 @@ public class AutenticacaoService implements IAutenticacaoService {
     public boolean validarSenhaDaAutenticacao(String senhaEsperada, String senhaEncriptada) {
         return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
     }
+
+    // Atualizar testes unitários
     @Override
     public String encriptarSenhaDaAutenticacao(String senha) {
-        if(senha == null || senha.trim().isEmpty())throw new IllegalArgumentException("Senha não deve ser nula");
+        if(senha == null || senha.trim().isEmpty())throw new IllegalArgumentException("Senha deve ser informada.");
+        if (senha.trim().length() < 8)
+            throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo.");
+
         return this.passwordEncoder.encode(senha);
     }
 
@@ -63,5 +68,8 @@ public class AutenticacaoService implements IAutenticacaoService {
         if(!valido) throw new BadCredentialsException("Dados de autenticação inválidos.");
     }
 
+    public boolean verificarEmailJaEstaCadastrado(String email){
+        return this.autenticacaoRepository.findByEmail(email).isPresent();
+    }
    
 }

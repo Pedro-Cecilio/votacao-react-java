@@ -13,6 +13,7 @@ import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRe
 import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class UsuarioController {
 
     @SecurityRequirement(name = "bearer-key")
     @PostMapping
-    public ResponseEntity<CriarUsuarioRespostaDto> criarUsuario(@RequestBody CriarUsuarioDto dto) {
+    public ResponseEntity<CriarUsuarioRespostaDto> criarUsuario(@RequestBody @Valid CriarUsuarioDto dto) {
         Usuario usuario = new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
         String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
         Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto().email(), senhaEncriptada);
@@ -52,7 +53,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/existe")
-    public ResponseEntity<VerificarSeUsuarioExisteRespostaDto> verificarSeUsuarioExistePorCpf(@RequestParam(name = "cpf", required = true) final String cpf) {
+    public ResponseEntity<VerificarSeUsuarioExisteRespostaDto> verificarSeUsuarioExistePorCpf(@RequestParam(name = "cpf", required = false, defaultValue = "") final String cpf) {
         boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
         VerificarSeUsuarioExisteRespostaDto resposta = new VerificarSeUsuarioExisteRespostaDto(existe);
         return ResponseEntity.ok().body(resposta);
