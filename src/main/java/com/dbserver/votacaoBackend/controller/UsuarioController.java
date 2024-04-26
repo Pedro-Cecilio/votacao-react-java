@@ -35,7 +35,7 @@ public class UsuarioController {
     @SecurityRequirement(name = "bearer-key")
     @PostMapping
     public ResponseEntity<CriarUsuarioRespostaDto> criarUsuario(@RequestBody CriarUsuarioDto dto) {
-        Usuario usuario = new Usuario(dto);
+        Usuario usuario = new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
         String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
         Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto().email(), senhaEncriptada);
         Usuario novoUsuario = usuarioService.criarUsuario(usuario, autenticacao);

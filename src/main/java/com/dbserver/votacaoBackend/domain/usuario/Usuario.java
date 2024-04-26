@@ -34,11 +34,11 @@ public class Usuario {
     @Column(nullable = false)
     private boolean admin;
 
-    public Usuario(CriarUsuarioDto dto){
-        setNome(dto.nome());
-        setSobrenome(dto.sobrenome());
-        setCpf(dto.cpf());
-        this.admin = dto.admin();
+    public Usuario(String nome, String sobrenome, String cpf, boolean admin) {
+        setNome(nome);
+        setSobrenome(sobrenome);
+        setCpf(cpf);
+        this.admin = admin;
     }
 
     public void setNome(String nome){

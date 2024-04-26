@@ -58,9 +58,9 @@ public class AutenticacaoService implements IAutenticacaoService {
     }
 
     public void validarAutenticacaoPorCpfESenha(String cpf, String senha){
-        Autenticacao autenticacao = this.autenticacaoRepository.findByCpf(cpf).orElseThrow(()-> new NoSuchElementException("Autenticacao não encontrada."));
+        Autenticacao autenticacao = this.autenticacaoRepository.findByCpf(cpf).orElseThrow(()-> new BadCredentialsException("Dados de autenticação inválidos."));
         boolean valido = this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
-        if(!valido) throw new IllegalArgumentException("Dados de autenticação inválidos.");
+        if(!valido) throw new BadCredentialsException("Dados de autenticação inválidos.");
     }
 
    
