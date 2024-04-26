@@ -46,8 +46,11 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
 
     @Override
     public void verificarSeUsuarioPodeVotarSessaoVotacao(SessaoVotacao sessaoVotacao, Voto voto) {
+        if (sessaoVotacao == null)
+            throw new IllegalArgumentException("SessaoVotacao não deve ser nula.");
+
         if (voto == null)
-            throw new IllegalArgumentException("Voto deve ser informado.");
+            throw new IllegalArgumentException("Voto não deve ser nulo.");
         if (!this.verificarSeSessaoVotacaoEstaAtiva(sessaoVotacao))
             throw new IllegalStateException("Sessão de votação não está ativa.");
         if (sessaoVotacao.getPauta().getUsuario().getCpf().equals(voto.getCpf()))

@@ -31,7 +31,8 @@ public class SessaoVotacaoController {
     private IUsuarioService usuarioService;
     private ISessaoVotacaoService sessaoVotacaoService;
 
-    public SessaoVotacaoController(IPautaService pautaService, IUsuarioService usuarioService, ISessaoVotacaoService sessaoVotacaoService) {
+    public SessaoVotacaoController(IPautaService pautaService, IUsuarioService usuarioService,
+            ISessaoVotacaoService sessaoVotacaoService) {
         this.pautaService = pautaService;
         this.usuarioService = usuarioService;
         this.sessaoVotacaoService = sessaoVotacaoService;
@@ -39,7 +40,7 @@ public class SessaoVotacaoController {
 
     @SecurityRequirement(name = "bearer-key")
     @PostMapping("/abrir")
-    public ResponseEntity<RespostaSessaoVotacaoDto> abrirSessaoVotacao(@RequestBody AbrirVotacaoDto dto){
+    public ResponseEntity<RespostaSessaoVotacaoDto> abrirSessaoVotacao(@RequestBody AbrirVotacaoDto dto) {
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
         Pauta pauta = this.pautaService.buscarPautaPorIdEUsuarioId(dto.pautaId(), usuario.getId());
         LocalDateTime dataAbertura = LocalDateTime.now();
@@ -52,9 +53,10 @@ public class SessaoVotacaoController {
 
     @SecurityRequirement(name = "bearer-key")
     @PatchMapping("/votoInterno")
-    public ResponseEntity<RespostaSessaoVotacaoDto> votoInterno(@RequestBody InserirVotoInternoDto dto){
+    public ResponseEntity<RespostaSessaoVotacaoDto> votoInterno(@RequestBody InserirVotoInternoDto dto) {
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
-        Pauta pauta = this.pautaService.buscarPautaAtivaPorId(dto.pautaId());
+        LocalDateTime dataAtual = LocalDateTime.now();
+        Pauta pauta = this.pautaService.buscarPautaAtivaPorId(dto.pautaId(), dataAtual);
         SessaoVotacao sessaoVotacao = pauta.getSessaoVotacao();
         Voto voto = new Voto(usuario.getCpf(), usuario);
         this.sessaoVotacaoService.inserirVoto(sessaoVotacao, dto.tipoDeVoto(), voto);
@@ -62,11 +64,13 @@ public class SessaoVotacaoController {
         RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao, sessaoEstaAtiva);
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
+
     @PatchMapping("/votoExterno")
-    public ResponseEntity<RespostaSessaoVotacaoDto> votoExterno(@RequestBody InserirVotoExternoDto dto){
+    public ResponseEntity<RespostaSessaoVotacaoDto> votoExterno(@RequestBody InserirVotoExternoDto dto) {
         this.sessaoVotacaoService.verificarSePodeVotarExternamente(dto.cpf(), dto.senha());
+        LocalDateTime dataAtual = LocalDateTime.now();
         Usuario usuario = this.usuarioService.buscarUsuarioPorCpfSeHouver(dto.cpf());
-        Pauta pauta = this.pautaService.buscarPautaAtivaPorId(dto.pautaId());
+        Pauta pauta = this.pautaService.buscarPautaAtivaPorId(dto.pautaId(), dataAtual);
         SessaoVotacao sessaoVotacao = pauta.getSessaoVotacao();
         Voto voto = new Voto(dto.cpf(), usuario);
         this.sessaoVotacaoService.inserirVoto(sessaoVotacao, dto.tipoDeVoto(), voto);
