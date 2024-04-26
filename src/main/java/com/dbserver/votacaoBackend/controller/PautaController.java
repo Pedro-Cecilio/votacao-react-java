@@ -60,10 +60,9 @@ public class PautaController {
     @SecurityRequirement(name = "bearer-key")
     @GetMapping("/usuarioLogado")
     public ResponseEntity<List<RespostaPautaDto>> listarTodasPautasDoUsuario(
-            @RequestParam(name = "categoria", required = false) final Categoria categoria,
-            Pageable pageable) {
+            @RequestParam(name = "categoria", required = false) final Categoria categoria) {
         Usuario usuario = usuarioService.buscarUsuarioLogado();
-        List<Pauta> pautas = this.pautaService.buscarPautasPorUsuarioId(usuario.getId(), categoria, pageable);
+        List<Pauta> pautas = this.pautaService.buscarPautasPorUsuarioId(usuario.getId(), categoria);
         List<RespostaPautaDto> resposta = utils.criarListaRespostaPautaDto(pautas);
         return ResponseEntity.ok().body(resposta);
     }
@@ -73,7 +72,8 @@ public class PautaController {
     public ResponseEntity<List<RespostaPautaDto>> listarPautas(
             @RequestParam(name = "categoria", required = false) final Categoria categoria,
             Pageable pageable) {
-        List<Pauta> pautas = this.pautaService.buscarPautasAtivas(pageable, categoria);
+        LocalDateTime dataAtual = LocalDateTime.now();
+        List<Pauta> pautas = this.pautaService.buscarPautasAtivas(categoria, dataAtual);
         List<RespostaPautaDto> resposta = utils.criarListaRespostaPautaDto(pautas);
         return ResponseEntity.ok().body(resposta);
     }
@@ -82,7 +82,8 @@ public class PautaController {
     public ResponseEntity<RespostaPautaDto> buscarPautaAtivaPorId(@PathVariable("id") String id) {
         try {
             Long pautaId = Long.parseLong(id);
-            Pauta pauta = this.pautaService.buscarPautaAtivaPorId(pautaId);
+            LocalDateTime dataAtual = LocalDateTime.now();
+            Pauta pauta = this.pautaService.buscarPautaAtivaPorId(pautaId, dataAtual);
             UsuarioRespostaDto usuarioRespostaDto = new UsuarioRespostaDto(pauta.getUsuario());
             boolean sessaoAtiva = pauta.getSessaoVotacao().getDataFechamento().isAfter(LocalDateTime.now());
             RespostaSessaoVotacaoDto respostaSessaoDto = new RespostaSessaoVotacaoDto(pauta.getSessaoVotacao(), sessaoAtiva);

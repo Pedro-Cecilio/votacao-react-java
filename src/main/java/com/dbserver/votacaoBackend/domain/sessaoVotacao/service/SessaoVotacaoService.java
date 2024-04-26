@@ -46,8 +46,11 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
 
     @Override
     public void verificarSeUsuarioPodeVotarSessaoVotacao(SessaoVotacao sessaoVotacao, Voto voto) {
+        if (sessaoVotacao == null)
+            throw new IllegalArgumentException("SessaoVotacao não deve ser nula.");
+
         if (voto == null)
-            throw new IllegalArgumentException("Voto deve ser informado.");
+            throw new IllegalArgumentException("Voto não deve ser nulo.");
         if (!this.verificarSeSessaoVotacaoEstaAtiva(sessaoVotacao))
             throw new IllegalStateException("Sessão de votação não está ativa.");
         if (sessaoVotacao.getPauta().getUsuario().getCpf().equals(voto.getCpf()))
@@ -85,7 +88,7 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
     }
 
     public void verificarSePodeVotarExternamente(String cpf, String senha) {
-        boolean existe = this.usuarioService.verificarSeExisteUsuárioPorCpf(cpf);
+        boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
         if (existe)
             this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, senha);
 

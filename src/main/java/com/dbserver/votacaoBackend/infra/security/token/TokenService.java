@@ -21,13 +21,16 @@ import com.dbserver.votacaoBackend.infra.exeptions.novas.CriarJwtExeption;
 import com.dbserver.votacaoBackend.infra.exeptions.novas.ValidarJwtExeption;
 
 @Service
-public class TokenService {
+public class TokenService implements ITokenService{
     
     @Value("${api.security.token.senha}")
     private String senha;
 
+    @Override
     public String gerarToken(Autenticacao autenticacao) throws CriarJwtExeption {
 
+        if(autenticacao == null) throw new IllegalArgumentException("Autenticação não deve ser nula");
+        if(autenticacao.getUsuario() == null) throw new IllegalArgumentException("Usuário de autenticação não deve ser nula");
         try {
             Algorithm algorithm = Algorithm.HMAC256(senha);
             return JWT.create()
@@ -43,6 +46,7 @@ public class TokenService {
         }
     }
 
+    @Override
     public String validarToken(String token) throws ValidarJwtExeption {
         try {
             Algorithm algorithm = Algorithm.HMAC256(senha);

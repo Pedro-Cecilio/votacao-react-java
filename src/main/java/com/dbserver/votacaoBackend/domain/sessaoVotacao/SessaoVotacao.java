@@ -79,12 +79,12 @@ public class SessaoVotacao {
     }
 
     public void setVotosPositivos(Voto voto) {
-        if(voto == null) throw new IllegalArgumentException("Voto deve ser informado.");
+        if(voto == null) throw new IllegalArgumentException("Voto não deve ser nulo.");
         this.votosPositivos.add(voto);
     }
 
     public void setVotosNegativos(Voto voto) {
-        if(voto == null) throw new IllegalArgumentException("Voto deve ser informado.");
+        if(voto == null) throw new IllegalArgumentException("Voto não deve ser nulo.");
         this.votosNegativos.add(voto);
     }
 
