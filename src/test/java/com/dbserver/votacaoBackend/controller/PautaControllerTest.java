@@ -79,6 +79,7 @@ class PautaControllerTest {
         this.autenticacao.setUsuario(this.usuarioCadastrado);
         this.autenticacaoRepository.save(this.autenticacao);
         this.token = this.tokenService.gerarToken(autenticacao);
+        
 
     }
 
