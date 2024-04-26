@@ -51,17 +51,26 @@ public class AutenticacaoService implements IAutenticacaoService {
     public boolean validarSenhaDaAutenticacao(String senhaEsperada, String senhaEncriptada) {
         return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
     }
+
     @Override
     public String encriptarSenhaDaAutenticacao(String senha) {
-        if(senha == null || senha.trim().isEmpty())throw new IllegalArgumentException("Senha não deve ser nula");
+        if(senha == null || senha.trim().isEmpty())throw new IllegalArgumentException("Senha deve ser informada.");
+        if (senha.trim().length() < 8)
+            throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo.");
+
         return this.passwordEncoder.encode(senha);
     }
 
+    @Override
     public void validarAutenticacaoPorCpfESenha(String cpf, String senha){
-        Autenticacao autenticacao = this.autenticacaoRepository.findByCpf(cpf).orElseThrow(()-> new NoSuchElementException("Autenticacao não encontrada."));
+        Autenticacao autenticacao = this.autenticacaoRepository.findByCpf(cpf).orElseThrow(()-> new BadCredentialsException("Dados de autenticação inválidos."));
         boolean valido = this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
-        if(!valido) throw new IllegalArgumentException("Dados de autenticação inválidos.");
+        if(!valido) throw new BadCredentialsException("Dados de autenticação inválidos.");
     }
 
+    @Override
+    public boolean verificarEmailJaEstaCadastrado(String email){
+        return this.autenticacaoRepository.findByEmail(email).isPresent();
+    }
    
 }

@@ -70,7 +70,7 @@ public class Pauta {
         try {
             this.categoria = Categoria.valueOf(categoria);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Categoria inválida");
+            throw new IllegalArgumentException("Categoria inválida.");
         }
     }
 

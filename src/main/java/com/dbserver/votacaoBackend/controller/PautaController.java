@@ -18,6 +18,7 @@ import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -47,7 +48,7 @@ public class PautaController {
 
     @SecurityRequirement(name = "bearer-key")
     @PostMapping
-    public ResponseEntity<RespostaPautaDto> criarPauta(@RequestBody CriarPautaDto dto) {
+    public ResponseEntity<RespostaPautaDto> criarPauta(@RequestBody @Valid CriarPautaDto dto) {
         Usuario usuario = usuarioService.buscarUsuarioLogado();
         Pauta pauta = new Pauta(dto.assunto(), dto.categoria(), usuario);
         this.pautaService.criarPauta(pauta);
@@ -90,14 +91,14 @@ public class PautaController {
             RespostaPautaDto resposta = new RespostaPautaDto(pauta.getId(), pauta.getAssunto(), pauta.getCategoria(),
                 usuarioRespostaDto, respostaSessaoDto);
             return ResponseEntity.ok().body(resposta);
-        } catch (Exception e) {
-            throw new NoSuchElementException("Pauta não encontrada.");
+        } catch (NumberFormatException e) {
+            throw new NoSuchElementException("auta informada não possui sessão ativa.");
         }       
     }
 
     @SecurityRequirement(name = "bearer-key")
     @GetMapping("/detalhes/{id}")
-    public ResponseEntity<DetalhesPautaDto> buscarDetalhesPautaSessaoEncerrada(@PathVariable("id") String id) {
+    public ResponseEntity<DetalhesPautaDto> buscarDetalhesPautaSessaoVotacaoNaoNula(@PathVariable("id") String id) {
         try {
             Usuario usuario = usuarioService.buscarUsuarioLogado();
             Long pautaId = Long.parseLong(id);
@@ -110,7 +111,7 @@ public class PautaController {
             DetalhesPautaDto resposta = new DetalhesPautaDto(respostaPautaDto, status);
             return ResponseEntity.ok().body(resposta);
         } catch (NumberFormatException e) {
-            throw new NoSuchElementException("Pauta encerrada não encontrada.");
+            throw new NoSuchElementException("Pauta não encontrada.");
         }
     }
 

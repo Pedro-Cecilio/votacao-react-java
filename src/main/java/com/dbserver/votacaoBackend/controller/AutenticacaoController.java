@@ -26,7 +26,7 @@ public class AutenticacaoController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<AutenticacaoRespostaDto> autenticarUsuario(@RequestBody @Valid AutenticacaoDto dto) {
+    public ResponseEntity<AutenticacaoRespostaDto> autenticarUsuario(@Valid @RequestBody AutenticacaoDto dto) {
         Autenticacao autenticacao = this.autenticacaoService.buscarAutenticacaoPorEmailESenha(dto.email(), dto.senha());
         String token = this.tokenService.gerarToken(autenticacao);
         AutenticacaoRespostaDto resposta = new AutenticacaoRespostaDto(token, autenticacao.getUsuario().isAdmin());

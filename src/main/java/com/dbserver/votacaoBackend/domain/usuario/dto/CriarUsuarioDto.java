@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Pattern;
 
 public record CriarUsuarioDto(
 
-    @NotNull(message = "AutenticacaoDto deve ser informado")
+    @NotNull(message = "AutenticacaoDto deve ser informado.")
     AutenticacaoDto autenticacaoDto,
     
     @NotEmpty(message = "Nome deve ser informado.")

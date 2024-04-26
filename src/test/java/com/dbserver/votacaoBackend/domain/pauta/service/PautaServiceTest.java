@@ -125,7 +125,7 @@ class PautaServiceTest {
     @Test
     @DisplayName("Deve falhar buscar pauta ativa por id, ao passar inexiste ou de uma pauta com sessão inativa")
     void givenTenhoPautaIdInvalidaWhenTentoBuscarPautaAtivaPorIdThenRetornarPauta() {
-        assertThrows(IllegalArgumentException.class, () -> this.pautaService.buscarPautaAtivaPorId(1L, this.dataAtual));
+        assertThrows(NoSuchElementException.class, () -> this.pautaService.buscarPautaAtivaPorId(1L, this.dataAtual));
     }
 
     @Test

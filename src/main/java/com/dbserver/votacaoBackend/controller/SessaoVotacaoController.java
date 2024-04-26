@@ -23,6 +23,7 @@ import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/votacao")
@@ -40,20 +41,20 @@ public class SessaoVotacaoController {
 
     @SecurityRequirement(name = "bearer-key")
     @PostMapping("/abrir")
-    public ResponseEntity<RespostaSessaoVotacaoDto> abrirSessaoVotacao(@RequestBody AbrirVotacaoDto dto) {
+    public ResponseEntity<RespostaSessaoVotacaoDto> abrirSessaoVotacao(@Valid @RequestBody AbrirVotacaoDto dto) {
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
         Pauta pauta = this.pautaService.buscarPautaPorIdEUsuarioId(dto.pautaId(), usuario.getId());
         LocalDateTime dataAbertura = LocalDateTime.now();
         LocalDateTime dataFechamento = dataAbertura.plusMinutes(dto.minutos());
         SessaoVotacao sessaoVotacao = new SessaoVotacao(pauta, dataAbertura, dataFechamento);
         this.sessaoVotacaoService.abrirVotacao(sessaoVotacao);
-        RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao, false);
+        RespostaSessaoVotacaoDto resposta = new RespostaSessaoVotacaoDto(sessaoVotacao, true);
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 
     @SecurityRequirement(name = "bearer-key")
     @PatchMapping("/votoInterno")
-    public ResponseEntity<RespostaSessaoVotacaoDto> votoInterno(@RequestBody InserirVotoInternoDto dto) {
+    public ResponseEntity<RespostaSessaoVotacaoDto> votoInterno(@Valid @RequestBody InserirVotoInternoDto dto) {
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
         LocalDateTime dataAtual = LocalDateTime.now();
         Pauta pauta = this.pautaService.buscarPautaAtivaPorId(dto.pautaId(), dataAtual);
@@ -66,7 +67,7 @@ public class SessaoVotacaoController {
     }
 
     @PatchMapping("/votoExterno")
-    public ResponseEntity<RespostaSessaoVotacaoDto> votoExterno(@RequestBody InserirVotoExternoDto dto) {
+    public ResponseEntity<RespostaSessaoVotacaoDto> votoExterno(@Valid @RequestBody InserirVotoExternoDto dto) {
         this.sessaoVotacaoService.verificarSePodeVotarExternamente(dto.cpf(), dto.senha());
         LocalDateTime dataAtual = LocalDateTime.now();
         Usuario usuario = this.usuarioService.buscarUsuarioPorCpfSeHouver(dto.cpf());
