@@ -21,7 +21,6 @@ public class UsuarioService implements IUsuarioService {
         this.autenticacaoService = autenticacaoService;
     }
 
-    // Atualizar testes unitários
     @Override
     @Transactional
     public Usuario criarUsuario(Usuario usuario, Autenticacao autenticacao) {

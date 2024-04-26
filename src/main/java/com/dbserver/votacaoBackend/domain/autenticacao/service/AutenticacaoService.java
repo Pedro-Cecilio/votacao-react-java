@@ -52,7 +52,6 @@ public class AutenticacaoService implements IAutenticacaoService {
         return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
     }
 
-    // Atualizar testes unitários
     @Override
     public String encriptarSenhaDaAutenticacao(String senha) {
         if(senha == null || senha.trim().isEmpty())throw new IllegalArgumentException("Senha deve ser informada.");
@@ -62,12 +61,14 @@ public class AutenticacaoService implements IAutenticacaoService {
         return this.passwordEncoder.encode(senha);
     }
 
+    @Override
     public void validarAutenticacaoPorCpfESenha(String cpf, String senha){
         Autenticacao autenticacao = this.autenticacaoRepository.findByCpf(cpf).orElseThrow(()-> new BadCredentialsException("Dados de autenticação inválidos."));
         boolean valido = this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
         if(!valido) throw new BadCredentialsException("Dados de autenticação inválidos.");
     }
 
+    @Override
     public boolean verificarEmailJaEstaCadastrado(String email){
         return this.autenticacaoRepository.findByEmail(email).isPresent();
     }

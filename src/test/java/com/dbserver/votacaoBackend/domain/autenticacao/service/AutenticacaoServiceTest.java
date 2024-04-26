@@ -2,7 +2,9 @@ package com.dbserver.votacaoBackend.domain.autenticacao.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -80,6 +82,13 @@ class AutenticacaoServiceTest {
     @Test
     @DisplayName("Não deve ser possível criar uma autenticacao ao passar autenticacao nula")
     void givenTenhoUmUsuarioEDadosDeAutenticacaoNuloWhenTentoCriarAutenticacaoThenRetornarErro() {
+        assertThrows(IllegalArgumentException.class,
+                () -> this.autenticacaoService.criarAutenticacao(null, this.usuarioMock));
+    }
+
+    @Test
+    @DisplayName("Não deve ser possível criar uma autenticacao ao passar cpf já cadastrado")
+    void givenTenhoUmCpfJaCadastradoWhenTentoCriarAutenticacaoThenRetornarErro() {
         assertThrows(IllegalArgumentException.class,
                 () -> this.autenticacaoService.criarAutenticacao(null, this.usuarioMock));
     }
@@ -165,6 +174,13 @@ class AutenticacaoServiceTest {
     }
 
     @Test
+    @DisplayName("Não deve ser possível encriptar senha com menos de 8 caracteres")
+    void givenTenhoUmaSenhaComMenosDe8CaracteresWhenTentoEncriptarSenhaThenRetornarErro() {
+        assertThrows(IllegalArgumentException.class,
+                () -> this.autenticacaoService.encriptarSenhaDaAutenticacao("1234567"));
+    }
+
+    @Test
     @DisplayName("Não deve ser possível encriptar senha da autenticação ao passar senha vazia")
     void givenTenhoUmaSenhaVaziaWhenTentoEncriptarSenhaThenRetornarErro() {
         assertThrows(IllegalArgumentException.class,
@@ -190,7 +206,7 @@ class AutenticacaoServiceTest {
 
         when(this.autenticacaoRepository.findByCpf(cpf))
                 .thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class,
+        assertThrows(BadCredentialsException.class,
                 () -> this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, this.senhaValida));
     }
 
@@ -203,7 +219,25 @@ class AutenticacaoServiceTest {
                 .thenReturn(Optional.of(this.autenticacaoMock));
         when(this.autenticacaoService.validarSenhaDaAutenticacao(this.senhaInvalida, autenticacaoMock.getSenha()))
                 .thenReturn(false);
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(BadCredentialsException.class,
                 () -> this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, this.senhaInvalida));
+    }
+
+    @Test
+    @DisplayName("Deve ser possível verificar se email esta cadastrado e retornar true ao encontrar")
+    void givenTenhoEmailCadastradoWhenVerificoSeEstaCadastradoRetornarTrue(){
+        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
+                .thenReturn(Optional.of(this.autenticacaoMock));
+        boolean resposta = this.autenticacaoService.verificarEmailJaEstaCadastrado(this.autenticacaoMock.getEmail());
+        assertTrue(resposta);
+        
+    }
+    @Test
+    @DisplayName("Deve ser possível verificar se email esta cadastrado e retornar false ao não encontrar")
+    void givenTenhoEmailNãoCadastradoWhenVerificoSeEstaCadastradoRetornarTrue(){
+        when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
+                .thenReturn(Optional.empty());
+        boolean resposta = this.autenticacaoService.verificarEmailJaEstaCadastrado(this.autenticacaoMock.getEmail());
+        assertFalse(resposta);
     }
 }

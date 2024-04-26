@@ -15,4 +15,6 @@ public interface IAutenticacaoService {
     public String encriptarSenhaDaAutenticacao(String senha);
 
     public void validarAutenticacaoPorCpfESenha(String cpf, String senha);
+
+    public boolean verificarEmailJaEstaCadastrado(String email);
 }

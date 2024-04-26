@@ -25,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
-import com.dbserver.votacaoBackend.domain.autenticacao.service.IAutenticacaoService;
+import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoService;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 
@@ -37,7 +37,7 @@ class UsuarioServiceTest {
     @Mock
     private UsuarioRepository usuarioRepository;
     @Mock
-    private IAutenticacaoService autenticacaoService;
+    private AutenticacaoService autenticacaoService;
     @Mock
     private AutenticacaoRepository autenticacaoRepository;
     @Mock
@@ -72,10 +72,27 @@ class UsuarioServiceTest {
     @DisplayName("Deve ser possível criar um Usuario corretamente")
     void givenTenhoUmUsuarioEUmAutenticacaoComDadosCorretosWhenTentoCriarUsuarioThenRetornarUsuarioCriado() {
         when(this.usuarioRepository.save(this.usuarioMock)).thenReturn(this.usuarioMock);
+        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoMock.getEmail())).thenReturn(false);
+        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
         Usuario resposta = this.usuarioService.criarUsuario(usuarioMock, autenticacaoMock);
         verify(this.usuarioRepository, times(1)).save(this.usuarioMock);
         verify(this.autenticacaoService, times(1)).criarAutenticacao(this.autenticacaoMock, this.usuarioMock);
         assertEquals(this.usuarioMock.getId(), resposta.getId());
+    }
+
+    @Test
+    @DisplayName("Não deve ser possível criar um Usuario passando ao passar cpf existente")
+    void givenTenhoUmCpfJaCadastradoWhenTentoCriarUsuarioThenRetornarUmErro() {
+        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+        assertThrows(IllegalArgumentException.class,
+                () -> this.usuarioService.criarUsuario(this.usuarioMock, this.autenticacaoMock));
+    }
+    @Test
+    @DisplayName("Não deve ser possível criar um Usuario passando ao passar email existente")
+    void givenTenhoUmEmailJaCadastradoWhenTentoCriarUsuarioThenRetornarUmErro() {
+        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoMock.getEmail())).thenReturn(true);
+        assertThrows(IllegalArgumentException.class,
+                () -> this.usuarioService.criarUsuario(this.usuarioMock, this.autenticacaoMock));
     }
 
     @Test
@@ -108,6 +125,7 @@ class UsuarioServiceTest {
         boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
         assertTrue(resposta);
     }
+
     @Test
     @DisplayName("Deve retornar false ao verificar se existe usuário ao passar cpf inexistente")
     void givenTenhoUmCpfInexistenteWhenTentoVerificarSeExisteUsuarioPorCpfThenRetornarFalse() {

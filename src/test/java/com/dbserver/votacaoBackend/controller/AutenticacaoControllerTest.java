@@ -125,10 +125,10 @@ class AutenticacaoControllerTest {
     @DisplayName("Testes de login com dados inválidos")
     @MethodSource("dadosInválidosParaRealizarLogin")
     void givenAutenticacaoDtoDadosInvalidosWhenTentoRealizarLoginThenRetornarRespostaErro(String email, String senha,
-            String expectedErrorMessage)
+            String mensagemErro)
             throws Exception {
 
-        AutenticacaoDto autenticacaoDto = new AutenticacaoDto(email, senha);
+        this.autenticacaoDto = new AutenticacaoDto(email, senha);
         String json = this.autenticacaoDtoJson.write(autenticacaoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -136,12 +136,11 @@ class AutenticacaoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.erro").value(expectedErrorMessage));
+                .andExpect(jsonPath("$.erro").value(mensagemErro));
     }
 
     private static Stream<Arguments> dadosInválidosParaRealizarLogin() {
         return Stream.of(
-                // Email inválido
                 Arguments.of("email", "senha123", "Email com formato inválido."),
                 Arguments.of("", "senha123", "Email deve ser informado."),
                 Arguments.of(null, "senha123", "Email deve ser informado."),
