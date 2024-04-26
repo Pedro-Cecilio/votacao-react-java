@@ -154,7 +154,7 @@ class AutenticacaoServiceTest {
     @DisplayName("Deve ser possível encriptar senha da autenticação ao passar senha válida")
     void givenTenhoUmaSenhaValidaWhenTentoEncriptarSenhaThenRetornarSenhaEncriptada() {
         when(this.passwordEncoder.encode(this.senhaValida)).thenReturn(this.senhaValidaEncriptada);
-        this.autenticacaoService.encriptarSenhaDaAutenticacao(senhaInvalida);
+        this.autenticacaoService.encriptarSenhaDaAutenticacao(this.senhaValida);
         verify(this.passwordEncoder).encode(this.senhaValida);
     }
 

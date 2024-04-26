@@ -3,7 +3,6 @@ package com.dbserver.votacaoBackend.domain.pauta.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
