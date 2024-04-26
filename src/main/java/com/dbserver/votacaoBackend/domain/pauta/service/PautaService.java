@@ -48,9 +48,10 @@ public class PautaService implements IPautaService {
         return this.pautaRepository.findByIdAndUsuarioId(pautaId, usuarioId).orElseThrow(()-> new NoSuchElementException("Pauta não encontrada."));
     }
 
+    // Ajustar Teste unitário
     @Override
     public Pauta buscarPautaAtivaPorId(Long pautaId, LocalDateTime dataAtual) {
-        return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, dataAtual).orElseThrow(()-> new IllegalArgumentException("Pauta informada não possui sessão ativa."));
+        return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, dataAtual).orElseThrow(()-> new NoSuchElementException("Pauta informada não possui sessão ativa."));
     }
 
     @Override

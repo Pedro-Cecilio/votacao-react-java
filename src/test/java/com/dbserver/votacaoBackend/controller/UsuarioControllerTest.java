@@ -54,7 +54,6 @@ class UsuarioControllerTest {
         this.mockMvc = mockMvc;
         this.criarUsuarioDtoJson = criarUsuarioDtoJson;
         this.tokenService = tokenService;
-
     }
 
     @BeforeEach
