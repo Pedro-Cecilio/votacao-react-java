@@ -234,7 +234,7 @@ class AutenticacaoServiceTest {
     }
     @Test
     @DisplayName("Deve ser possível verificar se email esta cadastrado e retornar false ao não encontrar")
-    void givenTenhoEmailNãoCadastradoWhenVerificoSeEstaCadastradoRetornarTrue(){
+    void givenTenhoEmailNaoCadastradoWhenVerificoSeEstaCadastradoRetornarTrue(){
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                 .thenReturn(Optional.empty());
         boolean resposta = this.autenticacaoService.verificarEmailJaEstaCadastrado(this.autenticacaoMock.getEmail());
