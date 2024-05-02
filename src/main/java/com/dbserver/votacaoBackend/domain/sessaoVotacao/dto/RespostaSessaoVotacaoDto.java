@@ -19,7 +19,7 @@ public record RespostaSessaoVotacaoDto(
         
         boolean sessaoAtiva
         ) {
-    public RespostaSessaoVotacaoDto(SessaoVotacao sessaoVotacao, boolean sessaoAtiva){
-        this(sessaoVotacao.getId(), sessaoVotacao.getPauta().getId(), sessaoVotacao.getVotosPositivos().size(), sessaoVotacao.getVotosNegativos().size(), sessaoVotacao.getDataAbertura(), sessaoVotacao.getDataFechamento(), sessaoAtiva);
+    public RespostaSessaoVotacaoDto(SessaoVotacao sessaoVotacao){
+        this(sessaoVotacao.getId(), sessaoVotacao.getPauta().getId(), sessaoVotacao.getVotosPositivos().size(), sessaoVotacao.getVotosNegativos().size(), sessaoVotacao.getDataAbertura(), sessaoVotacao.getDataFechamento(), sessaoVotacao.isAtiva());
     }
 }

@@ -22,6 +22,7 @@ import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.utils.Utils;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +30,9 @@ class PautaServiceTest {
 
     @Mock
     private PautaRepository pautaRepository;
+
+    @Mock 
+    private Utils utils;
 
     @InjectMocks
     private PautaService pautaService;
@@ -87,14 +91,16 @@ class PautaServiceTest {
     @Test
     @DisplayName("Deve ser possível buscar todas pautas ativas")
     void givenTenhoCategoriaCorretaWhenTentoBuscarPautasAtivasThenRetornarListaDePautas() {
-        this.pautaService.buscarPautasAtivas(null, this.dataAtual);
+        when(this.utils.obterHoraAtual()).thenReturn(this.dataAtual);
+        this.pautaService.buscarPautasAtivas(null);
         verify(this.pautaRepository).findAllBySessaoVotacaoAtiva(this.dataAtual);
     }
 
     @Test
     @DisplayName("Deve ser possível buscar todas pautas ativas por categoria")
     void givenTenhoCategoriaNullWhenTentoBuscarPautasAtivasThenRetornarListaDePautas() {
-        this.pautaService.buscarPautasAtivas(this.pautaMock.getCategoria(), this.dataAtual);
+        when(this.utils.obterHoraAtual()).thenReturn(this.dataAtual);
+        this.pautaService.buscarPautasAtivas(this.pautaMock.getCategoria());
         verify(this.pautaRepository).findAllByCategoriaAndSessaoVotacaoAtiva(this.pautaMock.getCategoria(), this.dataAtual);
     }
 
@@ -117,15 +123,17 @@ class PautaServiceTest {
     @Test
     @DisplayName("Deve buscar pauta ativa por id")
     void givenTenhoPautaIdCorretoWhenTentoBuscarPautaAtivaPorIdThenRetornarPauta() {
+        when(this.utils.obterHoraAtual()).thenReturn(this.dataAtual);
         when(this.pautaRepository.findByIdAndSessaoVotacaoAtiva(1L, this.dataAtual))
                 .thenReturn(Optional.of(this.pautaMock));
-        assertDoesNotThrow(() -> this.pautaService.buscarPautaAtivaPorId(1L, this.dataAtual));
+        assertDoesNotThrow(() -> this.pautaService.buscarPautaAtivaPorId(1L));
     }
 
     @Test
     @DisplayName("Deve falhar buscar pauta ativa por id, ao passar inexiste ou de uma pauta com sessão inativa")
     void givenTenhoPautaIdInvalidaWhenTentoBuscarPautaAtivaPorIdThenRetornarPauta() {
-        assertThrows(NoSuchElementException.class, () -> this.pautaService.buscarPautaAtivaPorId(1L, this.dataAtual));
+        when(this.utils.obterHoraAtual()).thenReturn(this.dataAtual);
+        assertThrows(NoSuchElementException.class, () -> this.pautaService.buscarPautaAtivaPorId(1L));
     }
 
     @Test

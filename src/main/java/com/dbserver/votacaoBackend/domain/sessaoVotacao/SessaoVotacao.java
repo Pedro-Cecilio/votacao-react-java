@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,9 @@ public class SessaoVotacao {
 
     @Column
     private LocalDateTime dataFechamento;
+
+    @Transient
+    private boolean ativa;
 
     public SessaoVotacao(Pauta pauta, LocalDateTime dataAbertura, LocalDateTime dataFechamento) {
         setPauta(pauta);
@@ -88,5 +92,9 @@ public class SessaoVotacao {
         this.votosNegativos.add(voto);
     }
 
+    public boolean isAtiva(){
+        if(this.dataFechamento == null) return false;
+        return LocalDateTime.now().isBefore(this.dataFechamento);
+    }
     
 }

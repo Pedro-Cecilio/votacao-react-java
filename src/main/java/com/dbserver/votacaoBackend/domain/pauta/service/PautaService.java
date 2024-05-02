@@ -8,38 +8,47 @@ import org.springframework.stereotype.Service;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
+import com.dbserver.votacaoBackend.utils.Utils;
 
 import jakarta.transaction.Transactional;
 
 @Service
 public class PautaService implements IPautaService {
     private PautaRepository pautaRepository;
+    private Utils utils;
 
-    public PautaService(PautaRepository pautaRepository) {
+    public PautaService(PautaRepository pautaRepository, Utils utils) {
         this.pautaRepository = pautaRepository;
+        this.utils = utils;
     }
 
     @Transactional
     @Override
     public Pauta criarPauta(Pauta pauta) {
         if(pauta == null) throw new IllegalArgumentException("Pauta não deve ser nula.");
+
         return this.pautaRepository.save(pauta);
     }
 
     @Override
     public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Categoria categoria) {
         if(usuarioId == null) throw new IllegalArgumentException("Id do usuário não deve ser nulo.");
+
         if (categoria != null) {
             return this.pautaRepository.findAllByUsuarioIdAndCategoria(usuarioId, categoria);
         }
+
         return this.pautaRepository.findAllByUsuarioId(usuarioId);
     }
 
     @Override
-    public List<Pauta> buscarPautasAtivas(Categoria categoria, LocalDateTime dataAtual) {
+    public List<Pauta> buscarPautasAtivas(Categoria categoria) {
+        LocalDateTime dataAtual = this.utils.obterHoraAtual();
+
         if (categoria != null) {
             return this.pautaRepository.findAllByCategoriaAndSessaoVotacaoAtiva(categoria, dataAtual);
         }
+
         return this.pautaRepository.findAllBySessaoVotacaoAtiva(dataAtual);
     }
     
@@ -49,7 +58,9 @@ public class PautaService implements IPautaService {
     }
 
     @Override
-    public Pauta buscarPautaAtivaPorId(Long pautaId, LocalDateTime dataAtual) {
+    public Pauta buscarPautaAtivaPorId(Long pautaId) {
+        LocalDateTime dataAtual = this.utils.obterHoraAtual();
+        
         return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, dataAtual).orElseThrow(()-> new NoSuchElementException("Pauta informada não possui sessão ativa."));
     }
 
