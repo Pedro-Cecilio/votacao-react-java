@@ -1,99 +1,104 @@
-# votacao-react-java
+## VotaçãoApp
 
-## Objetivo
+VotaçãoApp é uma aplicação de votação que permite a criação de novos usuários votantes e administradores, além da criação de pautas e sessões de votação.
 
-Imagine que você deve criar uma solução web para gerenciar e participar de sessões de votação.
+### Objetivo
+O objetivo principal da VotaçãoApp é fornecer uma plataforma para administradores gerenciarem pautas e sessões de votação, enquanto os usuários podem votar nas pautas e explorar as pautas ativas.
 
-Essa solução deve ser executada na nuvem e promover as seguintes funcionalidades através de uma API REST:
+### Funcionalidades Principais
+- Administração de Usuários: Administradores podem criar novos usuários votantes e outros administradores.
+- Gestão de Pautas: Administradores podem criar pautas para votação.
+- Sessões de Votação: Administradores podem abrir sessões de votação para as pautas criadas.
+- Votação em Pautas: Tanto os usuários votantes quanto os administradores podem votar nas pautas abertas pelos administradores.
+- Exploração de Pautas: Usuários podem visualizar as pautas ativas.
 
-- Cadastrar uma nova pauta
-- Abrir uma sessão de votação em uma **pauta** (a sessão de votação deve ficar aberta por um tempo determinado na chamada de abertura ou 1 minuto por *default*)
-- Receber votos nas pautas (os votos são apenas 'Sim'/'Não'. Cada usuário é identificado por um id único e pode votar apenas uma vez por pauta)
-- Contabilizar os votos e dar o resultado da votação na pauta
+### Tecnologias Utilizadas
+- Spring Boot
+- Spring Data JPA
+- Spring Validation
+- Spring Web
+- Spring Security
+- Java JWT
+- PostgreSQL
+- H2 Database (runtime)
+- Flyway Database Migrations
+- Springdoc OpenAPI
+- Lombok
+- Spring Boot DevTools
+- JUnit
 
-Para fins de exercício a solução deve ser construída em Java (SpringBoot) no backend e React no frontend. Frameworks e bibliotecas são de livre escolha (desde que não infrinja direitos de uso).
 
-É importante que as pautas e os votos sejam persistidos e que não sejam perdidos com o restart da aplicação.
+### Como Usar
+1. **Instalação:** Clone este repositório e instale as dependências necessárias.
+2. **Configuração:** Crie um arquivo `.env` baseado no arquivo `.env.example` fornecido. Nele, insira as seguintes propriedades:
+    ```
+    DB_URL= Aqui deve ser inserida a URL de conexão com o banco de dados PostgreSQL que a aplicação poderá utilizar
+    DB_USERNAME= Insira o username do seu banco de dados PostgreSQL
+    DB_PASSWORD= Insira a senha do seu banco de dados PostgreSQL
+    JWT_SECRET= Insira uma senha secreta para a geração de JWT na aplicação
+    ```
+3. **Execução:** Inicie a aplicação utilizando o Gradle:
+    ```bash
+    ./gradlew bootRun
+    ```
 
-O foco dessa avaliação é a comunicação entre o backend e o frontend. Essa comunicação é feita através de mensagens no formato JSON, onde essas mensagens serão interpretadas pelo cliente para montar as telas onde o usuário vai interagir com o sistema. O formato fica a seu criterio e as telas estão descritas no anexo 1.
+### Conta Admin Padrão
+A aplicação já possui uma conta admin cadastrada com os seguintes dados de acesso:
+- **Email:** admin@email.com
+- **Senha:** admin123
 
-## Como proceder
 
-Por favor, realize o FORK desse repositório e implemente sua solução no FORK em seu repositório GitHub, ao final, notifique da conclusão para que possamos analisar o código implementado.
+### Documentação da API
+- Para explorar a documentação da API construída com Swagger, execute a aplicação e acesse: [Swagger UI](http://localhost:8080/swagger-ui/index.html#/)
+  
 
-Lembre-se de deixar todas as orientações necessárias para executar o seu código.
+## Endpoints
 
-## Tarefas bônus
+### Autenticação
 
-### Tarefa Bônus 1 - Controle de usuários
+#### POST /auth/login
+- Rota não autenticada, utilizada para autenticar um usuário na aplicação.
 
-- Criar cadastro de usuários para votação (apenas CPFs validos)
-- Adicionar usuários específicos como admin
-- Apenas usuários admin podem acessar alguns recursos
-    - Criar pautas
-    - Cadastrar usuários votantes
+#### POST /auth/votoExterno
+-Rota não autenticada, utilizada para validar se um usuário cadastrado pode inserir um voto de forma externa.
 
-### Tarefa Bônus 2 - Performance
+### Usuário
 
-- Imagine que sua aplicação possa ser usada em cenários que existam centenas de milhares de votos. Ela deve se comportar de maneira performática nesses cenários
-- Testes de performance são uma boa maneira de garantir e observar como sua aplicação se comporta
+#### POST /usuario
+- Rota acessada somente por administradores, permite criar novos usuários, sejam eles administradores ou não.
 
-### Tarefa Bônus 3 - Versionamento da API
+#### GET /usuario/usuarioLogado
+- Rota autenticada, permite buscar o usuário que está atualmente logado na aplicação.
 
-- Como você versionaria a API da sua aplicação? Que estratégia usar?
+#### GET /usuario/existe
+- Rota não autenticada, permite verificar se um usuário com o CPF fornecido já existe na base de dados.
 
-## Dicas e observações
+### Pauta
 
-- Teste bem sua solução, evite bugs;
-- Não inicie o teste sem sanar todas as dúvidas;
-- Iremos executar a aplicação para testá-la, cuide com qualquer dependência externa e deixe claro caso haja instruções especiais para execução do mesmo;
+#### POST /pauta
+- Rota acessada somente por administradores, permite criar uma nova pauta sem sessão de votação.
 
-## Anexo 1
+#### GET /pauta/usuarioLogado
+- Rota acessada somente por administradores, permite listar todas as pautas que foram criadas pelo usuário logado na aplicação.
 
-### Introdução
+#### GET /pauta/ativas
+- Rota autenticada, permite listar todas as pautas que estão com sessão de votação aberta.
 
-A seguir serão detalhados quais telas são necessárias para a conclusão do desafio, assim como os tipos de campos disponíveis para a interação do usuário.
+#### GET /pauta/{id}
+- Rota não autenticada, permite buscar uma sessão ativa pelo id.
 
-### Tipo de tela – FORMULARIO
+#### GET /pauta/detalhes/{id}
+- Rota acessada somente por administradores, permite verificar detalhes a respeito de uma pauta que possui ou possuiu sessão de votação aberta.
 
-Criar um formulário para cadastro de uma pauta com o tempo de sessão.
+### Votação
 
-### Tipo de tela – SELECAO
+#### POST /votacao/abrir
+- Rota acessada somente por administradores, permite abrir sessão de votação em uma pauta.
 
-Exibir uma lista de pautas para que o usuário acesse e consiga votar.
+#### PATCH /votacao/votoInterno
+- Rota autenticada, permite inserir um voto em uma pauta.
 
-Apenas pautas com sessão disponíveis devem ser exibidas.
+#### PATCH /votacao/votoExterno
+- Rota não autenticada, permite inserir um voto sem precisar estar autenticado na aplicação.
 
-Deve ser possível filtrar uma pauta por **categoria**
 
-### Tipo de tela – VOTACAO
-
-Exibir os dados da pauta e as opções de voto disponíveis.
-
-Ao acessar a votação uma sessão precisa estar aberta para a pauta em questão.
-
-Pautas com sessão expiradas não podem receber votos.
-
-A votação pode ser acessada por qualquer pessoa com link, sendo necessário informar o CFP antes de votar.
-
-### Tipo de tela – DETALHES
-
-Exibir os dados da pauta, quantidade de votos total e se a mesma foi aprovada.
-
-Ao acessar os detalhes deve exibir se a sessão já terminou.
-
-## O que será analisado
-
-- Simplicidade no design da solução (evitar over engineering)
-- Organização do código
-- Arquitetura do projeto
-- Boas práticas de programação (manutenibilidade, legibilidade etc)
-- Possíveis bugs
-- Tratamento de erros e exceções
-- Explicação breve do porquê das escolhas tomadas durante o desenvolvimento da solução
-- Uso de testes automatizados e ferramentas de qualidade
-- Limpeza do código
-- Documentação do código e da API
-- Logs da aplicação
-- Mensagens e organização dos commits
-- Layout responsivo
