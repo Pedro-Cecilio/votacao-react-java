@@ -35,7 +35,7 @@ class PautaServiceTest {
     private Utils utils;
 
     @InjectMocks
-    private PautaService pautaService;
+    private PautaServiceImpl pautaService;
 
     private Pauta pautaMock;
 

@@ -11,16 +11,16 @@ import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutenticacaoDto;
 import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutenticacaoRespostaDto;
 import com.dbserver.votacaoBackend.domain.autenticacao.dto.ValidarVotoExternoDto;
 import com.dbserver.votacaoBackend.domain.autenticacao.dto.ValidarVotoExternoRespostaDto;
-import com.dbserver.votacaoBackend.domain.autenticacao.service.IAutenticacaoService;
+import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoService;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
 public class AutenticacaoController {
-    private IAutenticacaoService autenticacaoService;
+    private AutenticacaoService autenticacaoService;
     private TokenService tokenService;
-    public AutenticacaoController(IAutenticacaoService autenticacaoService, TokenService tokenService){
+    public AutenticacaoController(AutenticacaoService autenticacaoService, TokenService tokenService){
         this.autenticacaoService = autenticacaoService;
         this.tokenService = tokenService;
     }

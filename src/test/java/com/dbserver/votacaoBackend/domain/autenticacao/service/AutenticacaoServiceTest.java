@@ -32,7 +32,7 @@ import com.dbserver.votacaoBackend.utils.Utils;
 @ExtendWith(MockitoExtension.class)
 class AutenticacaoServiceTest {
     @InjectMocks
-    private AutenticacaoService autenticacaoService;
+    private AutenticacaoServiceImpl autenticacaoService;
 
     @Mock
     private AutenticacaoRepository autenticacaoRepository;

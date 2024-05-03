@@ -25,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
-import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoService;
+import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServiceImpl;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 
@@ -33,11 +33,11 @@ import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
     @InjectMocks
-    private UsuarioService usuarioService;
+    private UsuarioServiceImpl usuarioService;
     @Mock
     private UsuarioRepository usuarioRepository;
     @Mock
-    private AutenticacaoService autenticacaoService;
+    private AutenticacaoServiceImpl autenticacaoService;
     @Mock
     private AutenticacaoRepository autenticacaoRepository;
     @Mock

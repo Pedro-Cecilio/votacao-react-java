@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
-import com.dbserver.votacaoBackend.domain.pauta.service.IPautaService;
+import com.dbserver.votacaoBackend.domain.pauta.service.PautaService;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.AbrirVotacaoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoExternoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoInternoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacaoDto;
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.service.ISessaoVotacaoService;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.service.SessaoVotacaoService;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
-import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
+import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioService;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,12 +28,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(value = "/votacao")
 public class SessaoVotacaoController {
-    private IPautaService pautaService;
-    private IUsuarioService usuarioService;
-    private ISessaoVotacaoService sessaoVotacaoService;
+    private PautaService pautaService;
+    private UsuarioService usuarioService;
+    private SessaoVotacaoService sessaoVotacaoService;
 
-    public SessaoVotacaoController(IPautaService pautaService, IUsuarioService usuarioService,
-            ISessaoVotacaoService sessaoVotacaoService) {
+    public SessaoVotacaoController(PautaService pautaService, UsuarioService usuarioService,
+            SessaoVotacaoService sessaoVotacaoService) {
         this.pautaService = pautaService;
         this.usuarioService = usuarioService;
         this.sessaoVotacaoService = sessaoVotacaoService;

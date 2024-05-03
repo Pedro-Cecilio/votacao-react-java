@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
-import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoService;
+import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServiceImpl;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
@@ -33,7 +33,7 @@ import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotaca
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.TipoDeVotoEnum;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.repository.SessaoVotacaoRepository;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
-import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioService;
+import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioServiceImpl;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 import com.dbserver.votacaoBackend.utils.Utils;
 
@@ -42,15 +42,15 @@ import com.dbserver.votacaoBackend.utils.Utils;
 class SessaoVotacaoServiceTest {
 
     @InjectMocks
-    private SessaoVotacaoService sessaoVotacaoService;
+    private SessaoVotacaoServiceImpl sessaoVotacaoService;
 
     @Mock
     private SessaoVotacaoRepository sessaoVotacaoRepository;
 
     @Mock
-    private UsuarioService usuarioService;
+    private UsuarioServiceImpl usuarioService;
     @Mock
-    private AutenticacaoService autenticacaoService;
+    private AutenticacaoServiceImpl autenticacaoService;
 
     @Mock
     private AutenticacaoRepository autenticacaoRepository;

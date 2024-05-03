@@ -8,11 +8,11 @@ import com.dbserver.votacaoBackend.domain.pauta.dto.CriarPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.dto.DetalhesPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
-import com.dbserver.votacaoBackend.domain.pauta.service.IPautaService;
+import com.dbserver.votacaoBackend.domain.pauta.service.PautaService;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotacao;
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.service.ISessaoVotacaoService;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.service.SessaoVotacaoService;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
-import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
+import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioService;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,13 +28,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @RequestMapping(value = "/pauta")
 public class PautaController {
-    private IPautaService pautaService;
-    private IUsuarioService usuarioService;
-    private ISessaoVotacaoService sessaoVotacaoService;
+    private PautaService pautaService;
+    private UsuarioService usuarioService;
+    private SessaoVotacaoService sessaoVotacaoService;
     private Utils utils;
 
-    public PautaController(IPautaService pautaService, IUsuarioService usuarioService, Utils utils,
-            ISessaoVotacaoService sessaoVotacaoService) {
+    public PautaController(PautaService pautaService, UsuarioService usuarioService, Utils utils,
+            SessaoVotacaoService sessaoVotacaoService) {
         this.pautaService = pautaService;
         this.usuarioService = usuarioService;
         this.utils = utils;
