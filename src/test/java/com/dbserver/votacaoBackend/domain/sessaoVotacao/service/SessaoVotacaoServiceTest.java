@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -15,10 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoService;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
@@ -30,6 +35,7 @@ import com.dbserver.votacaoBackend.domain.sessaoVotacao.repository.SessaoVotacao
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioService;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
+import com.dbserver.votacaoBackend.utils.Utils;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -50,15 +56,24 @@ class SessaoVotacaoServiceTest {
     private AutenticacaoRepository autenticacaoRepository;
 
     @Mock
+    private Utils utils;
+    @Mock
     private PasswordEncoder passwordEncoder;
 
-    private Pauta pautaMock;
-    private Usuario usuarioDonoDaPautaMock;
-    private Usuario usuarioVotanteMock;
-    private SessaoVotacao sessaoVotacaoMock;
     private LocalDateTime dataAbertura;
+
     private LocalDateTime dataFechamento;
+
+    private Pauta pautaMock;
+
+    private Usuario usuarioDonoDaPautaMock;
+
+    private Usuario usuarioVotanteMock;
+
+    private SessaoVotacao sessaoVotacaoMock;
+
     private Voto votoDoUsuarioVotanteMock;
+
     private Voto votoDoDonoDaPautaMock;
 
     @BeforeEach
@@ -78,45 +93,34 @@ class SessaoVotacaoServiceTest {
     @Test
     @DisplayName("Deve ser possível abrir uma votação corretamente")
     void givenPossuoUmSessaoVotacaoValidaWhenTentoAbrirSessaoVotacaoThenRetornarSessaoVotacao() {
-        when(this.sessaoVotacaoRepository.save(this.sessaoVotacaoMock)).thenReturn(this.sessaoVotacaoMock);
-        SessaoVotacao resposta = this.sessaoVotacaoService.abrirVotacao(this.sessaoVotacaoMock);
-        verify(this.sessaoVotacaoRepository).save(this.sessaoVotacaoMock);
+        when(this.utils.obterDataAtual()).thenReturn(this.dataAbertura);
+
+        when(this.sessaoVotacaoRepository.save(any(SessaoVotacao.class))).thenReturn(this.sessaoVotacaoMock);
+
+        SessaoVotacao resposta = this.sessaoVotacaoService.abrirVotacao(this.pautaMock, 5L);
+
+        verify(this.sessaoVotacaoRepository).save(any(SessaoVotacao.class));
+
         assertEquals(this.sessaoVotacaoMock, resposta);
     }
 
     @Test
-    @DisplayName("Não deve ser possível abrir uma votação ao passar SessaoVotacao nula")
-    void givenPossuoUmSessaoVotacaoNulaWhenTentoAbrirSessaoVotacaoThenRetornarErro() {
-        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoService.abrirVotacao(null));
+    @DisplayName("Não deve ser possível abrir uma votação ao passar pauta nula")
+    void givenPossuoPautaNulaWhenTentoAbrirSessaoVotacaoThenRetornarErro() {
+        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoService.abrirVotacao(null, null));
+    }
+
+    @Test
+    @DisplayName("Não deve ser possível abrir uma votação ao passar minutos nulo")
+    void givenPossuoMinutosNuloWhenTentoAbrirSessaoVotacaoThenRetornarErro() {
+        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoService.abrirVotacao(this.pautaMock, null));
     }
 
     @Test
     @DisplayName("Não deve ser possível abrir uma votação ao passar que possua uma pauta com sessãoVotacao diferente de null")
     void givenPossuoUmSessaoVotacaoComPautaInvalidaWhenTentoAbrirSessaoVotacaoThenRetornarErro() {
-        this.sessaoVotacaoMock.getPauta().setSessaoVotacao(this.sessaoVotacaoMock);
-        assertThrows(IllegalStateException.class, () -> this.sessaoVotacaoService.abrirVotacao(this.sessaoVotacaoMock));
-    }
-
-    @Test
-    @DisplayName("Deve ser possível verificar se SessaoVotacao está ativa")
-    void givenPossuoUmaSessaoVotacaoValidaWhenTentoVerificarSeEstaAtivaThenRetornarTrue() {
-        boolean resposta = this.sessaoVotacaoService.verificarSeSessaoVotacaoEstaAtiva(this.sessaoVotacaoMock);
-        assertTrue(resposta);
-    }
-
-    @Test
-    @DisplayName("Deve ser possível verificar se SessaoVotacao está ativa")
-    void givenPossuoUmaSessaoVotacaoValidaWhenTentoVerificarSeEstaAtivaThenRetornarFalse() {
-        this.sessaoVotacaoMock.setDataFechamento(LocalDateTime.now());
-        boolean resposta = this.sessaoVotacaoService.verificarSeSessaoVotacaoEstaAtiva(this.sessaoVotacaoMock);
-        assertFalse(resposta);
-    }
-
-    @Test
-    @DisplayName("Não deve ser possível verificar se SessaoVotacao está ativa ao passar SessaoVotacao nula")
-    void givenPossuoUmaSessaoVotacaoNulaWhenTentoVerificarSeEstaAtivaThenRetornarErro() {
-        assertThrows(IllegalArgumentException.class,
-                () -> this.sessaoVotacaoService.verificarSeSessaoVotacaoEstaAtiva(null));
+        this.pautaMock.setSessaoVotacao(sessaoVotacaoMock);
+        assertThrows(IllegalStateException.class, () -> this.sessaoVotacaoService.abrirVotacao(this.pautaMock, 5L));
     }
 
     @Test
@@ -136,7 +140,7 @@ class SessaoVotacaoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar um erro ao verificar se Usuário pode votar na sessão de votação ao enviar voto nulo")
+    @DisplayName("Deve lançar um erro ao verificar se Usuário pode votar na sessão de votação ao enviar sessaoVotacao nula")
     void givenSessaovotacaoNuloWhenVerificoSeUsuarioPodeVotarThenRetornarErro() {
 
         assertThrows(IllegalArgumentException.class,
@@ -175,8 +179,12 @@ class SessaoVotacaoServiceTest {
     @Test
     @DisplayName("Deve ser possível inserir voto positivo corretamente")
     void givenPossuoDadosValidosWhenTentoInserirVotoPositivoThenRetornarSessaoVotacao() {
-        assertDoesNotThrow(() -> this.sessaoVotacaoService.inserirVoto(this.sessaoVotacaoMock,
-                TipoDeVotoEnum.VOTO_POSITIVO, this.votoDoUsuarioVotanteMock));
+        when(this.utils.obterDataAtual()).thenReturn(this.dataAbertura);
+        when(this.sessaoVotacaoRepository.findByPautaIdAndSessaoVotacaoAtiva(this.pautaMock.getId(), this.dataAbertura)).thenReturn(Optional.of(this.sessaoVotacaoMock));
+
+        assertDoesNotThrow(() -> this.sessaoVotacaoService.inserirVotoInterno(this.votoDoUsuarioVotanteMock, this.pautaMock.getId(),
+                TipoDeVotoEnum.VOTO_POSITIVO));
+
         assertEquals(1, this.sessaoVotacaoMock.getVotosPositivos().size());
         verify(this.sessaoVotacaoRepository).save(this.sessaoVotacaoMock);
     }
@@ -184,8 +192,10 @@ class SessaoVotacaoServiceTest {
     @Test
     @DisplayName("Deve ser possível inserir voto negativo corretamente")
     void givenPossuoDadosValidosWhenTentoInserirVotoNegativoThenRetornarSessaoVotacao() {
-        assertDoesNotThrow(() -> this.sessaoVotacaoService.inserirVoto(this.sessaoVotacaoMock,
-                TipoDeVotoEnum.VOTO_NEGATIVO, this.votoDoUsuarioVotanteMock));
+        when(this.utils.obterDataAtual()).thenReturn(this.dataAbertura);
+        when(this.sessaoVotacaoRepository.findByPautaIdAndSessaoVotacaoAtiva(this.pautaMock.getId(), this.dataAbertura)).thenReturn(Optional.of(this.sessaoVotacaoMock));
+        assertDoesNotThrow(() -> this.sessaoVotacaoService.inserirVotoInterno(this.votoDoUsuarioVotanteMock, this.pautaMock.getId(),
+                TipoDeVotoEnum.VOTO_NEGATIVO));
         assertEquals(1, this.sessaoVotacaoMock.getVotosNegativos().size());
         verify(this.sessaoVotacaoRepository).save(this.sessaoVotacaoMock);
     }
@@ -193,8 +203,9 @@ class SessaoVotacaoServiceTest {
     @Test
     @DisplayName("Deve retornar erro ao tentar inserir com tipo de voto nulo")
     void givenTipoDeVotoNullWhenTentoInserirVotoThenRetornarErro() {
-        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoService.inserirVoto(this.sessaoVotacaoMock,
-                null, this.votoDoUsuarioVotanteMock));
+        Long pautaId = this.pautaMock.getId();
+        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoService.inserirVotoInterno(this.votoDoUsuarioVotanteMock, pautaId,
+                null));
     }
 
     @Test
@@ -228,4 +239,21 @@ class SessaoVotacaoServiceTest {
         assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoService.obterStatusSessaoVotacao(null));
     }
 
+    @Test
+    @DisplayName("Deve buscar sessão de votação ativa ao passar pautaId")
+    void givenPossuoPautaIdWhenBuscoSessaoVotacaoAtivaThenRetornarSessaoVotacaoAtiva(){
+        when(this.utils.obterDataAtual()).thenReturn(this.dataAbertura);
+        when(this.sessaoVotacaoRepository.findByPautaIdAndSessaoVotacaoAtiva(this.pautaMock.getId(), this.dataAbertura)).thenReturn(Optional.of(this.sessaoVotacaoMock));
+        assertDoesNotThrow(()->{
+            this.sessaoVotacaoService.buscarSessaoVotacaoAtiva(this.pautaMock.getId());
+        });
+    }
+    @Test
+    @DisplayName("Deve falhar ao buscar sessão de votação ativa ao passar pautaId de sessao inexistente ou inativa")
+    void givenPossuoPautaIdInvalidaWhenBuscoSessaoVotacaoAtivaThenRetornarSessaoVotacaoAtiva(){
+        when(this.utils.obterDataAtual()).thenReturn(this.dataAbertura);
+        assertThrows(IllegalArgumentException.class, ()->{
+            this.sessaoVotacaoService.buscarSessaoVotacaoAtiva(this.pautaMock.getId());
+        });
+    }
 }

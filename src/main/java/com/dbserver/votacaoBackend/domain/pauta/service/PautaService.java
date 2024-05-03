@@ -43,7 +43,7 @@ public class PautaService implements IPautaService {
 
     @Override
     public List<Pauta> buscarPautasAtivas(Categoria categoria) {
-        LocalDateTime dataAtual = this.utils.obterHoraAtual();
+        LocalDateTime dataAtual = this.utils.obterDataAtual();
 
         if (categoria != null) {
             return this.pautaRepository.findAllByCategoriaAndSessaoVotacaoAtiva(categoria, dataAtual);
@@ -59,7 +59,7 @@ public class PautaService implements IPautaService {
 
     @Override
     public Pauta buscarPautaAtivaPorId(Long pautaId) {
-        LocalDateTime dataAtual = this.utils.obterHoraAtual();
+        LocalDateTime dataAtual = this.utils.obterDataAtual();
         
         return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, dataAtual).orElseThrow(()-> new NoSuchElementException("Pauta informada não possui sessão ativa."));
     }

@@ -29,7 +29,7 @@ public class Utils {
         }).toList();
     }
 
-    public LocalDateTime obterHoraAtual(){
+    public LocalDateTime obterDataAtual(){
         return LocalDateTime.now();
     }
 }

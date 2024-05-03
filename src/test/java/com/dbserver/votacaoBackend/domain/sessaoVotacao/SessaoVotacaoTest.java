@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.time.LocalDateTime;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
@@ -117,6 +118,18 @@ class SessaoVotacaoTest {
     @DisplayName("Não deve ser possível setarVotoNegativo passando Voto nulo")
     void givenPossuoVotoInvalidoThenTentoSetarVotoNegativoWhenRetornarErro(){
         assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoAtivaMock.setVotosNegativos(null));
+    }
+
+    @Test
+    @DisplayName("Deve obter ativa true")
+    void givenPossuoUmaSessaoVotacaoAtivaWhenTentoObterAtivaThenRetornarTrue(){
+        assertTrue(this.sessaoVotacaoAtivaMock.isAtiva());
+    }
+    @Test
+    @DisplayName("Deve obter ativa false")
+    void givenNaoPossuoUmaSessaoVotacaoAtivaWhenTentoObterAtivaThenRetornarTrue(){
+        this.sessaoVotacaoAtivaMock.setDataFechamento(this.dataAbertura);
+        assertFalse(this.sessaoVotacaoAtivaMock.isAtiva());
     }
 
 }

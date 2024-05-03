@@ -91,7 +91,7 @@ class PautaServiceTest {
     @Test
     @DisplayName("Deve ser possível buscar todas pautas ativas")
     void givenTenhoCategoriaCorretaWhenTentoBuscarPautasAtivasThenRetornarListaDePautas() {
-        when(this.utils.obterHoraAtual()).thenReturn(this.dataAtual);
+        when(this.utils.obterDataAtual()).thenReturn(this.dataAtual);
         this.pautaService.buscarPautasAtivas(null);
         verify(this.pautaRepository).findAllBySessaoVotacaoAtiva(this.dataAtual);
     }
@@ -99,7 +99,7 @@ class PautaServiceTest {
     @Test
     @DisplayName("Deve ser possível buscar todas pautas ativas por categoria")
     void givenTenhoCategoriaNullWhenTentoBuscarPautasAtivasThenRetornarListaDePautas() {
-        when(this.utils.obterHoraAtual()).thenReturn(this.dataAtual);
+        when(this.utils.obterDataAtual()).thenReturn(this.dataAtual);
         this.pautaService.buscarPautasAtivas(this.pautaMock.getCategoria());
         verify(this.pautaRepository).findAllByCategoriaAndSessaoVotacaoAtiva(this.pautaMock.getCategoria(), this.dataAtual);
     }
@@ -123,7 +123,7 @@ class PautaServiceTest {
     @Test
     @DisplayName("Deve buscar pauta ativa por id")
     void givenTenhoPautaIdCorretoWhenTentoBuscarPautaAtivaPorIdThenRetornarPauta() {
-        when(this.utils.obterHoraAtual()).thenReturn(this.dataAtual);
+        when(this.utils.obterDataAtual()).thenReturn(this.dataAtual);
         when(this.pautaRepository.findByIdAndSessaoVotacaoAtiva(1L, this.dataAtual))
                 .thenReturn(Optional.of(this.pautaMock));
         assertDoesNotThrow(() -> this.pautaService.buscarPautaAtivaPorId(1L));
@@ -132,7 +132,7 @@ class PautaServiceTest {
     @Test
     @DisplayName("Deve falhar buscar pauta ativa por id, ao passar inexiste ou de uma pauta com sessão inativa")
     void givenTenhoPautaIdInvalidaWhenTentoBuscarPautaAtivaPorIdThenRetornarPauta() {
-        when(this.utils.obterHoraAtual()).thenReturn(this.dataAtual);
+        when(this.utils.obterDataAtual()).thenReturn(this.dataAtual);
         assertThrows(NoSuchElementException.class, () -> this.pautaService.buscarPautaAtivaPorId(1L));
     }
 

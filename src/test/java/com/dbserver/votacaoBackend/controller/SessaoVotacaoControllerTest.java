@@ -141,7 +141,6 @@ class SessaoVotacaoControllerTest {
         AbrirVotacaoDto abrirVotacaoDto = new AbrirVotacaoDto(minutos, pautaId);
         String json = this.abrirVotacaoDtoJson.write(abrirVotacaoDto).getJson();
 
-        System.out.println(json);
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/votacao/abrir")
                 .header("Authorization", "Bearer " + this.tokenAdmin)

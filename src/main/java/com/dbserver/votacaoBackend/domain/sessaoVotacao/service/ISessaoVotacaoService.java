@@ -1,20 +1,25 @@
 package com.dbserver.votacaoBackend.domain.sessaoVotacao.service;
 
+import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.TipoDeVotoEnum;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 
 public interface ISessaoVotacaoService {
-    public SessaoVotacao abrirVotacao(SessaoVotacao sessaoVotacao);
+        public SessaoVotacao abrirVotacao(Pauta pauta, Long minutos);
 
-    public boolean verificarSeSessaoVotacaoEstaAtiva(SessaoVotacao sessaoVotacao);
+        public void verificarSeUsuarioPodeVotarSessaoVotacao(SessaoVotacao sessaoVotacao, Voto voto);
 
-    public void verificarSeUsuarioPodeVotarSessaoVotacao(SessaoVotacao sessaoVotacao, Voto voto);
+        public SessaoVotacao inserirVotoInterno(Voto voto, Long pautaId,
+                        TipoDeVotoEnum tipoDeVoto);
 
-    public SessaoVotacao inserirVoto(SessaoVotacao sessaoVotacao, TipoDeVotoEnum tipoDeVoto, Voto voto);
+        public SessaoVotacao inserirVotoExterno(Voto voto, Long pautaId, TipoDeVotoEnum tipoDeVoto, String cpf,
+                        String senha);
 
-    public StatusSessaoVotacao obterStatusSessaoVotacao(SessaoVotacao sessaoVotacao);
+        public StatusSessaoVotacao obterStatusSessaoVotacao(SessaoVotacao sessaoVotacao);
 
-    public void verificarSePodeVotarExternamente(String cpf, String senha);
+        public void verificarSePodeVotarExternamente(String cpf, String senha);
+
+        public SessaoVotacao buscarSessaoVotacaoAtiva(Long pautaId);
 }
