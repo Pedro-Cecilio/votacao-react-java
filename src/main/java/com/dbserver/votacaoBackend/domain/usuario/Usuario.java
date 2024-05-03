@@ -40,28 +40,30 @@ public class Usuario {
         this.admin = admin;
     }
 
-    public void setNome(String nome){
-        if(nome == null || nome.trim().isEmpty()){
+    public void setNome(String nome) {
+        if (nome == null || nome.trim().isEmpty())
             throw new IllegalArgumentException("Nome deve ser informado.");
-        }
-        if(nome.trim().length() < 3 || nome.trim().length() > 20){
+
+        if (nome.trim().length() < 3 || nome.trim().length() > 20)
             throw new IllegalArgumentException("Nome deve conter entre 3 e 20 caracteres.");
-        }
+
         this.nome = nome.trim();
     }
-    public void setSobrenome(String sobrenome){
-        if(sobrenome == null || sobrenome.trim().isEmpty()){
+
+    public void setSobrenome(String sobrenome) {
+        if (sobrenome == null || sobrenome.trim().isEmpty()) 
             throw new IllegalArgumentException("Sobrenome deve ser informado.");
-        }
-        if(sobrenome.trim().length() < 2 || sobrenome.trim().length() > 20){
+        
+        if (sobrenome.trim().length() < 2 || sobrenome.trim().length() > 20) 
             throw new IllegalArgumentException("Sobrenome deve conter entre 2 e 20 caracteres.");
-        }
+        
         this.sobrenome = sobrenome.trim();
     }
-    public void setCpf(String cpf){
-        if(cpf == null || !Utils.validarRegex(Utils.REGEX_CPF, cpf.trim())){
+
+    public void setCpf(String cpf) {
+        if (cpf == null || !Utils.validarRegex(Utils.REGEX_CPF, cpf.trim())) 
             throw new IllegalArgumentException("Cpf deve conter 11 caracteres numéricos.");
-        }
+        
         this.cpf = cpf.trim();
     }
 
@@ -96,8 +98,4 @@ public class Usuario {
         return true;
     }
 
-    
-
-    
 }
-

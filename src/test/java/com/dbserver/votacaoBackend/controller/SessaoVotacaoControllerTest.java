@@ -163,8 +163,11 @@ class SessaoVotacaoControllerTest {
     void givenPossuoFecharVotacaoDtoCorretoWhenTentoVotarInternamenteThenRetornarRespostaSessaoVotacao() throws Exception{
         SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5));
         pautaTransporte.setSessaoVotacao(sessaoVotacao);
+
         this.pautaRepository.save(pautaTransporte);
+
         InserirVotoInternoDto inserirVotoInternoDto = new InserirVotoInternoDto(this.pautaTransporte.getId(), TipoDeVotoEnum.VOTO_POSITIVO );
+
         String json = this.inserirVotoInternoDtoJson.write(inserirVotoInternoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -182,8 +185,11 @@ class SessaoVotacaoControllerTest {
     void givenPossuoFecharVotacaoDtoCorretoWhenTentoVotarExternamenteThenRetornarRespostaSessaoVotacao() throws Exception{
         SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5));
         pautaTransporte.setSessaoVotacao(sessaoVotacao);
+
         this.pautaRepository.save(pautaTransporte);
+
         InserirVotoExternoDto inserirVotoExternoDto = new InserirVotoExternoDto(this.pautaTransporte.getId(), TipoDeVotoEnum.VOTO_NEGATIVO, this.cpfUsuarioNaoCadastrado, null);
+        
         String json = this.inserirVotoExternoDtoJson.write(inserirVotoExternoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders

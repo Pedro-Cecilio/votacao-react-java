@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import com.dbserver.votacaoBackend.infra.exeptions.novas.CriarJwtExeption;
-
 import javax.naming.AuthenticationException;
 import java.nio.file.AccessDeniedException;
 import java.util.List;

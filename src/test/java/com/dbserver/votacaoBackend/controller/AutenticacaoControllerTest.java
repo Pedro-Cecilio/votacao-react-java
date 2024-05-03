@@ -81,7 +81,9 @@ class AutenticacaoControllerTest {
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto(this.autenticacao.getEmail(), this.senhaCorreta);
+
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +99,9 @@ class AutenticacaoControllerTest {
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto(this.autenticacao.getEmail(), "senhaIncorreta");
+
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +116,9 @@ class AutenticacaoControllerTest {
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto("emailInexistente@email.com", this.senhaCorreta);
+
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,12 +129,13 @@ class AutenticacaoControllerTest {
 
     @ParameterizedTest
     @DisplayName("Testes de login com dados inválidos")
-    @MethodSource("dadosInválidosParaRealizarLogin")
+    @MethodSource("dadosInvalidosParaRealizarLogin")
     void givenAutenticacaoDtoDadosInvalidosWhenTentoRealizarLoginThenRetornarRespostaErro(String email, String senha,
             String mensagemErro)
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto(email, senha);
+
         String json = this.autenticacaoDtoJson.write(autenticacaoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -139,7 +146,7 @@ class AutenticacaoControllerTest {
                 .andExpect(jsonPath("$.erro").value(mensagemErro));
     }
 
-    private static Stream<Arguments> dadosInválidosParaRealizarLogin() {
+    private static Stream<Arguments> dadosInvalidosParaRealizarLogin() {
         return Stream.of(
                 Arguments.of("email", "senha123", "Email com formato inválido."),
                 Arguments.of("", "senha123", "Email deve ser informado."),
@@ -154,7 +161,9 @@ class AutenticacaoControllerTest {
     void givenPossuoDadosValidarVotoExternoCorretosWhenTentoValidarVotoExternoThenRetornarValidarVotoExternoComTrue()
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
+
         this.validarVotoExternoDto = new ValidarVotoExternoDto(cpf, senhaCorreta);
+
         String json = this.validarVotoExternoDtoJson.write(this.validarVotoExternoDto).getJson();
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
@@ -169,8 +178,11 @@ class AutenticacaoControllerTest {
     void givenCpfNaoCadastradoWhenTentoValidarVotoExternoThenRetornarRespostaErro()
             throws Exception {
         String cpf = "33322211100";
+
         this.validarVotoExternoDto = new ValidarVotoExternoDto(cpf, senhaCorreta);
+
         String json = this.validarVotoExternoDtoJson.write(this.validarVotoExternoDto).getJson();
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -184,8 +196,11 @@ class AutenticacaoControllerTest {
     void givenSenhaIncorretaWhenTentoValidarVotoExternoThenRetornarRespostaErro()
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
+
         this.validarVotoExternoDto = new ValidarVotoExternoDto(cpf, "senhaIncorreta");
+
         String json = this.validarVotoExternoDtoJson.write(this.validarVotoExternoDto).getJson();
+        
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -28,15 +28,20 @@ public class AutenticacaoController {
     @PostMapping("/login")
     public ResponseEntity<AutenticacaoRespostaDto> autenticarUsuario(@Valid @RequestBody AutenticacaoDto dto) {
         Autenticacao autenticacao = this.autenticacaoService.buscarAutenticacaoPorEmailESenha(dto.email(), dto.senha());
+
         String token = this.tokenService.gerarToken(autenticacao);
+
         AutenticacaoRespostaDto resposta = new AutenticacaoRespostaDto(token, autenticacao.getUsuario().isAdmin());
+
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 
     @PostMapping("/votoExterno")
     public ResponseEntity<ValidarVotoExternoRespostaDto> validarUsuarioVotoExterno(@RequestBody ValidarVotoExternoDto dto) {
         this.autenticacaoService.validarAutenticacaoPorCpfESenha(dto.cpf(), dto.senha());
+
         ValidarVotoExternoRespostaDto resposta = new ValidarVotoExternoRespostaDto(true);
+        
         return ResponseEntity.ok(resposta);
     }
     

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -68,7 +67,9 @@ class AutenticacaoServiceTest {
     @DisplayName("Deve ser possível criar uma autenticacao")
     void givenTenhoUmUsuarioCadastradoEDadosDeAutenticacaoWhenTentoCriarAutenticacaoThenRetornarAutenticacaoCriada() {
         when(this.autenticacaoRepository.save(this.autenticacaoMock)).thenReturn(this.autenticacaoMock);
+
         this.autenticacaoService.criarAutenticacao(this.autenticacaoMock, this.usuarioMock);
+
         verify(this.autenticacaoRepository, times(1)).save(this.autenticacaoMock);
     }
 
@@ -94,35 +95,17 @@ class AutenticacaoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve ser possível deletar uma autenticacao")
-    void givenTenhoUmaAutenticacaoIdWhenTentoDeletarAutenticacaoThenDeletarAutenticacao() {
-        when(this.autenticacaoRepository.findById(1L)).thenReturn(Optional.of(this.autenticacaoMock));
-        this.autenticacaoService.deletarAutenticacao(1L);
-        verify(this.autenticacaoRepository, times(1)).delete(this.autenticacaoMock);
-    }
-
-    @Test
-    @DisplayName("Não deve ser possível deletar uma autenticacao inexistente")
-    void givenTenhoUmaAutenticacaoIdInexistenteWhenTentoDeletarAutenticacaoThenRetornarUmaExcecao() {
-        when(this.autenticacaoRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> this.autenticacaoService.deletarAutenticacao(1L));
-    }
-
-    @Test
-    @DisplayName("Não deve ser possível deletar uma autenticacao inexistente")
-    void givenTenhoUmaAutenticacaoIdNuloWhenTentoDeletarAutenticacaoThenRetornarUmaExcecao() {
-        assertThrows(IllegalArgumentException.class, () -> this.autenticacaoService.deletarAutenticacao(null));
-    }
-
-    @Test
     @DisplayName("Deve ser possível buscar autenticação por email e senha")
     void givenTenhoUmEmailEUmSenhaValidosWhenTentoBuscarPorEmailESenhaThenRetornarAutenticacao() {
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                 .thenReturn(Optional.of(this.autenticacaoMock));
+
         when(this.passwordEncoder.matches(this.autenticacaoMock.getSenha(), this.autenticacaoMock.getSenha()))
                 .thenReturn(true);
+
         Autenticacao autenticacao = this.autenticacaoService
                 .buscarAutenticacaoPorEmailESenha(this.autenticacaoMock.getEmail(), this.autenticacaoMock.getSenha());
+
         assertEquals(this.autenticacaoMock.getEmail(), autenticacao.getEmail());
         assertEquals(this.autenticacaoMock.getSenha(), autenticacao.getSenha());
     }
@@ -131,8 +114,10 @@ class AutenticacaoServiceTest {
     @DisplayName("Não deve ser possível buscar autenticação com email inexistente")
     void givenTenhoUmEmailInexistenteWhenTentoBuscarPorEmailESenhaThenRetornarAutenticacao() {
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail())).thenReturn(Optional.empty());
+
         String email = this.autenticacaoMock.getEmail();
         String senha = this.autenticacaoMock.getSenha();
+
         assertThrows(BadCredentialsException.class, () -> this.autenticacaoService
                 .buscarAutenticacaoPorEmailESenha(email, senha));
     }
@@ -142,10 +127,13 @@ class AutenticacaoServiceTest {
     void givenTenhoUmaSenhaInvalidaWhenTentoBuscarPorEmailESenhaThenRetornarAutenticacao() {
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                 .thenReturn(Optional.of(this.autenticacaoMock));
+
         when(this.autenticacaoService.validarSenhaDaAutenticacao(this.senhaInvalida, this.autenticacaoMock.getSenha()))
                 .thenReturn(false);
+
         String email = this.autenticacaoMock.getEmail();
         String senha = this.senhaInvalida;
+
         assertThrows(BadCredentialsException.class, () -> this.autenticacaoService
                 .buscarAutenticacaoPorEmailESenha(email, senha));
     }
@@ -155,7 +143,9 @@ class AutenticacaoServiceTest {
     void givenTenhoSenhasCompativeisWhenTentoValidarSenhaThenValidarCorretamente() {
         when(this.passwordEncoder.matches(this.senhaValida, this.senhaValidaEncriptada))
                 .thenReturn(true);
+
         this.autenticacaoService.validarSenhaDaAutenticacao(this.senhaValida, this.senhaValidaEncriptada);
+
         verify(this.passwordEncoder).matches(this.senhaValida, this.senhaValidaEncriptada);
     }
 
@@ -163,7 +153,9 @@ class AutenticacaoServiceTest {
     @DisplayName("Deve ser possível encriptar senha da autenticação ao passar senha válida")
     void givenTenhoUmaSenhaValidaWhenTentoEncriptarSenhaThenRetornarSenhaEncriptada() {
         when(this.passwordEncoder.encode(this.senhaValida)).thenReturn(this.senhaValidaEncriptada);
+
         this.autenticacaoService.encriptarSenhaDaAutenticacao(this.senhaValida);
+
         verify(this.passwordEncoder).encode(this.senhaValida);
     }
 
@@ -192,6 +184,7 @@ class AutenticacaoServiceTest {
     void givenTenhoUmCpfEUmaSenhaValidosWhenTentoValidarAutenticacaoPorCpfESenhaThenExecutarSemErros() {
         when(this.autenticacaoRepository.findByCpf(this.usuarioMock.getCpf()))
                 .thenReturn(Optional.of(this.autenticacaoMock));
+
         when(this.autenticacaoService.validarSenhaDaAutenticacao(this.senhaValida, autenticacaoMock.getSenha()))
                 .thenReturn(true);
 
@@ -206,6 +199,7 @@ class AutenticacaoServiceTest {
 
         when(this.autenticacaoRepository.findByCpf(cpf))
                 .thenReturn(Optional.empty());
+
         assertThrows(BadCredentialsException.class,
                 () -> this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, this.senhaValida));
     }
@@ -217,8 +211,10 @@ class AutenticacaoServiceTest {
 
         when(this.autenticacaoRepository.findByCpf(this.usuarioMock.getCpf()))
                 .thenReturn(Optional.of(this.autenticacaoMock));
+
         when(this.autenticacaoService.validarSenhaDaAutenticacao(this.senhaInvalida, autenticacaoMock.getSenha()))
                 .thenReturn(false);
+
         assertThrows(BadCredentialsException.class,
                 () -> this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, this.senhaInvalida));
     }
@@ -228,7 +224,9 @@ class AutenticacaoServiceTest {
     void givenTenhoEmailCadastradoWhenVerificoSeEstaCadastradoRetornarTrue(){
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                 .thenReturn(Optional.of(this.autenticacaoMock));
+
         boolean resposta = this.autenticacaoService.verificarEmailJaEstaCadastrado(this.autenticacaoMock.getEmail());
+        
         assertTrue(resposta);
         
     }
@@ -237,7 +235,9 @@ class AutenticacaoServiceTest {
     void givenTenhoEmailNaoCadastradoWhenVerificoSeEstaCadastradoRetornarTrue(){
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                 .thenReturn(Optional.empty());
+
         boolean resposta = this.autenticacaoService.verificarEmailJaEstaCadastrado(this.autenticacaoMock.getEmail());
+        
         assertFalse(resposta);
     }
 }

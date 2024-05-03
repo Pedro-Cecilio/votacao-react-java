@@ -42,21 +42,21 @@ public class Autenticacao {
     }
 
     public void setEmail(String email) {
-        if(email == null || !Utils.validarRegex(Utils.REGEX_EMAIL, email.trim())){
+        if (email == null || !Utils.validarRegex(Utils.REGEX_EMAIL, email.trim()))
             throw new IllegalArgumentException("Email com formato inválido.");
-        }
+
         this.email = email.trim();
     }
 
     public void setSenha(String senha) {
-        
+
         if (senha == null)
             throw new IllegalArgumentException("Senha deve ser informada.");
+            
         if (senha.trim().length() < 8)
             throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo.");
 
         this.senha = senha;
     }
-    
 
 }

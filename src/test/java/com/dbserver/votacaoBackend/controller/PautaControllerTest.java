@@ -151,9 +151,10 @@ class PautaControllerTest {
                                 this.usuarioCadastrado);
 
                 Pauta pautaTransporte = new Pauta("Sabe dirigir?", Categoria.TRANSPORTE.toString(),
-
                                 this.usuarioCadastrado);
+
                 List<Pauta> pautas = List.of(pautaSaude, pautaTransporte);
+
                 this.pautaRepository.saveAll(pautas);
 
                 MockHttpServletResponse resposta = mockMvc.perform(MockMvcRequestBuilders
@@ -206,6 +207,7 @@ class PautaControllerTest {
 
                 SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(),
                                 LocalDateTime.now().plusMinutes(5));
+
                 pautaTransporte.setSessaoVotacao(sessaoVotacao);
 
                 List<Pauta> pautas = List.of(pautaSaude, pautaTransporte);
@@ -222,6 +224,7 @@ class PautaControllerTest {
                 List<RespostaPautaDto> pautasDoUsuario = this.objectMapper.readValue(resposta.getContentAsString(),
                                 new TypeReference<List<RespostaPautaDto>>() {
                                 });
+
                 assertEquals(1, pautasDoUsuario.size());
         }
 
@@ -233,6 +236,7 @@ class PautaControllerTest {
 
                 SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(),
                                 LocalDateTime.now().plusMinutes(5));
+
                 pautaTransporte.setSessaoVotacao(sessaoVotacao);
 
                 this.pautaRepository.save(pautaTransporte);
@@ -269,8 +273,9 @@ class PautaControllerTest {
 
                 SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(),
                                 LocalDateTime.now().plusMinutes(5));
+                                
                 pautaTransporte.setSessaoVotacao(sessaoVotacao);
-                
+
                 this.pautaRepository.save(pautaTransporte);
 
                 mockMvc.perform(MockMvcRequestBuilders

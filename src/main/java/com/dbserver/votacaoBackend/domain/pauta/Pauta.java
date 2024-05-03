@@ -24,7 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Pauta {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,7 +39,7 @@ public class Pauta {
     @Setter
     @OneToOne(mappedBy = "pauta", optional = true, cascade = CascadeType.ALL)
     private SessaoVotacao sessaoVotacao;
-    
+
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
@@ -50,22 +50,23 @@ public class Pauta {
         setCategoria(categoria);
     }
 
-
     public void setUsuario(Usuario usuario) {
-        if(usuario == null){
+        if (usuario == null)
             throw new IllegalArgumentException("Usuario deve ser informado.");
-        }
-        if(!usuario.isAdmin()){
+
+        if (!usuario.isAdmin())
             throw new IllegalArgumentException("Usuario deve ser admin.");
-        }
+
         this.usuario = usuario;
     }
+
     public void setAssunto(String assunto) {
-        if(assunto == null || assunto.trim().isEmpty()){
+        if (assunto == null || assunto.trim().isEmpty())
             throw new IllegalArgumentException("Assunto deve ser informado.");
-        }
+
         this.assunto = assunto;
     }
+
     public void setCategoria(String categoria) {
         try {
             this.categoria = Categoria.valueOf(categoria);
@@ -73,6 +74,5 @@ public class Pauta {
             throw new IllegalArgumentException("Categoria inválida.");
         }
     }
-
 
 }

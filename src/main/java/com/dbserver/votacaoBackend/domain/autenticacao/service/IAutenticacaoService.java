@@ -6,7 +6,6 @@ import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 public interface IAutenticacaoService {
     public Autenticacao criarAutenticacao(Autenticacao autenticacao, Usuario usuarioSalvo);
 
-    public void deletarAutenticacao(Long id);
 
     public Autenticacao buscarAutenticacaoPorEmailESenha(String email, String senha);
 

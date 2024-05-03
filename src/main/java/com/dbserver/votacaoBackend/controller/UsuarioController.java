@@ -37,10 +37,15 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<CriarUsuarioRespostaDto> criarUsuario(@RequestBody @Valid CriarUsuarioDto dto) {
         Usuario usuario = new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
+
         String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
+
         Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto().email(), senhaEncriptada);
-        Usuario novoUsuario = usuarioService.criarUsuario(usuario, autenticacao);
-        CriarUsuarioRespostaDto resposta = new CriarUsuarioRespostaDto(novoUsuario, autenticacao);
+
+        usuarioService.criarUsuario(usuario, autenticacao);
+
+        CriarUsuarioRespostaDto resposta = new CriarUsuarioRespostaDto(usuario, autenticacao);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
@@ -48,14 +53,18 @@ public class UsuarioController {
     @GetMapping("/usuarioLogado")
     public ResponseEntity<UsuarioRespostaDto> buscarUsuarioLogado() {
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
+
         UsuarioRespostaDto resposta = new UsuarioRespostaDto(usuario);
+
         return ResponseEntity.ok().body(resposta);
     }
 
     @GetMapping("/existe")
     public ResponseEntity<VerificarSeUsuarioExisteRespostaDto> verificarSeUsuarioExistePorCpf(@RequestParam(name = "cpf", required = false, defaultValue = "") final String cpf) {
         boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
+
         VerificarSeUsuarioExisteRespostaDto resposta = new VerificarSeUsuarioExisteRespostaDto(existe);
+        
         return ResponseEntity.ok().body(resposta);
     }
 

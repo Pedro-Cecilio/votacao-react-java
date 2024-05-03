@@ -35,10 +35,10 @@ public class Voto {
         this.usuario = usuario;
     }
 
-    public void setCpf(String cpf){
-        if(cpf == null || !Utils.validarRegex(Utils.REGEX_CPF, cpf.trim())){
+    public void setCpf(String cpf) {
+        if (cpf == null || !Utils.validarRegex(Utils.REGEX_CPF, cpf.trim()))
             throw new IllegalArgumentException("Cpf deve conter 11 caracteres numéricos.");
-        }
+
         this.cpf = cpf.trim();
     }
 
@@ -67,6 +67,4 @@ public class Voto {
         return true;
     }
 
-    
-    
 }

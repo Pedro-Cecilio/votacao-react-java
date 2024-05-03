@@ -74,7 +74,9 @@ class UsuarioServiceTest {
         when(this.usuarioRepository.save(this.usuarioMock)).thenReturn(this.usuarioMock);
         when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoMock.getEmail())).thenReturn(false);
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+
         Usuario resposta = this.usuarioService.criarUsuario(usuarioMock, autenticacaoMock);
+
         verify(this.usuarioRepository, times(1)).save(this.usuarioMock);
         verify(this.autenticacaoService, times(1)).criarAutenticacao(this.autenticacaoMock, this.usuarioMock);
         assertEquals(this.usuarioMock.getId(), resposta.getId());
@@ -84,6 +86,7 @@ class UsuarioServiceTest {
     @DisplayName("Não deve ser possível criar um Usuario passando ao passar cpf existente")
     void givenTenhoUmCpfJaCadastradoWhenTentoCriarUsuarioThenRetornarUmErro() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+
         assertThrows(IllegalArgumentException.class,
                 () -> this.usuarioService.criarUsuario(this.usuarioMock, this.autenticacaoMock));
     }
@@ -91,6 +94,7 @@ class UsuarioServiceTest {
     @DisplayName("Não deve ser possível criar um Usuario passando ao passar email existente")
     void givenTenhoUmEmailJaCadastradoWhenTentoCriarUsuarioThenRetornarUmErro() {
         when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoMock.getEmail())).thenReturn(true);
+
         assertThrows(IllegalArgumentException.class,
                 () -> this.usuarioService.criarUsuario(this.usuarioMock, this.autenticacaoMock));
     }
@@ -112,9 +116,12 @@ class UsuarioServiceTest {
     @DisplayName("Deve ser possível buscar o usuário logado")
     void givenTenhoUmUsuarioLogadoWhenTentoBuscarUsuarioLogadoThenRetornarUsuarioLogado() {
         SecurityContextHolder.setContext(this.securityContext);
+
         when(this.securityContext.getAuthentication()).thenReturn(this.securityAuthenticationMock);
         when(securityAuthenticationMock.getPrincipal()).thenReturn(this.usuarioMock);
+
         Usuario usuarioLogado = this.usuarioService.buscarUsuarioLogado();
+
         assertEquals(this.usuarioMock.getId(), usuarioLogado.getId());
     }
 
@@ -122,7 +129,9 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar true ao verificar se existe usuário ao passar cpf existente")
     void givenTenhoUmCpfExistenteWhenTentoVerificarSeExisteUsuarioPorCpfThenRetornarTrue() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+
         boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
+
         assertTrue(resposta);
     }
 
@@ -130,7 +139,9 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar false ao verificar se existe usuário ao passar cpf inexistente")
     void givenTenhoUmCpfInexistenteWhenTentoVerificarSeExisteUsuarioPorCpfThenRetornarFalse() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+
         boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
+
         assertFalse(resposta);
     }
 
@@ -138,7 +149,9 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar usuário ao buscar usuario com cpf existete")
     void givenTenhoUmCpfExistenteWhenTentoBuscarUsuarioPorCpfThenRetornarUsuario() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+
         Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(this.usuarioMock.getCpf());
+
         assertEquals(this.usuarioMock.getId(), resposta.getId());
     }
 
@@ -146,7 +159,9 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar null ao buscar usuario com cpf inexistente")
     void givenTenhoUmCpfInexistenteWhenTentoBuscarUsuarioPorCpfThenRetornarNull() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+
         Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(this.usuarioMock.getCpf());
+        
         assertNull(resposta);
     }
 

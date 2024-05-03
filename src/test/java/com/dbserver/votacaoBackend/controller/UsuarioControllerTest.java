@@ -80,6 +80,7 @@ class UsuarioControllerTest {
     void givenCriarUsuarioDtoCorretoWhenTentoCriarUsuarioThenRetornarCriarUsuarioRespostaDto() throws Exception {
         this.autenticacaoDto = new AutenticacaoDto("example2@example.com",
                 "senha123");
+
         this.criarUsuarioDto = new CriarUsuarioDto(this.autenticacaoDto, "Pedro", "Cecilio", "12345678910", true);
 
         String email = this.autenticacaoDto.email();
@@ -149,6 +150,7 @@ class UsuarioControllerTest {
             throws Exception {
         this.autenticacaoDto = new AutenticacaoDto(email,
                 senha);
+                
         this.criarUsuarioDto = new CriarUsuarioDto(this.autenticacaoDto, nome, sobrenome, cpf, admin);
 
         String json = this.criarUsuarioDtoJson.write(this.criarUsuarioDto).getJson();

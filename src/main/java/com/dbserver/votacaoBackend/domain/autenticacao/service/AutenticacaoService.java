@@ -22,17 +22,12 @@ public class AutenticacaoService implements IAutenticacaoService {
     @Override
     public Autenticacao criarAutenticacao(Autenticacao autenticacao, Usuario usuarioSalvo) {
         if(usuarioSalvo == null) throw new IllegalArgumentException("Usuario não deve ser nulo.");
-        if(autenticacao == null) throw new IllegalArgumentException("Autenticação não deve ser nula.");
-        autenticacao.setUsuario(usuarioSalvo);
-        return this.autenticacaoRepository.save(autenticacao);
-    }
 
-    @Override
-    public void deletarAutenticacao(Long id) {
-        if(id == null) throw new IllegalArgumentException("Id não deve ser nulo.");
-        Autenticacao autenticacao = this.autenticacaoRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado."));
-        this.autenticacaoRepository.delete(autenticacao);
+        if(autenticacao == null) throw new IllegalArgumentException("Autenticação não deve ser nula.");
+        
+        autenticacao.setUsuario(usuarioSalvo);
+
+        return this.autenticacaoRepository.save(autenticacao);
     }
 
     @Override
@@ -41,9 +36,11 @@ public class AutenticacaoService implements IAutenticacaoService {
                 .orElseThrow(() -> new BadCredentialsException("Dados de login inválidos."));
 
         boolean senhaValida = this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
+
         if(!senhaValida) {
             throw new BadCredentialsException("Dados de login inválidos.");
         }
+
         return autenticacao;
     }
         
@@ -55,6 +52,7 @@ public class AutenticacaoService implements IAutenticacaoService {
     @Override
     public String encriptarSenhaDaAutenticacao(String senha) {
         if(senha == null || senha.trim().isEmpty())throw new IllegalArgumentException("Senha deve ser informada.");
+
         if (senha.trim().length() < 8)
             throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo.");
 
@@ -64,7 +62,9 @@ public class AutenticacaoService implements IAutenticacaoService {
     @Override
     public void validarAutenticacaoPorCpfESenha(String cpf, String senha){
         Autenticacao autenticacao = this.autenticacaoRepository.findByCpf(cpf).orElseThrow(()-> new BadCredentialsException("Dados de autenticação inválidos."));
+
         boolean valido = this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
+        
         if(!valido) throw new BadCredentialsException("Dados de autenticação inválidos.");
     }
 

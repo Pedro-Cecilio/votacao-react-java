@@ -45,6 +45,7 @@ class SessaoVotacaoTest {
     @DisplayName("Deve ser possível setar uma pauta corretamente")
     void givenPossuoUmaPautaValidaWhenTentoSetarPautaThenDefinirNovaPauta() {
         Pauta pautaSetMock = new Pauta("Você sabe dirigir?", Categoria.TRANSPORTE.toString(), this.usuarioAdminMock);
+
         assertDoesNotThrow(() -> this.sessaoVotacaoAtivaMock.setPauta(pautaSetMock));
         assertEquals(pautaSetMock, this.sessaoVotacaoAtivaMock.getPauta());
     }
@@ -59,6 +60,7 @@ class SessaoVotacaoTest {
     @DisplayName("Deve ser possível setar uma data de abertura corretamente")
     void givenPossuoUmaDataDeAberturaValidaWhenTentoSetarDataDeAberturaThenDefinirNovaDataDeAbertura() {
         this.novaDataAbertura = this.dataFechamento.minusMinutes(5);
+
         assertDoesNotThrow(() -> this.sessaoVotacaoAtivaMock.setDataAbertura(novaDataAbertura));
         assertTrue(this.sessaoVotacaoAtivaMock.getDataAbertura().isEqual(novaDataAbertura));
     }
@@ -72,6 +74,7 @@ class SessaoVotacaoTest {
     @DisplayName("Não deve ser possível setar uma data de abertura menor que a data atual")
     void givenPossuoUmaDataDeAberturaMenorQueDataAtualWhenTentoSetarDataDeAberturaThenRetornarErro() {
         this.novaDataAbertura = LocalDateTime.now().minusMinutes(5);
+
         assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoAtivaMock.setDataAbertura(this.novaDataAbertura));
     }
     
@@ -79,6 +82,7 @@ class SessaoVotacaoTest {
     @DisplayName("Deve ser possível setar data de fechamento corretamente")
     void givenPossuoUmaDataDeFechamentoValidaWhenTentoSetarDataDeFechamentoThenDefinirNovaDataDeFechamento() {
         this.novaDataFechamento = this.dataAbertura.plusMinutes(4);
+
         assertDoesNotThrow(() -> this.sessaoVotacaoAtivaMock.setDataFechamento(this.novaDataFechamento));
         assertEquals(this.novaDataFechamento, this.sessaoVotacaoAtivaMock.getDataFechamento());
     }
@@ -92,6 +96,7 @@ class SessaoVotacaoTest {
     @DisplayName("Não deve ser possível setar uma data de fechamento menor que a data de abertura")
     void givenPossuoUmaDataDeFechamentoMenorQueDataAberturaWhenTentoSetarDataDeFechamentoThenRetornarErro() {
         this.novaDataFechamento = this.dataAbertura.minusMinutes(5);
+
         assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoAtivaMock.setDataAbertura(this.novaDataFechamento));
     }
 
@@ -129,6 +134,7 @@ class SessaoVotacaoTest {
     @DisplayName("Deve obter ativa false")
     void givenNaoPossuoUmaSessaoVotacaoAtivaWhenTentoObterAtivaThenRetornarTrue(){
         this.sessaoVotacaoAtivaMock.setDataFechamento(this.dataAbertura);
+        
         assertFalse(this.sessaoVotacaoAtivaMock.isAtiva());
     }
 

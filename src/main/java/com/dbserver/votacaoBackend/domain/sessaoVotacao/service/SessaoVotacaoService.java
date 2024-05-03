@@ -35,8 +35,10 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
     public SessaoVotacao abrirVotacao(Pauta pauta, Long minutos) {
         if (pauta == null)
             throw new IllegalArgumentException("Pauta deve ser informada");
+
         if (minutos == null)
             throw new IllegalArgumentException("Minutos devem ser informados");
+
         if (pauta.getSessaoVotacao() != null)
             throw new IllegalStateException("Pauta já possui uma votação aberta.");
 
@@ -49,14 +51,6 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
         return this.sessaoVotacaoRepository.save(sessaoVotacao);
     }
 
-    // @Override
-    // public boolean verificarSeSessaoVotacaoEstaAtiva(SessaoVotacao sessaoVotacao)
-    // {
-    // if (sessaoVotacao == null)
-    // throw new IllegalArgumentException("SessaoVotacao não deve ser nula");
-    // return sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now());
-    // }
-
     @Override
     public void verificarSeUsuarioPodeVotarSessaoVotacao(SessaoVotacao sessaoVotacao, Voto voto) {
         if (sessaoVotacao == null)
@@ -64,12 +58,17 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
 
         if (voto == null)
             throw new IllegalArgumentException("Voto não deve ser nulo.");
+
         if (!sessaoVotacao.isAtiva())
             throw new IllegalStateException("Sessão de votação não está ativa.");
+
         if (sessaoVotacao.getPauta().getUsuario().getCpf().equals(voto.getCpf()))
             throw new IllegalArgumentException("O criador não pode votar na pauta criada.");
+
         List<Voto> todosVotantes = new ArrayList<>(sessaoVotacao.getVotosPositivos());
+
         todosVotantes.addAll(sessaoVotacao.getVotosNegativos());
+
         if (todosVotantes.contains(voto))
             throw new IllegalStateException("Não é possível votar duas vezes.");
     }
@@ -120,18 +119,20 @@ public class SessaoVotacaoService implements ISessaoVotacaoService {
     public StatusSessaoVotacao obterStatusSessaoVotacao(SessaoVotacao sessaoVotacao) {
         if (sessaoVotacao == null)
             throw new IllegalArgumentException("SessaoVotacao não deve ser nula.");
-        if (sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now())) {
+
+        if (sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now()))
             return StatusSessaoVotacao.EM_ANDAMENTO;
-        }
-        if (sessaoVotacao.getVotosPositivos().size() > sessaoVotacao.getVotosNegativos().size()) {
+
+        if (sessaoVotacao.getVotosPositivos().size() > sessaoVotacao.getVotosNegativos().size())
             return StatusSessaoVotacao.APROVADA;
-        }
+
         return StatusSessaoVotacao.REPROVADA;
     }
 
     @Override
     public void verificarSePodeVotarExternamente(String cpf, String senha) {
         boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
+        
         if (existe)
             this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, senha);
     }
