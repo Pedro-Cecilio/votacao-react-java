@@ -4,16 +4,15 @@ import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 
 public interface AutenticacaoService {
-    public Autenticacao criarAutenticacao(Autenticacao autenticacao, Usuario usuarioSalvo);
+    Autenticacao criarAutenticacao(Autenticacao autenticacao, Usuario usuarioSalvo);
 
+    Autenticacao buscarAutenticacaoPorEmailESenha(String email, String senha);
 
-    public Autenticacao buscarAutenticacaoPorEmailESenha(String email, String senha);
+    boolean validarSenhaDaAutenticacao(String senhaEsperada, String senhaEncriptada);
 
-    public boolean validarSenhaDaAutenticacao(String senhaEsperada, String senhaEncriptada);
+    String encriptarSenhaDaAutenticacao(String senha);
 
-    public String encriptarSenhaDaAutenticacao(String senha);
+    void validarAutenticacaoPorCpfESenha(String cpf, String senha);
 
-    public void validarAutenticacaoPorCpfESenha(String cpf, String senha);
-
-    public boolean verificarEmailJaEstaCadastrado(String email);
+    boolean verificarEmailJaEstaCadastrado(String email);
 }
