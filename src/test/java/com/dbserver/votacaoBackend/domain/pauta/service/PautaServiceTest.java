@@ -53,7 +53,7 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve ser possível criar uma pauta corretamente")
-    void givenTenhoUmaPautaComDadosCorretosWhenTentoCriarPautaThenRetornarPautaCriada() {
+    void dadoTenhoUmaPautaComDadosCorretosQuandoTentoCriarPautaEntaoRetornarPautaCriada() {
         when(this.pautaRepository.save(this.pautaMock)).thenReturn(this.pautaMock);
         Pauta resposta = this.pautaService.criarPauta(this.pautaMock);
         assertEquals(this.pautaMock.getAssunto(), resposta.getAssunto());
@@ -63,20 +63,20 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Não deve ser possível criar uma pauta ao passar valor nulo")
-    void givenTenhoUmaPautaNulaWhenTentoCriarPautaThenRetornarErro() {
+    void dadoTenhoUmaPautaNulaQuandoTentoCriarPautaEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class, () -> this.pautaService.criarPauta(null));
     }
 
     @Test
     @DisplayName("Deve ser possível todas buscar pautas por usuarioId sem passar categoria")
-    void givenTenhoUsuarioIdCorretoECategoriaNullWhenTentoBuscarPautasPorUsuarioIdThenRetornarListaDePautas() {
+    void dadoTenhoUsuarioIdCorretoECategoriaNullQuandoTentoBuscarPautasPorUsuarioIdEntaoRetornarListaDePautas() {
         this.pautaService.buscarPautasPorUsuarioId(this.usuarioAdminMock.getId(), null);
         verify(this.pautaRepository).findAllByUsuarioId(this.usuarioAdminMock.getId());
     }
 
     @Test
     @DisplayName("Deve ser possível todas buscar pautas por usuarioId com a categoria informada")
-    void givenTenhoUsuarioIdECategoriaCorretosCorretoWhenTentoBuscarPautasPorUsuarioIdThenRetornarListaDePautas() {
+    void dadoTenhoUsuarioIdECategoriaCorretosCorretoQuandoTentoBuscarPautasPorUsuarioIdEntaoRetornarListaDePautas() {
         this.pautaService.buscarPautasPorUsuarioId(this.usuarioAdminMock.getId(),
                 this.pautaMock.getCategoria());
         verify(this.pautaRepository).findAllByUsuarioIdAndCategoria(this.usuarioAdminMock.getId(), this.pautaMock.getCategoria());
@@ -84,13 +84,13 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Não deve ser possível buscar todas pautas por usuarioId, ao passar UsuarioId nulo")
-    void givenTenhoUsuarioIdNuloWhenTentoBuscarPautasPorUsuarioIdThenRetornarErro() {
+    void dadoTenhoUsuarioIdNuloQuandoTentoBuscarPautasPorUsuarioIdEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class, () -> this.pautaService.buscarPautasPorUsuarioId(null, categoria));
     }
 
     @Test
     @DisplayName("Deve ser possível buscar todas pautas ativas")
-    void givenTenhoCategoriaCorretaWhenTentoBuscarPautasAtivasThenRetornarListaDePautas() {
+    void dadoTenhoCategoriaCorretaQuandoTentoBuscarPautasAtivasEntaoRetornarListaDePautas() {
         when(this.utils.obterDataAtual()).thenReturn(this.dataAtual);
         this.pautaService.buscarPautasAtivas(null);
         verify(this.pautaRepository).findAllBySessaoVotacaoAtiva(this.dataAtual);
@@ -98,7 +98,7 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve ser possível buscar todas pautas ativas por categoria")
-    void givenTenhoCategoriaNullWhenTentoBuscarPautasAtivasThenRetornarListaDePautas() {
+    void dadoTenhoCategoriaNullQuandoTentoBuscarPautasAtivasEntaoRetornarListaDePautas() {
         when(this.utils.obterDataAtual()).thenReturn(this.dataAtual);
         this.pautaService.buscarPautasAtivas(this.pautaMock.getCategoria());
         verify(this.pautaRepository).findAllByCategoriaAndSessaoVotacaoAtiva(this.pautaMock.getCategoria(), this.dataAtual);
@@ -106,7 +106,7 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve ser possível buscar pauta por id e usuarioId")
-    void givenTenhoPautaIdEUsuarioIdCorretosWhenTentoBuscarPautaPorIdEUsuarioIdThenRetornarPauta() {
+    void dadoTenhoPautaIdEUsuarioIdCorretosQuandoTentoBuscarPautaPorIdEUsuarioIdEntaoRetornarPauta() {
         when(this.pautaRepository.findByIdAndUsuarioId(1L, this.usuarioAdminMock.getId()))
                 .thenReturn(Optional.of(this.pautaMock));
         assertDoesNotThrow(() -> this.pautaService.buscarPautaPorIdEUsuarioId(1L,
@@ -115,14 +115,14 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve falhar ao buscar pauta por id e usuarioId não encontrar")
-    void givenTenhoPautaIdEUsuarioIdWhenTentoBuscarPautaPorIdEUsuarioIdThenRetornarErro() {
+    void dadoTenhoPautaIdEUsuarioIdQuandoTentoBuscarPautaPorIdEUsuarioIdEntaoRetornarErro() {
         Long usuarioId = this.usuarioAdminMock.getId();
         assertThrows(NoSuchElementException.class, () -> this.pautaService.buscarPautaPorIdEUsuarioId(1L, usuarioId));
     }
 
     @Test
     @DisplayName("Deve buscar pauta ativa por id")
-    void givenTenhoPautaIdCorretoWhenTentoBuscarPautaAtivaPorIdThenRetornarPauta() {
+    void dadoTenhoPautaIdCorretoQuandoTentoBuscarPautaAtivaPorIdEntaoRetornarPauta() {
         when(this.utils.obterDataAtual()).thenReturn(this.dataAtual);
         when(this.pautaRepository.findByIdAndSessaoVotacaoAtiva(1L, this.dataAtual))
                 .thenReturn(Optional.of(this.pautaMock));
@@ -131,14 +131,14 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve falhar buscar pauta ativa por id, ao passar inexiste ou de uma pauta com sessão inativa")
-    void givenTenhoPautaIdInvalidaWhenTentoBuscarPautaAtivaPorIdThenRetornarPauta() {
+    void dadoTenhoPautaIdInvalidaQuandoTentoBuscarPautaAtivaPorIdEntaoRetornarPauta() {
         when(this.utils.obterDataAtual()).thenReturn(this.dataAtual);
         assertThrows(NoSuchElementException.class, () -> this.pautaService.buscarPautaAtivaPorId(1L));
     }
 
     @Test
     @DisplayName("Deve buscar pauta com sessão votação não nula por id e usuario id validos")
-    void givenTenhoPautaIdEUsuarioIdCorretosWhenTentoBuscarPautaComSessaoVotacaoNaoNulaThenRetornarPauta() {
+    void dadoTenhoPautaIdEUsuarioIdCorretosQuandoTentoBuscarPautaComSessaoVotacaoNaoNulaEntaoRetornarPauta() {
         when(this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(1L, this.usuarioAdminMock.getId()))
                 .thenReturn(Optional.of(this.pautaMock));
         assertDoesNotThrow(() -> this.pautaService.buscarPautaPorIdEUsuarioIdComSessaoVotacaoNaoNula(1L,
@@ -147,7 +147,7 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve falhar ao buscar pauta com sessão votação não nula por id e usuario id invalidos")
-    void givenTenhoPautaIdEUsuarioIdInvalidosWhenTentoBuscarPautaComSessaoVotacaoNaoNulaThenRetornarErro() {
+    void dadoTenhoPautaIdEUsuarioIdInvalidosQuandoTentoBuscarPautaComSessaoVotacaoNaoNulaEntaoRetornarErro() {
         Long usuarioId = this.usuarioAdminMock.getId();
         assertThrows(NoSuchElementException.class,
                 () -> this.pautaService.buscarPautaPorIdEUsuarioIdComSessaoVotacaoNaoNula(1L, usuarioId));

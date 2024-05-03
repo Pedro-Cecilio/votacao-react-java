@@ -116,7 +116,7 @@ class SessaoVotacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível abrir sessão votação em uma pauta")
-    void givenPossuoAbrirVotacaoDtoCorretoWhenTentoAbrirSessaoVotacaoThenRetornarRespostaSessaoVotacao()
+    void dadoPossuoAbrirVotacaoDtoCorretoQuandoTentoAbrirSessaoVotacaoEntaoRetornarRespostaSessaoVotacao()
             throws Exception {
 
         AbrirVotacaoDto abrirVotacaoDto = new AbrirVotacaoDto(10L, this.pautaTransporte.getId());
@@ -136,7 +136,7 @@ class SessaoVotacaoControllerTest {
     @ParameterizedTest
     @MethodSource("dadosInvalidosAbrirVotacao")
     @DisplayName("Não deve ser possível abrir sessão votação em uma pauta ao passar dados inválidos")
-    void givenPossuoAbrirVotacaoDtoIncorretoWhenTentoAbrirSessaoVotacaoThenRetornarRespostaErro(Long minutos, Long pautaId, String mensagemErro) throws Exception {
+    void dadoPossuoAbrirVotacaoDtoIncorretoQuandoTentoAbrirSessaoVotacaoEntaoRetornarRespostaErro(Long minutos, Long pautaId, String mensagemErro) throws Exception {
 
         AbrirVotacaoDto abrirVotacaoDto = new AbrirVotacaoDto(minutos, pautaId);
         String json = this.abrirVotacaoDtoJson.write(abrirVotacaoDto).getJson();
@@ -160,7 +160,7 @@ class SessaoVotacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível votar internamente em uma pauta")
-    void givenPossuoFecharVotacaoDtoCorretoWhenTentoVotarInternamenteThenRetornarRespostaSessaoVotacao() throws Exception{
+    void dadoPossuoFecharVotacaoDtoCorretoQuandoTentoVotarInternamenteEntaoRetornarRespostaSessaoVotacao() throws Exception{
         SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5));
         pautaTransporte.setSessaoVotacao(sessaoVotacao);
 
@@ -182,7 +182,7 @@ class SessaoVotacaoControllerTest {
     }
     @Test
     @DisplayName("Deve ser possível votar externamente em uma pauta")
-    void givenPossuoFecharVotacaoDtoCorretoWhenTentoVotarExternamenteThenRetornarRespostaSessaoVotacao() throws Exception{
+    void dadoPossuoFecharVotacaoDtoCorretoQuandoTentoVotarExternamenteEntaoRetornarRespostaSessaoVotacao() throws Exception{
         SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5));
         pautaTransporte.setSessaoVotacao(sessaoVotacao);
 

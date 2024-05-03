@@ -65,7 +65,7 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Deve ser possível criar uma autenticacao")
-    void givenTenhoUmUsuarioCadastradoEDadosDeAutenticacaoWhenTentoCriarAutenticacaoThenRetornarAutenticacaoCriada() {
+    void dadoTenhoUmUsuarioCadastradoEDadosDeAutenticacaoQuandoTentoCriarAutenticacaoEntaoRetornarAutenticacaoCriada() {
         when(this.autenticacaoRepository.save(this.autenticacaoMock)).thenReturn(this.autenticacaoMock);
 
         this.autenticacaoService.criarAutenticacao(this.autenticacaoMock, this.usuarioMock);
@@ -75,28 +75,28 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Não deve ser possível criar uma autenticacao ao passar usuario nulo")
-    void givenTenhoUmUsuarioNuloEDadosDeAutenticacaoWhenTentoCriarAutenticacaoThenRetornarErro() {
+    void dadoTenhoUmUsuarioNuloEDadosDeAutenticacaoQuandoTentoCriarAutenticacaoEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class,
                 () -> this.autenticacaoService.criarAutenticacao(this.autenticacaoMock, null));
     }
 
     @Test
     @DisplayName("Não deve ser possível criar uma autenticacao ao passar autenticacao nula")
-    void givenTenhoUmUsuarioEDadosDeAutenticacaoNuloWhenTentoCriarAutenticacaoThenRetornarErro() {
+    void dadoTenhoUmUsuarioEDadosDeAutenticacaoNuloQuandoTentoCriarAutenticacaoEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class,
                 () -> this.autenticacaoService.criarAutenticacao(null, this.usuarioMock));
     }
 
     @Test
     @DisplayName("Não deve ser possível criar uma autenticacao ao passar cpf já cadastrado")
-    void givenTenhoUmCpfJaCadastradoWhenTentoCriarAutenticacaoThenRetornarErro() {
+    void dadoTenhoUmCpfJaCadastradoQuandoTentoCriarAutenticacaoEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class,
                 () -> this.autenticacaoService.criarAutenticacao(null, this.usuarioMock));
     }
 
     @Test
     @DisplayName("Deve ser possível buscar autenticação por email e senha")
-    void givenTenhoUmEmailEUmSenhaValidosWhenTentoBuscarPorEmailESenhaThenRetornarAutenticacao() {
+    void dadoTenhoUmEmailEUmSenhaValidosQuandoTentoBuscarPorEmailESenhaEntaoRetornarAutenticacao() {
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                 .thenReturn(Optional.of(this.autenticacaoMock));
 
@@ -112,7 +112,7 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Não deve ser possível buscar autenticação com email inexistente")
-    void givenTenhoUmEmailInexistenteWhenTentoBuscarPorEmailESenhaThenRetornarAutenticacao() {
+    void dadoTenhoUmEmailInexistenteQuandoTentoBuscarPorEmailESenhaEntaoRetornarAutenticacao() {
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail())).thenReturn(Optional.empty());
 
         String email = this.autenticacaoMock.getEmail();
@@ -124,7 +124,7 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Não deve ser possível buscar autenticação com senha invalida")
-    void givenTenhoUmaSenhaInvalidaWhenTentoBuscarPorEmailESenhaThenRetornarAutenticacao() {
+    void dadoTenhoUmaSenhaInvalidaQuandoTentoBuscarPorEmailESenhaEntaoRetornarAutenticacao() {
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                 .thenReturn(Optional.of(this.autenticacaoMock));
 
@@ -140,7 +140,7 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Deve ser possível validar senha da autenticação")
-    void givenTenhoSenhasCompativeisWhenTentoValidarSenhaThenValidarCorretamente() {
+    void dadoTenhoSenhasCompativeisQuandoTentoValidarSenhaEntaoValidarCorretamente() {
         when(this.passwordEncoder.matches(this.senhaValida, this.senhaValidaEncriptada))
                 .thenReturn(true);
 
@@ -151,7 +151,7 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Deve ser possível encriptar senha da autenticação ao passar senha válida")
-    void givenTenhoUmaSenhaValidaWhenTentoEncriptarSenhaThenRetornarSenhaEncriptada() {
+    void dadoTenhoUmaSenhaValidaQuandoTentoEncriptarSenhaEntaoRetornarSenhaEncriptada() {
         when(this.passwordEncoder.encode(this.senhaValida)).thenReturn(this.senhaValidaEncriptada);
 
         this.autenticacaoService.encriptarSenhaDaAutenticacao(this.senhaValida);
@@ -161,27 +161,27 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Não deve ser possível encriptar senha da autenticação ao passar senha nula")
-    void givenTenhoUmaSenhaNulaWhenTentoEncriptarSenhaThenRetornarErro() {
+    void dadoTenhoUmaSenhaNulaQuandoTentoEncriptarSenhaEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class, () -> this.autenticacaoService.encriptarSenhaDaAutenticacao(null));
     }
 
     @Test
     @DisplayName("Não deve ser possível encriptar senha com menos de 8 caracteres")
-    void givenTenhoUmaSenhaComMenosDe8CaracteresWhenTentoEncriptarSenhaThenRetornarErro() {
+    void dadoTenhoUmaSenhaComMenosDe8CaracteresQuandoTentoEncriptarSenhaEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class,
                 () -> this.autenticacaoService.encriptarSenhaDaAutenticacao("1234567"));
     }
 
     @Test
     @DisplayName("Não deve ser possível encriptar senha da autenticação ao passar senha vazia")
-    void givenTenhoUmaSenhaVaziaWhenTentoEncriptarSenhaThenRetornarErro() {
+    void dadoTenhoUmaSenhaVaziaQuandoTentoEncriptarSenhaEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class,
                 () -> this.autenticacaoService.encriptarSenhaDaAutenticacao("   "));
     }
 
     @Test
     @DisplayName("Deve ser possível validar autenticação ao passar cpf e senha validos")
-    void givenTenhoUmCpfEUmaSenhaValidosWhenTentoValidarAutenticacaoPorCpfESenhaThenExecutarSemErros() {
+    void dadoTenhoUmCpfEUmaSenhaValidosQuandoTentoValidarAutenticacaoPorCpfESenhaEntaoExecutarSemErros() {
         when(this.autenticacaoRepository.findByCpf(this.usuarioMock.getCpf()))
                 .thenReturn(Optional.of(this.autenticacaoMock));
 
@@ -194,7 +194,7 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Não deve ser possível validar autenticação ao passar cpf não cadastrado")
-    void givenTenhoUmCpfNaoCadastradoWhenTentoValidarAutenticacaoPorCpfESenhaThenRetornarErro() {
+    void dadoTenhoUmCpfNaoCadastradoQuandoTentoValidarAutenticacaoPorCpfESenhaEntaoRetornarErro() {
         String cpf = this.usuarioMock.getCpf();
 
         when(this.autenticacaoRepository.findByCpf(cpf))
@@ -206,7 +206,7 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Não deve ser possível validar autenticação ao passar senha incompatível")
-    void givenTenhoSenhaIncompativelWhenTentoValidarAutenticacaoPorCpfESenhaThenRetornarErro() {
+    void dadoTenhoSenhaIncompativelQuandoTentoValidarAutenticacaoPorCpfESenhaEntaoRetornarErro() {
         String cpf = this.usuarioMock.getCpf();
 
         when(this.autenticacaoRepository.findByCpf(this.usuarioMock.getCpf()))
@@ -221,7 +221,7 @@ class AutenticacaoServiceTest {
 
     @Test
     @DisplayName("Deve ser possível verificar se email esta cadastrado e retornar true ao encontrar")
-    void givenTenhoEmailCadastradoWhenVerificoSeEstaCadastradoRetornarTrue(){
+    void dadoTenhoEmailCadastradoQuandoVerificoSeEstaCadastradoRetornarTrue(){
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                 .thenReturn(Optional.of(this.autenticacaoMock));
 
@@ -232,7 +232,7 @@ class AutenticacaoServiceTest {
     }
     @Test
     @DisplayName("Deve ser possível verificar se email esta cadastrado e retornar false ao não encontrar")
-    void givenTenhoEmailNaoCadastradoWhenVerificoSeEstaCadastradoRetornarTrue(){
+    void dadoTenhoEmailNaoCadastradoQuandoVerificoSeEstaCadastradoRetornarTrue(){
         when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                 .thenReturn(Optional.empty());
 

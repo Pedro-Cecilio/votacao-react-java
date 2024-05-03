@@ -33,7 +33,7 @@ class AutenticacaoTest {
 
     @Test
     @DisplayName("Deve ser possível setar um email corretamente")
-    void givenPossuoUmEmailComFormatoValidoWhenTentoSetarEmailThenDefinirNovoEmail(){
+    void dadoPossuoUmEmailComFormatoValidoQuandoTentoSetarEmailEntaoDefinirNovoEmail(){
         assertDoesNotThrow(()->this.autenticacaoMock.setEmail(this.emailValido));
         assertEquals(this.emailValido, this.autenticacaoMock.getEmail());
     }
@@ -43,13 +43,13 @@ class AutenticacaoTest {
     @ParameterizedTest
     @MethodSource("com.dbserver.votacaoBackend.testUtils.DadosTestesParametrizados#dadosInvalidosParaSetarEmail")
     @DisplayName("Deve ser falhar ao setar um email com dado invalido")
-    void givenPossuoUmEmailInvalidoWhenTentoSetarEmailThenRetornarUmaExcecao(String emailInvalido){
+    void dadoPossuoUmEmailInvalidoQuandoTentoSetarEmailEntaoRetornarUmaExcecao(String emailInvalido){
         assertThrows(IllegalArgumentException.class, ()->this.autenticacaoMock.setEmail(emailInvalido));
     }
 
     @Test
     @DisplayName("Deve ser possível setar uma senha corretamente")
-    void givenPossuoUmaSenhaComFormatoValidoWhenTentoSetarSenhaThenDefinirNovaSenha(){ 
+    void dadoPossuoUmaSenhaComFormatoValidoQuandoTentoSetarSenhaEntaoDefinirNovaSenha(){ 
         assertDoesNotThrow(()->this.autenticacaoMock.setSenha(this.senhaValida));
         assertEquals(this.senhaValida, this.autenticacaoMock.getSenha());
     }
@@ -58,7 +58,7 @@ class AutenticacaoTest {
     @ParameterizedTest
     @MethodSource("com.dbserver.votacaoBackend.testUtils.DadosTestesParametrizados#dadosInvalidosParaSetarSenha")
     @DisplayName("Deve falhar ao setar uma senha com dado inválido")
-    void givenPossuoUmaSenhaInvalidaWhenTentoSetarSenhaThenRetornarUmaExcecao(String senhaInvalida) {
+    void dadoPossuoUmaSenhaInvalidaQuandoTentoSetarSenhaEntaoRetornarUmaExcecao(String senhaInvalida) {
         assertThrows(IllegalArgumentException.class, () -> this.autenticacaoMock.setSenha(senhaInvalida));
     }
 }

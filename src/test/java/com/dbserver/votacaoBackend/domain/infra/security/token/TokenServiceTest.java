@@ -35,7 +35,7 @@ class TokenServiceTest {
 
     @Test
     @DisplayName("Deve ser possível criar um token ao passar uma autenticação valida")
-    void givenPossuoUmaAutenticacaoValidaWhenTentoCriarTokenThenRetornarToken() {
+    void dadoPossuoUmaAutenticacaoValidaQuandoTentoCriarTokenEntaoRetornarToken() {
 
         String token = this.tokenService.gerarToken(this.autenticacao);
         assertNotNull(token);
@@ -43,7 +43,7 @@ class TokenServiceTest {
 
     @Test
     @DisplayName("Deve falhar ao tentar criar um token com autenticação sem usuário")
-    void givenPossuoUmaAutenticacaoSemUsuarioWhenTentoCriarTokenThenRetornarErro() {
+    void dadoPossuoUmaAutenticacaoSemUsuarioQuandoTentoCriarTokenEntaoRetornarErro() {
         Autenticacao autenticacao = new Autenticacao("example@example.com", "senha123");
 
         assertThrows(IllegalArgumentException.class, () -> this.tokenService.gerarToken(autenticacao));
@@ -51,13 +51,13 @@ class TokenServiceTest {
 
     @Test
     @DisplayName("Deve falhar ao tentar criar um token com autenticação nula")
-    void givenPossuoUmaAutenticacaoNulaWhenTentoCriarTokenThenRetornarErro() {
+    void dadoPossuoUmaAutenticacaoNulaQuandoTentoCriarTokenEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class, () -> this.tokenService.gerarToken(null));
     }
 
     @Test
     @DisplayName("Deve ser possível validar um token corretamente")
-    void givenPossuoUmTokenValidoWhenTentoValidarTokenThenRetornarToken() {
+    void dadoPossuoUmTokenValidoQuandoTentoValidarTokenEntaoRetornarToken() {
 
         String token = this.tokenService.gerarToken(this.autenticacao);
         String resposta = this.tokenService.validarToken(token);

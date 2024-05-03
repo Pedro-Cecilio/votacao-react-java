@@ -77,7 +77,7 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível realizar login corretamente")
-    void givenPossuoDadosDeAutenticacaCorretosoWhenTentoRealizarLoginThenRetornarAutenticacaoRespostaDto()
+    void dadoPossuoDadosDeAutenticacaCorretosoQuandoTentoRealizarLoginEntaoRetornarAutenticacaoRespostaDto()
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto(this.autenticacao.getEmail(), this.senhaCorreta);
@@ -95,7 +95,7 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Não deve ser possível realizar login com senha incorreta")
-    void givenPossuoUmaSenhaIncorretaWhenTentoRealizarLoginThenRetornarRespostaErro()
+    void dadoPossuoUmaSenhaIncorretaQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto(this.autenticacao.getEmail(), "senhaIncorreta");
@@ -112,7 +112,7 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Não deve ser possível realizar login com email inexistente")
-    void givenPossuoUmaEmailInexistenteWhenTentoRealizarLoginThenRetornarRespostaErro()
+    void dadoPossuoUmaEmailInexistenteQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto("emailInexistente@email.com", this.senhaCorreta);
@@ -130,7 +130,7 @@ class AutenticacaoControllerTest {
     @ParameterizedTest
     @DisplayName("Testes de login com dados inválidos")
     @MethodSource("dadosInvalidosParaRealizarLogin")
-    void givenAutenticacaoDtoDadosInvalidosWhenTentoRealizarLoginThenRetornarRespostaErro(String email, String senha,
+    void dadoAutenticacaoDtoDadosInvalidosQuandoTentoRealizarLoginEntaoRetornarRespostaErro(String email, String senha,
             String mensagemErro)
             throws Exception {
 
@@ -158,7 +158,7 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível validar usuário existente com dados para validar voto externo validos ao tentar votar externamente")
-    void givenPossuoDadosValidarVotoExternoCorretosWhenTentoValidarVotoExternoThenRetornarValidarVotoExternoComTrue()
+    void dadoPossuoDadosValidarVotoExternoCorretosQuandoTentoValidarVotoExternoEntaoRetornarValidarVotoExternoComTrue()
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 
@@ -175,7 +175,7 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Não deve ser possível validar usuário existente com ao passar cpf não cadastrado ao tentar votar externamente")
-    void givenCpfNaoCadastradoWhenTentoValidarVotoExternoThenRetornarRespostaErro()
+    void dadoCpfNaoCadastradoQuandoTentoValidarVotoExternoEntaoRetornarRespostaErro()
             throws Exception {
         String cpf = "33322211100";
 
@@ -193,7 +193,7 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Não deve ser possível validar usuário existente com ao passar senha incorreta ao tentar votar externamente")
-    void givenSenhaIncorretaWhenTentoValidarVotoExternoThenRetornarRespostaErro()
+    void dadoSenhaIncorretaQuandoTentoValidarVotoExternoEntaoRetornarRespostaErro()
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 

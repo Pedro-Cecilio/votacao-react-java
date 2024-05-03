@@ -77,7 +77,7 @@ class UsuarioControllerTest {
 
     @Test
     @DisplayName("Deve ser possível criar um usuário corretamente")
-    void givenCriarUsuarioDtoCorretoWhenTentoCriarUsuarioThenRetornarCriarUsuarioRespostaDto() throws Exception {
+    void dadoCriarUsuarioDtoCorretoQuandoTentoCriarUsuarioEntaoRetornarCriarUsuarioRespostaDto() throws Exception {
         this.autenticacaoDto = new AutenticacaoDto("example2@example.com",
                 "senha123");
 
@@ -166,7 +166,7 @@ class UsuarioControllerTest {
 
     @Test
     @DisplayName("Deve ser possível buscar usuário logado")
-    void givenEstouAutenticadoWhenTentoBuscarUsuarioLogadoThenRetornarUsuarioRespostaDto() throws Exception {
+    void dadoEstouAutenticadoQuandoTentoBuscarUsuarioLogadoEntaoRetornarUsuarioRespostaDto() throws Exception {
 
         String nome = this.usuarioCadastrado.getNome();
         String sobrenome = this.usuarioCadastrado.getSobrenome();
@@ -187,7 +187,7 @@ class UsuarioControllerTest {
     
     @Test
     @DisplayName("Deve retornar true ao verificar se usuario existe ao passar cpf cadastrado")
-    void givenPossuoCpfDeUmUsuarioExistenteWhenVerificoSeEleExisteThenRetornarVerificarSeUsuarioExisteRespostaDtoTrue() throws Exception{
+    void dadoPossuoCpfDeUmUsuarioExistenteQuandoVerificoSeEleExisteEntaoRetornarVerificarSeUsuarioExisteRespostaDtoTrue() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/usuario/existe?cpf=" + this.usuarioCadastrado.getCpf())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -197,7 +197,7 @@ class UsuarioControllerTest {
     }
     @Test
     @DisplayName("Deve retornar false ao verificar se usuário existe ao passar cpf não cadastrado")
-    void givenPossuoCpfDeUmUsuarioInexistenteWhenVerificoSeEleExisteThenRetornarVerificarSeUsuarioExisteRespostaDtoFalse() throws Exception{
+    void dadoPossuoCpfDeUmUsuarioInexistenteQuandoVerificoSeEleExisteEntaoRetornarVerificarSeUsuarioExisteRespostaDtoFalse() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/usuario/existe?cpf=" + "11122233344"))
                 .andExpect(status().isOk())
@@ -205,7 +205,7 @@ class UsuarioControllerTest {
     }
     @Test
     @DisplayName("Deve retornar false ao verificar se usuário existe ao não informar cpf")
-    void givenNaoPossuoCpfWhenVerificoSeEleExisteThenRetornarVerificarSeUsuarioExisteRespostaDtoFalse() throws Exception{
+    void dadoNaoPossuoCpfQuandoVerificoSeEleExisteEntaoRetornarVerificarSeUsuarioExisteRespostaDtoFalse() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/usuario/existe"))
                 .andExpect(status().isOk())

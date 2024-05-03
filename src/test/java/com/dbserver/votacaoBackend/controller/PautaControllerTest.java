@@ -93,7 +93,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Deve ser possível criar uma pauta corretamente")
-        void givenTenhoCriarPautaDtoComDadosCorretosWhenTentoCriarPautaThenRetornarRespostaPautaDto() throws Exception {
+        void dadoTenhoCriarPautaDtoComDadosCorretosQuandoTentoCriarPautaEntaoRetornarRespostaPautaDto() throws Exception {
                 this.criarPautaDto = new CriarPautaDto("Você sabe dirigir?", Categoria.TRANSPORTE.toString());
                 String json = this.criarPautaDtoJson.write(criarPautaDto).getJson();
 
@@ -115,7 +115,7 @@ class PautaControllerTest {
         @ParameterizedTest
         @MethodSource("dadosInvalidosCriarPauta")
         @DisplayName("Deve ser possível criar uma pauta corretamente")
-        void givenTenhoCriarPautaDtoComDadosInvalidosWhenTentoCriarPautaThenRetornarRespostaErro(String assunto,
+        void dadoTenhoCriarPautaDtoComDadosInvalidosQuandoTentoCriarPautaEntaoRetornarRespostaErro(String assunto,
                         String categoria, String mensagemErro) throws Exception {
 
                 this.criarPautaDto = new CriarPautaDto(assunto, categoria);
@@ -146,7 +146,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("deve ser possível lista pautas do usuário logado")
-        void givenNaoEnvioCategoriaWhenBuscoTodasMinhasPautasWhenRetornarListaDePautas() throws Exception {
+        void dadoNaoEnvioCategoriaQuandoBuscoTodasMinhasPautasQuandoRetornarListaDePautas() throws Exception {
                 Pauta pautaSaude = new Pauta("Você está bem de saúde?", Categoria.SAUDE.toString(),
                                 this.usuarioCadastrado);
 
@@ -172,7 +172,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("deve ser possível lista pautas do usuário logado")
-        void givenEnvioCategoriaWhenBuscoTodasMinhasPautasWhenRetornarListaDePautas() throws Exception {
+        void dadoEnvioCategoriaQuandoBuscoTodasMinhasPautasQuandoRetornarListaDePautas() throws Exception {
                 Pauta pautaSaude = new Pauta("Você está bem de saúde?", Categoria.SAUDE.toString(),
                                 this.usuarioCadastrado);
 
@@ -198,7 +198,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("deve ser possível listar todas pautas ativas")
-        void givenEstouLogadoWhenBuscoTodasPautasAtivasWhenRetornarListaDePautas() throws Exception {
+        void dadoEstouLogadoQuandoBuscoTodasPautasAtivasQuandoRetornarListaDePautas() throws Exception {
                 Pauta pautaSaude = new Pauta("Você está bem de saúde?", Categoria.SAUDE.toString(),
                                 this.usuarioCadastrado);
 
@@ -230,7 +230,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("deve ser possível buscar pauta ativa por Id")
-        void givenPossuoPautaIdWhenBuscoAtivaPorIdWhenRetornarRespostaPautaDto() throws Exception {
+        void dadoPossuoPautaIdQuandoBuscoAtivaPorIdQuandoRetornarRespostaPautaDto() throws Exception {
                 Pauta pautaTransporte = new Pauta("Sabe dirigir?", Categoria.TRANSPORTE.toString(),
                                 this.usuarioCadastrado);
 
@@ -254,7 +254,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Não deve ser possível buscar pauta ativa por Id ao passar id de pauta não ativa")
-        void givenPossuoPautaIdInvalidoWhenBuscoAtivaPorIdWhenRetornarRespostaErro() throws Exception {
+        void dadoPossuoPautaIdInvalidoQuandoBuscoAtivaPorIdQuandoRetornarRespostaErro() throws Exception {
 
                 mockMvc.perform(MockMvcRequestBuilders
                                 .get("/pauta/{id}", 50)
@@ -267,7 +267,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Deve ser possível buscar detalhes de uma pauta ")
-        void givenPossuoPautaIdWhenBuscoDetalhesPautaWhenRetornarRespostaPautaDto() throws Exception {
+        void dadoPossuoPautaIdQuandoBuscoDetalhesPautaQuandoRetornarRespostaPautaDto() throws Exception {
                 Pauta pautaTransporte = new Pauta("Sabe dirigir?", Categoria.TRANSPORTE.toString(),
                                 this.usuarioCadastrado);
 
@@ -289,7 +289,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Não deve ser possível buscar detalhes de uma pauta ao passar id inválido ou de pauta não ativa")
-        void givenPossuoPautaIdInvalidoWhenBuscoDetalhesPautaWhenRetornarRespostaErro() throws Exception {
+        void dadoPossuoPautaIdInvalidoQuandoBuscoDetalhesPautaQuandoRetornarRespostaErro() throws Exception {
                 mockMvc.perform(MockMvcRequestBuilders
                                 .get("/pauta/detalhes/{id}", 1)
                                 .header("Authorization", "Bearer " + this.token)
