@@ -35,10 +35,10 @@ public class PautaServiceImpl implements PautaService {
         if(usuarioId == null) throw new IllegalArgumentException("Id do usuário não deve ser nulo.");
 
         if (categoria != null) {
-            return this.pautaRepository.findAllByUsuarioIdAndCategoria(usuarioId, categoria);
+            return this.pautaRepository.findAllByUsuarioIdAndCategoriaOrderByCreatedAtDesc(usuarioId, categoria);
         }
 
-        return this.pautaRepository.findAllByUsuarioId(usuarioId);
+        return this.pautaRepository.findAllByUsuarioIdOrderByCreatedAtDesc(usuarioId);
     }
 
     @Override

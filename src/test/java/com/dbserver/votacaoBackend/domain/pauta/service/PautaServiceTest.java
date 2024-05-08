@@ -71,7 +71,7 @@ class PautaServiceTest {
     @DisplayName("Deve ser possível todas buscar pautas por usuarioId sem passar categoria")
     void dadoTenhoUsuarioIdCorretoECategoriaNullQuandoTentoBuscarPautasPorUsuarioIdEntaoRetornarListaDePautas() {
         this.pautaService.buscarPautasPorUsuarioId(this.usuarioAdminMock.getId(), null);
-        verify(this.pautaRepository).findAllByUsuarioId(this.usuarioAdminMock.getId());
+        verify(this.pautaRepository).findAllByUsuarioIdOrderByCreatedAtDesc(this.usuarioAdminMock.getId());
     }
 
     @Test
@@ -79,7 +79,7 @@ class PautaServiceTest {
     void dadoTenhoUsuarioIdECategoriaCorretosCorretoQuandoTentoBuscarPautasPorUsuarioIdEntaoRetornarListaDePautas() {
         this.pautaService.buscarPautasPorUsuarioId(this.usuarioAdminMock.getId(),
                 this.pautaMock.getCategoria());
-        verify(this.pautaRepository).findAllByUsuarioIdAndCategoria(this.usuarioAdminMock.getId(), this.pautaMock.getCategoria());
+        verify(this.pautaRepository).findAllByUsuarioIdAndCategoriaOrderByCreatedAtDesc(this.usuarioAdminMock.getId(), this.pautaMock.getCategoria());
     }
 
     @Test

@@ -14,16 +14,16 @@ import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 
 @Repository
 public interface PautaRepository extends JpaRepository<Pauta, Long> {
-    List<Pauta> findAllByUsuarioId(Long usuarioId);
+    List<Pauta> findAllByUsuarioIdOrderByCreatedAtDesc(Long usuarioId);
 
-    List<Pauta> findAllByUsuarioIdAndCategoria(Long usuarioId, Categoria categoria);
+    List<Pauta> findAllByUsuarioIdAndCategoriaOrderByCreatedAtDesc(Long usuarioId, Categoria categoria);
 
     Optional<Pauta> findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    @Query("SELECT p FROM Pauta p WHERE p.categoria = :categoria AND p.sessaoVotacao.dataFechamento > :dataAtual")
+    @Query("SELECT p FROM Pauta p WHERE p.categoria = :categoria AND p.sessaoVotacao.dataFechamento > :dataAtual ORDER BY p.sessaoVotacao.dataAbertura DESC")
     List<Pauta> findAllByCategoriaAndSessaoVotacaoAtiva(@Param("categoria") Categoria categoria, @Param("dataAtual") LocalDateTime dataAtual);
 
-    @Query("SELECT p FROM Pauta p WHERE p.sessaoVotacao.dataFechamento > :dataAtual")
+    @Query("SELECT p FROM Pauta p WHERE p.sessaoVotacao.dataFechamento > :dataAtual ORDER BY p.sessaoVotacao.dataAbertura DESC")
     List<Pauta> findAllBySessaoVotacaoAtiva(@Param("dataAtual") LocalDateTime dataAtual);
 
     @Query("SELECT p FROM Pauta p WHERE p.id = :id AND p.sessaoVotacao.dataFechamento > :dataAtual")
