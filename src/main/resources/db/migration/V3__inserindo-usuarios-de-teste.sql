@@ -5,6 +5,6 @@ INSERT INTO usuario (nome, sobrenome, cpf, admin)
 VALUES ('Usuario', 'Tester', '12345678912', FALSE);
 
 INSERT INTO autenticacao (email, senha, usuario_id)
-VALUES ('restassuredAdmin@email.com', '$2a$10$2dbA9zTcOkI0UTnX4CyE3uQCYZd/FqWaF7pvxRXkj9/TPiMwZAEmu', (SELECT id FROM usuario WHERE cpf = '12345678911'));
+VALUES ('testesAdmin@email.com', '$2a$10$Y9dFckNplor4dLJzmuDZ.OFOi0HAF5tdjnqJ.DzaBegrvXciTWrbm', (SELECT id FROM usuario WHERE cpf = '12345678911'));
 INSERT INTO autenticacao (email, senha, usuario_id)
-VALUES ('restassuredUsuario@email.com', '$2a$10$2dbA9zTcOkI0UTnX4CyE3uQCYZd/FqWaF7pvxRXkj9/TPiMwZAEmu', (SELECT id FROM usuario WHERE cpf = '12345678912'));
+VALUES ('testesUsuario@email.com', '$2a$10$Y9dFckNplor4dLJzmuDZ.OFOi0HAF5tdjnqJ.DzaBegrvXciTWrbm', (SELECT id FROM usuario WHERE cpf = '12345678912'));
