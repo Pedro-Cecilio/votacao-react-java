@@ -36,7 +36,6 @@ public class AutenticacaoServiceImpl implements AutenticacaoService {
                 .orElseThrow(() -> new BadCredentialsException("Dados de login inválidos."));
 
         boolean senhaValida = this.validarSenhaDaAutenticacao(senha, autenticacao.getSenha());
-
         if(!senhaValida) {
             throw new BadCredentialsException("Dados de login inválidos.");
         }
@@ -46,6 +45,7 @@ public class AutenticacaoServiceImpl implements AutenticacaoService {
         
     @Override
     public boolean validarSenhaDaAutenticacao(String senhaEsperada, String senhaEncriptada) {
+        if(senhaEsperada == null || senhaEncriptada == null) return false;
         return this.passwordEncoder.matches(senhaEsperada, senhaEncriptada);
     }
 

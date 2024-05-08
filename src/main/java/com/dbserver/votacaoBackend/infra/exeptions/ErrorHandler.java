@@ -33,7 +33,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<RespostaErro> handleIllegalArgumentException(IllegalArgumentException e) {
+    public ResponseEntity<RespostaErro> handleIllegalArgumentException(IllegalArgumentException e) {    
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RespostaErro(e.getMessage()));
     }
 
