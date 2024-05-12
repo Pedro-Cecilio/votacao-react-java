@@ -43,7 +43,7 @@ public class SecurityConfig {
                         
                         .requestMatchers(HttpMethod.POST, "/votacao/abrir").hasAuthority(AUTORIDADE_ADMIN)
 
-                        .requestMatchers(HttpMethod.GET, "/votacao/votoInterno").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/votacao/votoInterno").authenticated()
 
                         .anyRequest().permitAll())
                 .cors(cors -> cors.configurationSource(this.corsConfigurationSource()))

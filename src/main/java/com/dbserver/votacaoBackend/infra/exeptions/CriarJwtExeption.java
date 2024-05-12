@@ -1,4 +1,4 @@
-package com.dbserver.votacaoBackend.infra.exeptions.novas;
+package com.dbserver.votacaoBackend.infra.exeptions;
 
 public class CriarJwtExeption extends RuntimeException {
     public CriarJwtExeption() {

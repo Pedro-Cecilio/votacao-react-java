@@ -12,7 +12,10 @@ public record RespostaPautaDto(
     UsuarioRespostaDto usuario,
     RespostaSessaoVotacaoDto sessaoVotacao
 ) {
-    public RespostaPautaDto(Pauta pauta, RespostaSessaoVotacaoDto respostaSessaoVotacao){
-        this(pauta.getId(), pauta.getAssunto(), pauta.getCategoria(), new UsuarioRespostaDto(pauta.getUsuario()), respostaSessaoVotacao);
+    public RespostaPautaDto(Pauta pauta){
+        this(pauta.getId(), pauta.getAssunto(), pauta.getCategoria(), new UsuarioRespostaDto(pauta.getUsuario()), new RespostaSessaoVotacaoDto(pauta.getSessaoVotacao()));
+    }
+    public RespostaPautaDto(Pauta pauta, RespostaSessaoVotacaoDto sessaoVotacao){
+        this(pauta.getId(), pauta.getAssunto(), pauta.getCategoria(), new UsuarioRespostaDto(pauta.getUsuario()), sessaoVotacao);
     }
 }

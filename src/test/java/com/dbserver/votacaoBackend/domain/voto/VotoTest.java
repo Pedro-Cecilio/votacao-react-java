@@ -29,18 +29,18 @@ class VotoTest {
 
     @Test
     @DisplayName("Deve ser possível definir cpf valido")
-    void givenPossuoCpfValidoWhenSetarCpfThenSetarCpf() {
+    void dadoPossuoCpfValidoQuandoSetarCpfEntaoSetarCpf() {
         assertDoesNotThrow(() -> this.votoMock.setCpf(this.novoCpfValido));
         assertEquals(this.novoCpfValido, this.votoMock.getCpf());
     }
     @Test
     @DisplayName("Deve retornar um erro ao tentar definir cpf inválido")
-    void givenPossuoCpfInalidoWhenSetarCpfThenRetornarErro() {
+    void dadoPossuoCpfInalidoQuandoSetarCpfEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class, () -> this.votoMock.setCpf(this.novoCpfInvalido));
     }
     @Test
     @DisplayName("Deve retornar um erro ao tentar definir cpf nulo")
-    void givenPossuoCpfNuloWhenSetarCpfThenRetornarErro() {
+    void dadoPossuoCpfNuloQuandoSetarCpfEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class, () -> this.votoMock.setCpf(null));
     }
 

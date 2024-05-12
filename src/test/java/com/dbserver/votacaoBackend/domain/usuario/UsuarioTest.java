@@ -34,7 +34,7 @@ class UsuarioTest {
 
     @Test
     @DisplayName("Deve ser possível setar nome de Usuario corretemante")
-    void givenPossuoNomeValidoWhenSetarNomeThenSetarNome(){
+    void dadoPossuoNomeValidoQuandoSetarNomeEntaoSetarNome(){
         assertDoesNotThrow(()-> this.usuarioMock.setNome(this.nomeValido));
         assertEquals(this.nomeValido, this.usuarioMock.getNome());
     }
@@ -42,13 +42,13 @@ class UsuarioTest {
     @ParameterizedTest
     @MethodSource("com.dbserver.votacaoBackend.testUtils.DadosTestesParametrizados#dadosInvalidosParaSetarNomeDeUsuario")
     @DisplayName("Não deve ser possível setar nome ao passar dado invalido")
-    void givenPossuoNomeInvalidoWhenTentoSetarNomeThenRetornarUmErro(String nomeInvalido){
+    void dadoPossuoNomeInvalidoQuandoTentoSetarNomeEntaoRetornarUmErro(String nomeInvalido){
         assertThrows(IllegalArgumentException.class, ()->this.usuarioMock.setNome(nomeInvalido));
     }
 
     @Test
     @DisplayName("Deve ser possível setar sobrenome de Usuario corretemante")
-    void givenPossuoSobrenomeValidoWhenSetarSobrenomeThenSetarSobrenome(){
+    void dadoPossuoSobrenomeValidoQuandoSetarSobrenomeEntaoSetarSobrenome(){
         assertDoesNotThrow(()-> this.usuarioMock.setSobrenome(this.sobrenomeValido));
         assertEquals(this.sobrenomeValido, this.usuarioMock.getSobrenome());
     }
@@ -56,13 +56,13 @@ class UsuarioTest {
     @ParameterizedTest
     @MethodSource("com.dbserver.votacaoBackend.testUtils.DadosTestesParametrizados#dadosInvalidosParaSetarSobrenomeDeUsuario")
     @DisplayName("Não deve ser possível setar sobrenome ao passar dado invalido")
-    void givenPossuoSobrenomeInvalidoWhenTentoSetarSobrenomeThenRetornarUmErro(String sobrenomeInvalido){
+    void dadoPossuoSobrenomeInvalidoQuandoTentoSetarSobrenomeEntaoRetornarUmErro(String sobrenomeInvalido){
         assertThrows(IllegalArgumentException.class, ()->this.usuarioMock.setNome(sobrenomeInvalido));
     }
 
     @Test
     @DisplayName("Deve ser possível setar cpf de Usuario corretemante")
-    void givenPossuoCpfValidoWhenSetarCpfThenSetarCpf(){
+    void dadoPossuoCpfValidoQuandoSetarCpfEntaoSetarCpf(){
         assertDoesNotThrow(()-> this.usuarioMock.setCpf(this.cpfValido));
         assertEquals(this.cpfValido, this.usuarioMock.getCpf());
     }
@@ -70,7 +70,7 @@ class UsuarioTest {
     @ParameterizedTest
     @MethodSource("com.dbserver.votacaoBackend.testUtils.DadosTestesParametrizados#dadosInvalidosParaSetarCpfDeUsuario")
     @DisplayName("Não deve ser possível setar cpf ao passar dado invalido")
-    void givenPossuoCpfInvalidoWhenTentoSetarCpfThenRetornarUmErro(String cpfInvalido){
+    void dadoPossuoCpfInvalidoQuandoTentoSetarCpfEntaoRetornarUmErro(String cpfInvalido){
         assertThrows(IllegalArgumentException.class, ()->this.usuarioMock.setCpf(cpfInvalido));
     }
 }

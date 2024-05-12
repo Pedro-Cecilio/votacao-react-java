@@ -11,16 +11,16 @@ import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutenticacaoDto;
 import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutenticacaoRespostaDto;
 import com.dbserver.votacaoBackend.domain.autenticacao.dto.ValidarVotoExternoDto;
 import com.dbserver.votacaoBackend.domain.autenticacao.dto.ValidarVotoExternoRespostaDto;
-import com.dbserver.votacaoBackend.domain.autenticacao.service.IAutenticacaoService;
+import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoService;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
 public class AutenticacaoController {
-    private IAutenticacaoService autenticacaoService;
+    private AutenticacaoService autenticacaoService;
     private TokenService tokenService;
-    public AutenticacaoController(IAutenticacaoService autenticacaoService, TokenService tokenService){
+    public AutenticacaoController(AutenticacaoService autenticacaoService, TokenService tokenService){
         this.autenticacaoService = autenticacaoService;
         this.tokenService = tokenService;
     }
@@ -28,15 +28,20 @@ public class AutenticacaoController {
     @PostMapping("/login")
     public ResponseEntity<AutenticacaoRespostaDto> autenticarUsuario(@Valid @RequestBody AutenticacaoDto dto) {
         Autenticacao autenticacao = this.autenticacaoService.buscarAutenticacaoPorEmailESenha(dto.email(), dto.senha());
+
         String token = this.tokenService.gerarToken(autenticacao);
+
         AutenticacaoRespostaDto resposta = new AutenticacaoRespostaDto(token, autenticacao.getUsuario().isAdmin());
+
         return ResponseEntity.status(HttpStatus.OK).body(resposta);
     }
 
     @PostMapping("/votoExterno")
     public ResponseEntity<ValidarVotoExternoRespostaDto> validarUsuarioVotoExterno(@RequestBody ValidarVotoExternoDto dto) {
         this.autenticacaoService.validarAutenticacaoPorCpfESenha(dto.cpf(), dto.senha());
+
         ValidarVotoExternoRespostaDto resposta = new ValidarVotoExternoRespostaDto(true);
+        
         return ResponseEntity.ok(resposta);
     }
     

@@ -37,43 +37,43 @@ class PautaTest {
     
     @Test
     @DisplayName("Deve ser possível setar um usuário corretamente")
-    void givenTenhoUmUsuarioValidoWhenTentoSetarUsuarioThenSetarUsuario(){
+    void dadoTenhoUmUsuarioValidoQuandoTentoSetarUsuarioEntaoSetarUsuario(){
         assertDoesNotThrow(()-> this.pautaMock.setUsuario(usuarioSetMock));
         assertEquals(this.usuarioSetMock.getId(), this.pautaMock.getUsuario().getId());
     }
     @Test
     @DisplayName("Não deve ser possível setar um usuário nulo")
-    void givenTenhoUmUsuarioNuloWhenTentoSetarUsuarioThenRetornarErro(){
+    void dadoTenhoUmUsuarioNuloQuandoTentoSetarUsuarioEntaoRetornarErro(){
         assertThrows(IllegalArgumentException.class, ()-> this.pautaMock.setUsuario(null));
     }
     @Test
     @DisplayName("Não deve ser possível setar um usuário não admin")
-    void givenTenhoUmUsuarioQueNaoEAdminWhenTentoSetarUsuarioThenRetornarErro(){    
+    void dadoTenhoUmUsuarioQueNaoEAdminQuandoTentoSetarUsuarioEntaoRetornarErro(){    
         assertThrows(IllegalArgumentException.class, ()-> this.pautaMock.setUsuario(this.usuarioNaoAdminMock));
     }
 
     @Test
     @DisplayName("Deve ser possível setar um assunto corretamente")
-    void givenTenhoUmAssuntoValidoWhenTentoSetarAssuntoThenSetarAssunto(){
+    void dadoTenhoUmAssuntoValidoQuandoTentoSetarAssuntoEntaoSetarAssunto(){
         assertDoesNotThrow(()-> this.pautaMock.setAssunto(this.assuntoValido));
         assertEquals(this.pautaMock.getAssunto(), this.pautaMock.getAssunto());
     }
 
     @Test
     @DisplayName("Deve ser possível setar um assunto vazio")
-    void givenTenhoUmAssuntoVazioWhenTentoSetarAssuntoThenRetornarErro(){
+    void dadoTenhoUmAssuntoVazioQuandoTentoSetarAssuntoEntaoRetornarErro(){
         assertThrows(IllegalArgumentException.class, ()-> this.pautaMock.setAssunto("  "));
     }
 
     @Test
     @DisplayName("Deve ser possível setar uma categoria corretamente")
-    void givenTenhoUmaCategoriaValidaWhenTentoSetarCategoriaThenSetarCategoria(){
+    void dadoTenhoUmaCategoriaValidaQuandoTentoSetarCategoriaEntaoSetarCategoria(){
         assertDoesNotThrow(()-> this.pautaMock.setCategoria(Categoria.EDUCACAO.toString()));
         assertEquals(this.pautaMock.getCategoria(), this.pautaMock.getCategoria());
     }
     @Test
     @DisplayName("Não deve ser possível setar uma categoria inválida")
-    void givenTenhoUmaCategoriaInvalidaWhenTentoSetarCategoriaThenRetornarErro(){
+    void dadoTenhoUmaCategoriaInvalidaQuandoTentoSetarCategoriaEntaoRetornarErro(){
         assertThrows(IllegalArgumentException.class, ()-> this.pautaMock.setCategoria(this.categoriaInvalida));
     }
  

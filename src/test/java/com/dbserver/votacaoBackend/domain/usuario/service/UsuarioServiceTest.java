@@ -25,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
-import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoService;
+import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServiceImpl;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 
@@ -33,11 +33,11 @@ import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
     @InjectMocks
-    private UsuarioService usuarioService;
+    private UsuarioServiceImpl usuarioService;
     @Mock
     private UsuarioRepository usuarioRepository;
     @Mock
-    private AutenticacaoService autenticacaoService;
+    private AutenticacaoServiceImpl autenticacaoService;
     @Mock
     private AutenticacaoRepository autenticacaoRepository;
     @Mock
@@ -70,11 +70,13 @@ class UsuarioServiceTest {
 
     @Test
     @DisplayName("Deve ser possível criar um Usuario corretamente")
-    void givenTenhoUmUsuarioEUmAutenticacaoComDadosCorretosWhenTentoCriarUsuarioThenRetornarUsuarioCriado() {
+    void dadoTenhoUmUsuarioEUmAutenticacaoComDadosCorretosQuandoTentoCriarUsuarioEntaoRetornarUsuarioCriado() {
         when(this.usuarioRepository.save(this.usuarioMock)).thenReturn(this.usuarioMock);
         when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoMock.getEmail())).thenReturn(false);
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+
         Usuario resposta = this.usuarioService.criarUsuario(usuarioMock, autenticacaoMock);
+
         verify(this.usuarioRepository, times(1)).save(this.usuarioMock);
         verify(this.autenticacaoService, times(1)).criarAutenticacao(this.autenticacaoMock, this.usuarioMock);
         assertEquals(this.usuarioMock.getId(), resposta.getId());
@@ -82,71 +84,84 @@ class UsuarioServiceTest {
 
     @Test
     @DisplayName("Não deve ser possível criar um Usuario passando ao passar cpf existente")
-    void givenTenhoUmCpfJaCadastradoWhenTentoCriarUsuarioThenRetornarUmErro() {
+    void dadoTenhoUmCpfJaCadastradoQuandoTentoCriarUsuarioEntaoRetornarUmErro() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+
         assertThrows(IllegalArgumentException.class,
                 () -> this.usuarioService.criarUsuario(this.usuarioMock, this.autenticacaoMock));
     }
     @Test
     @DisplayName("Não deve ser possível criar um Usuario passando ao passar email existente")
-    void givenTenhoUmEmailJaCadastradoWhenTentoCriarUsuarioThenRetornarUmErro() {
+    void dadoTenhoUmEmailJaCadastradoQuandoTentoCriarUsuarioEntaoRetornarUmErro() {
         when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoMock.getEmail())).thenReturn(true);
+
         assertThrows(IllegalArgumentException.class,
                 () -> this.usuarioService.criarUsuario(this.usuarioMock, this.autenticacaoMock));
     }
 
     @Test
     @DisplayName("Não deve ser possível criar um Usuario passando usuario nulo")
-    void givenTenhoUmUsuarioNuloWhenTentoCriarUsuarioThenRetornarUmErro() {
+    void dadoTenhoUmUsuarioNuloQuandoTentoCriarUsuarioEntaoRetornarUmErro() {
         assertThrows(IllegalArgumentException.class,
                 () -> this.usuarioService.criarUsuario(null, this.autenticacaoMock));
     }
 
     @Test
     @DisplayName("Não deve ser possível criar um Usuario passando autenticação nula")
-    void givenTenhoUmaAutenticacaoNulaWhenTentoCriarUsuarioThenRetornarUmErro() {
+    void dadoTenhoUmaAutenticacaoNulaQuandoTentoCriarUsuarioEntaoRetornarUmErro() {
         assertThrows(IllegalArgumentException.class, () -> this.usuarioService.criarUsuario(this.usuarioMock, null));
     }
 
     @Test
     @DisplayName("Deve ser possível buscar o usuário logado")
-    void givenTenhoUmUsuarioLogadoWhenTentoBuscarUsuarioLogadoThenRetornarUsuarioLogado() {
+    void dadoTenhoUmUsuarioLogadoQuandoTentoBuscarUsuarioLogadoEntaoRetornarUsuarioLogado() {
         SecurityContextHolder.setContext(this.securityContext);
+
         when(this.securityContext.getAuthentication()).thenReturn(this.securityAuthenticationMock);
         when(securityAuthenticationMock.getPrincipal()).thenReturn(this.usuarioMock);
+
         Usuario usuarioLogado = this.usuarioService.buscarUsuarioLogado();
+
         assertEquals(this.usuarioMock.getId(), usuarioLogado.getId());
     }
 
     @Test
     @DisplayName("Deve retornar true ao verificar se existe usuário ao passar cpf existente")
-    void givenTenhoUmCpfExistenteWhenTentoVerificarSeExisteUsuarioPorCpfThenRetornarTrue() {
+    void dadoTenhoUmCpfExistenteQuandoTentoVerificarSeExisteUsuarioPorCpfEntaoRetornarTrue() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+
         boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
+
         assertTrue(resposta);
     }
 
     @Test
     @DisplayName("Deve retornar false ao verificar se existe usuário ao passar cpf inexistente")
-    void givenTenhoUmCpfInexistenteWhenTentoVerificarSeExisteUsuarioPorCpfThenRetornarFalse() {
+    void dadoTenhoUmCpfInexistenteQuandoTentoVerificarSeExisteUsuarioPorCpfEntaoRetornarFalse() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+
         boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
+
         assertFalse(resposta);
     }
 
     @Test
     @DisplayName("Deve retornar usuário ao buscar usuario com cpf existete")
-    void givenTenhoUmCpfExistenteWhenTentoBuscarUsuarioPorCpfThenRetornarUsuario() {
+    void dadoTenhoUmCpfExistenteQuandoTentoBuscarUsuarioPorCpfEntaoRetornarUsuario() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+
         Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(this.usuarioMock.getCpf());
+
         assertEquals(this.usuarioMock.getId(), resposta.getId());
     }
 
     @Test
     @DisplayName("Deve retornar null ao buscar usuario com cpf inexistente")
-    void givenTenhoUmCpfInexistenteWhenTentoBuscarUsuarioPorCpfThenRetornarNull() {
+    void dadoTenhoUmCpfInexistenteQuandoTentoBuscarUsuarioPorCpfEntaoRetornarNull() {
         when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+
         Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(this.usuarioMock.getCpf());
+        
         assertNull(resposta);
     }
 

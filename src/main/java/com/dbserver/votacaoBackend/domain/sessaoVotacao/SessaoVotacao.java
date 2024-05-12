@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,6 +46,9 @@ public class SessaoVotacao {
     @Column
     private LocalDateTime dataFechamento;
 
+    @Transient
+    private boolean ativa;
+
     public SessaoVotacao(Pauta pauta, LocalDateTime dataAbertura, LocalDateTime dataFechamento) {
         setPauta(pauta);
         setDataAbertura(dataAbertura);
@@ -54,39 +58,51 @@ public class SessaoVotacao {
     public void setPauta(Pauta pauta) {
         if (pauta == null)
             throw new IllegalArgumentException("Pauta não deve ser nula");
+
         this.pauta = pauta;
     }
 
     public void setDataAbertura(LocalDateTime dataAbertura) {
         LocalDateTime dataAtual = LocalDateTime.now().withNano(0);
-        if (dataAbertura == null) {
+
+        if (dataAbertura == null)
             throw new IllegalArgumentException("A data de abertura não deve ser nula.");
-        }
-        if (dataAbertura.isBefore(dataAtual)) {
+
+        if (dataAbertura.isBefore(dataAtual))
             throw new IllegalArgumentException("A data de abertura não deve ser menor que a data atual");
-        }
+
         this.dataAbertura = dataAbertura;
     }
 
     public void setDataFechamento(LocalDateTime dataFechamento) {
-        if (dataFechamento == null) {
+        if (dataFechamento == null)
             throw new IllegalArgumentException("A data de abertura não deve ser nula.");
-        }
-        if (dataFechamento.isBefore(this.dataAbertura)) {
+
+        if (dataFechamento.isBefore(this.dataAbertura))
             throw new IllegalArgumentException("A data de fechamento deve ser maior que a data de abertura.");
-        }
+
         this.dataFechamento = dataFechamento;
     }
 
     public void setVotosPositivos(Voto voto) {
-        if(voto == null) throw new IllegalArgumentException("Voto não deve ser nulo.");
+        if (voto == null)
+            throw new IllegalArgumentException("Voto não deve ser nulo.");
+
         this.votosPositivos.add(voto);
     }
 
     public void setVotosNegativos(Voto voto) {
-        if(voto == null) throw new IllegalArgumentException("Voto não deve ser nulo.");
+        if (voto == null)
+            throw new IllegalArgumentException("Voto não deve ser nulo.");
+
         this.votosNegativos.add(voto);
     }
 
-    
+    public boolean isAtiva() {
+        if (this.dataFechamento == null)
+            return false;
+            
+        return LocalDateTime.now().isBefore(this.dataFechamento);
+    }
+
 }

@@ -8,8 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import com.dbserver.votacaoBackend.infra.exeptions.novas.CriarJwtExeption;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.naming.AuthenticationException;
 import java.nio.file.AccessDeniedException;
@@ -34,7 +33,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<RespostaErro> handleIllegalArgumentException(IllegalArgumentException e) {
+    public ResponseEntity<RespostaErro> handleIllegalArgumentException(IllegalArgumentException e) {    
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RespostaErro(e.getMessage()));
     }
 
@@ -68,6 +67,11 @@ public class ErrorHandler {
     @ExceptionHandler(CriarJwtExeption.class)
     public ResponseEntity<RespostaErro> handleValidarJwtExeption(CriarJwtExeption e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RespostaErro(e.getMessage()));
+    }
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<RespostaErro> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new RespostaErro(e.getMessage()));
     }
 

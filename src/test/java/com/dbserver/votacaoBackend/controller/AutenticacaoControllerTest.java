@@ -77,11 +77,13 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível realizar login corretamente")
-    void givenPossuoDadosDeAutenticacaCorretosoWhenTentoRealizarLoginThenRetornarAutenticacaoRespostaDto()
+    void dadoPossuoDadosDeAutenticacaCorretosoQuandoTentoRealizarLoginEntaoRetornarAutenticacaoRespostaDto()
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto(this.autenticacao.getEmail(), this.senhaCorreta);
+
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -93,11 +95,13 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Não deve ser possível realizar login com senha incorreta")
-    void givenPossuoUmaSenhaIncorretaWhenTentoRealizarLoginThenRetornarRespostaErro()
+    void dadoPossuoUmaSenhaIncorretaQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto(this.autenticacao.getEmail(), "senhaIncorreta");
+
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,11 +112,13 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Não deve ser possível realizar login com email inexistente")
-    void givenPossuoUmaEmailInexistenteWhenTentoRealizarLoginThenRetornarRespostaErro()
+    void dadoPossuoUmaEmailInexistenteQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto("emailInexistente@email.com", this.senhaCorreta);
+
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,12 +129,13 @@ class AutenticacaoControllerTest {
 
     @ParameterizedTest
     @DisplayName("Testes de login com dados inválidos")
-    @MethodSource("dadosInválidosParaRealizarLogin")
-    void givenAutenticacaoDtoDadosInvalidosWhenTentoRealizarLoginThenRetornarRespostaErro(String email, String senha,
+    @MethodSource("dadosInvalidosParaRealizarLogin")
+    void dadoAutenticacaoDtoDadosInvalidosQuandoTentoRealizarLoginEntaoRetornarRespostaErro(String email, String senha,
             String mensagemErro)
             throws Exception {
 
         this.autenticacaoDto = new AutenticacaoDto(email, senha);
+
         String json = this.autenticacaoDtoJson.write(autenticacaoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -139,7 +146,7 @@ class AutenticacaoControllerTest {
                 .andExpect(jsonPath("$.erro").value(mensagemErro));
     }
 
-    private static Stream<Arguments> dadosInválidosParaRealizarLogin() {
+    private static Stream<Arguments> dadosInvalidosParaRealizarLogin() {
         return Stream.of(
                 Arguments.of("email", "senha123", "Email com formato inválido."),
                 Arguments.of("", "senha123", "Email deve ser informado."),
@@ -151,10 +158,12 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível validar usuário existente com dados para validar voto externo validos ao tentar votar externamente")
-    void givenPossuoDadosValidarVotoExternoCorretosWhenTentoValidarVotoExternoThenRetornarValidarVotoExternoComTrue()
+    void dadoPossuoDadosValidarVotoExternoCorretosQuandoTentoValidarVotoExternoEntaoRetornarValidarVotoExternoComTrue()
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
+
         this.validarVotoExternoDto = new ValidarVotoExternoDto(cpf, senhaCorreta);
+
         String json = this.validarVotoExternoDtoJson.write(this.validarVotoExternoDto).getJson();
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
@@ -166,11 +175,14 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Não deve ser possível validar usuário existente com ao passar cpf não cadastrado ao tentar votar externamente")
-    void givenCpfNaoCadastradoWhenTentoValidarVotoExternoThenRetornarRespostaErro()
+    void dadoCpfNaoCadastradoQuandoTentoValidarVotoExternoEntaoRetornarRespostaErro()
             throws Exception {
         String cpf = "33322211100";
+
         this.validarVotoExternoDto = new ValidarVotoExternoDto(cpf, senhaCorreta);
+
         String json = this.validarVotoExternoDtoJson.write(this.validarVotoExternoDto).getJson();
+
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -181,11 +193,14 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Não deve ser possível validar usuário existente com ao passar senha incorreta ao tentar votar externamente")
-    void givenSenhaIncorretaWhenTentoValidarVotoExternoThenRetornarRespostaErro()
+    void dadoSenhaIncorretaQuandoTentoValidarVotoExternoEntaoRetornarRespostaErro()
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
+
         this.validarVotoExternoDto = new ValidarVotoExternoDto(cpf, "senhaIncorreta");
+
         String json = this.validarVotoExternoDtoJson.write(this.validarVotoExternoDto).getJson();
+        
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
                 .contentType(MediaType.APPLICATION_JSON)

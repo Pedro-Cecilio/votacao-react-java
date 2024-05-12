@@ -1,5 +1,10 @@
 package com.dbserver.votacaoBackend.domain.pauta;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
@@ -7,6 +12,7 @@ import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -23,8 +29,9 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class Pauta {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,33 +46,37 @@ public class Pauta {
     @Setter
     @OneToOne(mappedBy = "pauta", optional = true, cascade = CascadeType.ALL)
     private SessaoVotacao sessaoVotacao;
-    
+
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
+    @CreatedDate
+    private LocalDateTime createdAt;
+     
     public Pauta(String assunto, String categoria, Usuario usuario) {
         setAssunto(assunto);
         setUsuario(usuario);
         setCategoria(categoria);
     }
 
-
     public void setUsuario(Usuario usuario) {
-        if(usuario == null){
+        if (usuario == null)
             throw new IllegalArgumentException("Usuario deve ser informado.");
-        }
-        if(!usuario.isAdmin()){
+
+        if (!usuario.isAdmin())
             throw new IllegalArgumentException("Usuario deve ser admin.");
-        }
+
         this.usuario = usuario;
     }
+
     public void setAssunto(String assunto) {
-        if(assunto == null || assunto.trim().isEmpty()){
+        if (assunto == null || assunto.trim().isEmpty())
             throw new IllegalArgumentException("Assunto deve ser informado.");
-        }
+
         this.assunto = assunto;
     }
+
     public void setCategoria(String categoria) {
         try {
             this.categoria = Categoria.valueOf(categoria);
@@ -73,6 +84,5 @@ public class Pauta {
             throw new IllegalArgumentException("Categoria inválida.");
         }
     }
-
 
 }

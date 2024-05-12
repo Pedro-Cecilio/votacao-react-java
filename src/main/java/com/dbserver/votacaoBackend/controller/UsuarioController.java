@@ -4,13 +4,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
-import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoService;
+import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServiceImpl;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
-import com.dbserver.votacaoBackend.domain.usuario.service.IUsuarioService;
+import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -25,10 +25,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping(value = "/usuario")
 public class UsuarioController {
-    private IUsuarioService usuarioService;
-    private AutenticacaoService autenticacaoService;
+    private UsuarioService usuarioService;
+    private AutenticacaoServiceImpl autenticacaoService;
 
-    public UsuarioController(IUsuarioService usuarioService, AutenticacaoService autenticacaoService) {
+    public UsuarioController(UsuarioService usuarioService, AutenticacaoServiceImpl autenticacaoService) {
         this.usuarioService = usuarioService;
         this.autenticacaoService = autenticacaoService;
     }
@@ -37,10 +37,15 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<CriarUsuarioRespostaDto> criarUsuario(@RequestBody @Valid CriarUsuarioDto dto) {
         Usuario usuario = new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
+
         String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
+
         Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto().email(), senhaEncriptada);
-        Usuario novoUsuario = usuarioService.criarUsuario(usuario, autenticacao);
-        CriarUsuarioRespostaDto resposta = new CriarUsuarioRespostaDto(novoUsuario, autenticacao);
+
+        usuarioService.criarUsuario(usuario, autenticacao);
+
+        CriarUsuarioRespostaDto resposta = new CriarUsuarioRespostaDto(usuario, autenticacao);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
@@ -48,14 +53,18 @@ public class UsuarioController {
     @GetMapping("/usuarioLogado")
     public ResponseEntity<UsuarioRespostaDto> buscarUsuarioLogado() {
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
+
         UsuarioRespostaDto resposta = new UsuarioRespostaDto(usuario);
+
         return ResponseEntity.ok().body(resposta);
     }
 
     @GetMapping("/existe")
     public ResponseEntity<VerificarSeUsuarioExisteRespostaDto> verificarSeUsuarioExistePorCpf(@RequestParam(name = "cpf", required = false, defaultValue = "") final String cpf) {
         boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
+
         VerificarSeUsuarioExisteRespostaDto resposta = new VerificarSeUsuarioExisteRespostaDto(existe);
+        
         return ResponseEntity.ok().body(resposta);
     }
 
