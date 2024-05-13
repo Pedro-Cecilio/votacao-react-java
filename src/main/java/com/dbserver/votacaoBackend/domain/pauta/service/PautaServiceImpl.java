@@ -6,8 +6,15 @@ import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
+import com.dbserver.votacaoBackend.domain.pauta.dto.CriarPautaDto;
+import com.dbserver.votacaoBackend.domain.pauta.dto.DetalhesPautaDto;
+import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
+import com.dbserver.votacaoBackend.domain.pauta.mapper.PautaMapper;
 import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
+import com.dbserver.votacaoBackend.domain.pauta.validacoes.PautaValidacoes;
+import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioServiceImpl;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 import jakarta.transaction.Transactional;
@@ -15,58 +22,82 @@ import jakarta.transaction.Transactional;
 @Service
 public class PautaServiceImpl implements PautaService {
     private PautaRepository pautaRepository;
+    private PautaValidacoes pautaValidacoes;
+    private UsuarioServiceImpl usuarioService;
     private Utils utils;
+    private PautaMapper pautaMapper;
 
-    public PautaServiceImpl(PautaRepository pautaRepository, Utils utils) {
+    public PautaServiceImpl(PautaRepository pautaRepository, PautaValidacoes pautaValidacoes,
+            UsuarioServiceImpl usuarioService, Utils utils, PautaMapper pautaMapper) {
         this.pautaRepository = pautaRepository;
         this.utils = utils;
+        this.pautaValidacoes = pautaValidacoes;
+        this.usuarioService = usuarioService;
+        this.pautaMapper = pautaMapper;
     }
 
     @Transactional
     @Override
-    public Pauta criarPauta(Pauta pauta) {
-        if(pauta == null) throw new IllegalArgumentException("Pauta não deve ser nula.");
+    public RespostaPautaDto criarPauta(CriarPautaDto dto) {
+        this.pautaValidacoes.validarCriarPautaDtoNaoNula(dto);
 
-        return this.pautaRepository.save(pauta);
+        Usuario usuario = this.usuarioService.buscarUsuarioLogado();
+        Pauta pauta = new Pauta(dto.assunto(), dto.categoria(), usuario);
+
+        this.pautaRepository.save(pauta);
+
+        return pautaMapper.toRespostaPautaDto(pauta);
     }
 
     @Override
-    public List<Pauta> buscarPautasPorUsuarioId(Long usuarioId, Categoria categoria) {
-        if(usuarioId == null) throw new IllegalArgumentException("Id do usuário não deve ser nulo.");
-
+    public List<RespostaPautaDto> buscarPautasUsuarioLogado(Categoria categoria) {
+        Usuario usuario = usuarioService.buscarUsuarioLogado();
+        List<Pauta> pautas;
         if (categoria != null) {
-            return this.pautaRepository.findAllByUsuarioIdAndCategoriaOrderByCreatedAtDesc(usuarioId, categoria);
+            pautas = this.pautaRepository.findAllByUsuarioIdAndCategoriaOrderByCreatedAtDesc(usuario.getId(),
+                    categoria);
+        } else {
+            pautas = this.pautaRepository.findAllByUsuarioIdOrderByCreatedAtDesc(usuario.getId());
         }
 
-        return this.pautaRepository.findAllByUsuarioIdOrderByCreatedAtDesc(usuarioId);
+        return pautaMapper.toListRespostaPautaDto(pautas);
     }
 
     @Override
-    public List<Pauta> buscarPautasAtivas(Categoria categoria) {
+    public List<RespostaPautaDto> buscarPautasAtivas(Categoria categoria) {
         LocalDateTime dataAtual = this.utils.obterDataAtual();
+        List<Pauta> pautas;
 
         if (categoria != null) {
-            return this.pautaRepository.findAllByCategoriaAndSessaoVotacaoAtiva(categoria, dataAtual);
+            pautas = this.pautaRepository.findAllByCategoriaAndSessaoVotacaoAtiva(categoria, dataAtual);
+        } else {
+            pautas = this.pautaRepository.findAllBySessaoVotacaoAtiva(dataAtual);
         }
 
-        return this.pautaRepository.findAllBySessaoVotacaoAtiva(dataAtual);
+        return pautaMapper.toListRespostaPautaDto(pautas);
     }
-    
+
     @Override
     public Pauta buscarPautaPorIdEUsuarioId(Long pautaId, Long usuarioId) {
-        return this.pautaRepository.findByIdAndUsuarioId(pautaId, usuarioId).orElseThrow(()-> new NoSuchElementException("Pauta não encontrada."));
+        return this.pautaRepository.findByIdAndUsuarioId(pautaId, usuarioId)
+                .orElseThrow(() -> new NoSuchElementException("Pauta não encontrada."));
     }
 
     @Override
-    public Pauta buscarPautaAtivaPorId(Long pautaId) {
+    public RespostaPautaDto buscarPautaAtivaPorId(Long pautaId) {
         LocalDateTime dataAtual = this.utils.obterDataAtual();
-        
-        return this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, dataAtual).orElseThrow(()-> new NoSuchElementException("Pauta informada não possui sessão ativa."));
+
+        Pauta pauta = this.pautaRepository.findByIdAndSessaoVotacaoAtiva(pautaId, dataAtual)
+                .orElseThrow(() -> new NoSuchElementException("Pauta informada não possui sessão ativa."));
+
+        return pautaMapper.toRespostaPautaDto(pauta);
     }
 
     @Override
-    public Pauta buscarPautaPorIdEUsuarioIdComSessaoVotacaoNaoNula(Long pautaId, Long usuarioId) {
-        return this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(pautaId, usuarioId).orElseThrow(()-> new NoSuchElementException("Pauta não encontrada."));
+    public DetalhesPautaDto obterDetalhePautaSessaoVotacaoNaoNula(Long pautaId) {
+        Usuario usuario = usuarioService.buscarUsuarioLogado();
+        Pauta pauta = this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(pautaId, usuario.getId())
+                .orElseThrow(() -> new NoSuchElementException("Pauta não encontrada."));
+        return pautaMapper.toDetalhesPautaDto(pauta);
     }
-    
 }
