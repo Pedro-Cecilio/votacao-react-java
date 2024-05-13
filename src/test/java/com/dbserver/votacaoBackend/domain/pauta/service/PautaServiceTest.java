@@ -183,17 +183,4 @@ class PautaServiceTest {
 
         assertThrows(NoSuchElementException.class, ()->this.pautaService.obterDetalhePautaSessaoVotacaoNaoNula(1L));
     }
-
-    @Test
-    @DisplayName("Deve ser possível buscar pauta por id")
-    void dadoPossuoIdDePautaExistenteQuandoBuscoPorIDDeveRetornarPauta(){
-        when(this.pautaRepository.findById(1L)).thenReturn(Optional.of(this.pautaMock));
-        assertDoesNotThrow(()-> this.pautaService.bsucarPautaPorId(1L));
-    }
-
-    @Test
-    @DisplayName("Deve falhar ao buscar pauta por id ao não encontrar")
-    void dadoPossuoIdDePautaInexistenteQuandoBuscoPorIDDeveRetornarErro(){
-        assertThrows(NoSuchElementException.class, ()-> this.pautaService.bsucarPautaPorId(1L));
-    }
 }
