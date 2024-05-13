@@ -167,7 +167,7 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve ser possível obter detalhes da pauta com sessão votação não nula")
-    void dadoTenhoPautaIdEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaWhenRetornarDetalhes(){
+    void dadoTenhoPautaIdEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaDeveRetornarDetalhes(){
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioAdminMock);
         when(this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(1L, this.usuarioAdminMock.getId()))
                 .thenReturn(Optional.of(this.pautaMock));
@@ -176,11 +176,24 @@ class PautaServiceTest {
     }
     @Test
     @DisplayName("Deve falhar ao tentar obter detalhes da pauta com sessão votação não nula, ao não encontrar pauta com id informado")
-    void dadoTenhPautaIdInexistenteEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaWhenRetornarErro(){
+    void dadoTenhPautaIdInexistenteEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaDeveRetornarErro(){
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioAdminMock);
         when(this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(1L, this.usuarioAdminMock.getId()))
                 .thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, ()->this.pautaService.obterDetalhePautaSessaoVotacaoNaoNula(1L));
+    }
+
+    @Test
+    @DisplayName("Deve ser possível buscar pauta por id")
+    void dadoPossuoIdDePautaExistenteQuandoBuscoPorIDDeveRetornarPauta(){
+        when(this.pautaRepository.findById(1L)).thenReturn(Optional.of(this.pautaMock));
+        assertDoesNotThrow(()-> this.pautaService.bsucarPautaPorId(1L));
+    }
+
+    @Test
+    @DisplayName("Deve falhar ao buscar pauta por id ao não encontrar")
+    void dadoPossuoIdDePautaInexistenteQuandoBuscoPorIDDeveRetornarErro(){
+        assertThrows(NoSuchElementException.class, ()-> this.pautaService.bsucarPautaPorId(1L));
     }
 }

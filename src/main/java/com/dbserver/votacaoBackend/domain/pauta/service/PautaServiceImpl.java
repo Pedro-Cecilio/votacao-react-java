@@ -94,6 +94,11 @@ public class PautaServiceImpl implements PautaService {
     }
 
     @Override
+    public Pauta bsucarPautaPorId(Long id){
+        return this.pautaRepository.findById(id).orElseThrow(()-> new NoSuchElementException("Pauta não encontrada"));
+    }
+    
+    @Override
     public DetalhesPautaDto obterDetalhePautaSessaoVotacaoNaoNula(Long pautaId) {
         Usuario usuario = usuarioService.buscarUsuarioLogado();
         Pauta pauta = this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(pautaId, usuario.getId())

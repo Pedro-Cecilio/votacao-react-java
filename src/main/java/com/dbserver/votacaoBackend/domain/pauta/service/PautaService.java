@@ -20,4 +20,6 @@ public interface PautaService {
     RespostaPautaDto buscarPautaAtivaPorId(Long pautaId);
 
     public DetalhesPautaDto obterDetalhePautaSessaoVotacaoNaoNula(Long pautaId);
+
+    public Pauta bsucarPautaPorId(Long id);
 }
