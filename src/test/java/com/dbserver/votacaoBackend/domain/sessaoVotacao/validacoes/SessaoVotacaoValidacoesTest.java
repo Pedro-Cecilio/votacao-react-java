@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 
@@ -14,6 +16,7 @@ import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class SessaoVotacaoValidacoesTest {
     @InjectMocks
     private SessaoVotacaoValidacoes sessaoVotacaoValidacoes;
