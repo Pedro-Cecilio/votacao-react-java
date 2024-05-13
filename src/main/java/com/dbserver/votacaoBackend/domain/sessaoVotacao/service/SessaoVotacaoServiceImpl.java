@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServiceImpl;
+import com.dbserver.votacaoBackend.domain.autenticacao.validacoes.AutenticacaoValidacoes;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotacao;
@@ -20,15 +20,15 @@ import com.dbserver.votacaoBackend.utils.Utils;
 public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
     private SessaoVotacaoRepository sessaoVotacaoRepository;
     private UsuarioServiceImpl usuarioService;
-    private AutenticacaoServiceImpl autenticacaoService;
+    private AutenticacaoValidacoes autenticacaoValidacoes;
     private Utils utils;
 
     public SessaoVotacaoServiceImpl(SessaoVotacaoRepository sessaoVotacaoRepository, UsuarioServiceImpl usuarioService,
-            AutenticacaoServiceImpl autenticacaoService, Utils utils) {
+            AutenticacaoValidacoes autenticacaoValidacoes, Utils utils) {
         this.sessaoVotacaoRepository = sessaoVotacaoRepository;
         this.usuarioService = usuarioService;
-        this.autenticacaoService = autenticacaoService;
         this.utils = utils;
+        this.autenticacaoValidacoes = autenticacaoValidacoes;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
         boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
         
         if (existe)
-            this.autenticacaoService.validarAutenticacaoPorCpfESenha(cpf, senha);
+            this.autenticacaoValidacoes.validarAutenticacaoPorCpfESenha(cpf, senha);
     }
 
     @Override

@@ -260,7 +260,7 @@ class PautaControllerTest {
                                 .get("/pauta/{id}", 50)
                                 .header("Authorization", "Bearer " + this.token)
                                 .contentType(MediaType.APPLICATION_JSON))
-                                // .andExpect(status().isNotFound())
+                                .andExpect(status().isNotFound())
                                 .andExpect(jsonPath("$.erro").value("Pauta informada não possui sessão ativa."));
 
         }

@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutenticacaoDto;
-import com.dbserver.votacaoBackend.domain.autenticacao.dto.ValidarVotoExternoDto;
+import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutorizarVotoExternoDto;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
@@ -41,19 +41,19 @@ class AutenticacaoControllerTest {
     private AutenticacaoDto autenticacaoDto;
     private MockMvc mockMvc;
     private JacksonTester<AutenticacaoDto> autenticacaoDtoJson;
-    private JacksonTester<ValidarVotoExternoDto> validarVotoExternoDtoJson;
+    private JacksonTester<AutorizarVotoExternoDto> AutorizarVotoExternoDtoJson;
     private String senhaCorreta;
-    private ValidarVotoExternoDto validarVotoExternoDto;
+    private AutorizarVotoExternoDto AutorizarVotoExternoDto;
 
     @Autowired
     public AutenticacaoControllerTest(AutenticacaoRepository autenticacaoRepository,
             UsuarioRepository usuarioRepository, MockMvc mockMvc, JacksonTester<AutenticacaoDto> autenticacaoDtoJson,
-            JacksonTester<ValidarVotoExternoDto> validarVotoExternoDtoJson) {
+            JacksonTester<AutorizarVotoExternoDto> AutorizarVotoExternoDtoJson) {
         this.usuarioRepository = usuarioRepository;
         this.autenticacaoRepository = autenticacaoRepository;
         this.mockMvc = mockMvc;
         this.autenticacaoDtoJson = autenticacaoDtoJson;
-        this.validarVotoExternoDtoJson = validarVotoExternoDtoJson;
+        this.AutorizarVotoExternoDtoJson = AutorizarVotoExternoDtoJson;
     }
 
     @BeforeEach
@@ -162,9 +162,9 @@ class AutenticacaoControllerTest {
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 
-        this.validarVotoExternoDto = new ValidarVotoExternoDto(cpf, senhaCorreta);
+        this.AutorizarVotoExternoDto = new AutorizarVotoExternoDto(cpf, senhaCorreta);
 
-        String json = this.validarVotoExternoDtoJson.write(this.validarVotoExternoDto).getJson();
+        String json = this.AutorizarVotoExternoDtoJson.write(this.AutorizarVotoExternoDto).getJson();
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -179,9 +179,9 @@ class AutenticacaoControllerTest {
             throws Exception {
         String cpf = "33322211100";
 
-        this.validarVotoExternoDto = new ValidarVotoExternoDto(cpf, senhaCorreta);
+        this.AutorizarVotoExternoDto = new AutorizarVotoExternoDto(cpf, senhaCorreta);
 
-        String json = this.validarVotoExternoDtoJson.write(this.validarVotoExternoDto).getJson();
+        String json = this.AutorizarVotoExternoDtoJson.write(this.AutorizarVotoExternoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
@@ -197,9 +197,9 @@ class AutenticacaoControllerTest {
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 
-        this.validarVotoExternoDto = new ValidarVotoExternoDto(cpf, "senhaIncorreta");
+        this.AutorizarVotoExternoDto = new AutorizarVotoExternoDto(cpf, "senhaIncorreta");
 
-        String json = this.validarVotoExternoDtoJson.write(this.validarVotoExternoDto).getJson();
+        String json = this.AutorizarVotoExternoDtoJson.write(this.AutorizarVotoExternoDto).getJson();
         
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
