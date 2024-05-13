@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
-import com.dbserver.votacaoBackend.utils.Utils;
 
 @Component
 public class AutenticacaoValidacoes {
