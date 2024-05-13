@@ -1,5 +1,6 @@
 package com.dbserver.votacaoBackend.domain.usuario.service;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,9 @@ import org.springframework.stereotype.Service;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServiceImpl;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.mapper.UsuarioMapper;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
@@ -15,20 +19,23 @@ import jakarta.transaction.Transactional;
 public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioRepository usuarioRepository;
     private AutenticacaoServiceImpl autenticacaoService;
+    private UsuarioMapper usuarioMapper;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, AutenticacaoServiceImpl autenticacaoService) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, AutenticacaoServiceImpl autenticacaoService,
+            UsuarioMapper usuarioMapper) {
         this.usuarioRepository = usuarioRepository;
         this.autenticacaoService = autenticacaoService;
+        this.usuarioMapper = usuarioMapper;
     }
 
     @Override
     @Transactional
-    public Usuario criarUsuario(Usuario usuario, Autenticacao autenticacao) {
-        if (usuario == null)
-            throw new IllegalArgumentException("Usuario não deve ser nulo.");
+    public CriarUsuarioRespostaDto criarUsuario(CriarUsuarioDto dto) {
+        Usuario usuario = new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
 
-        if (autenticacao == null)
-            throw new IllegalArgumentException("Autenticação não deve ser nula.");
+        String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
+
+        Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto().email(), senhaEncriptada);
 
         if (this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacao.getEmail()))
             throw new IllegalArgumentException("Email já cadastrado.");
@@ -36,15 +43,19 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (this.usuarioRepository.findByCpf(usuario.getCpf()).isPresent())
             throw new IllegalArgumentException("Cpf já cadastrado.");
 
-        Usuario usuarioCriado = this.usuarioRepository.save(usuario);
-        this.autenticacaoService.criarAutenticacao(autenticacao, usuarioCriado);
-        return usuarioCriado;
+        this.usuarioRepository.save(usuario);
+        this.autenticacaoService.criarAutenticacao(autenticacao, usuario);
+        return usuarioMapper.toCriarUsuarioRespostaDto(usuario, autenticacao);
     }
 
     @Override
     public Usuario buscarUsuarioLogado() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();        
-        return (Usuario) authentication.getPrincipal();
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            return (Usuario) authentication.getPrincipal();
+        } catch (Exception e) {
+            throw new AccessDeniedException("Acesso negado.");
+        }
     }
 
     @Override

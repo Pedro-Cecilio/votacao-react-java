@@ -26,25 +26,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/usuario")
 public class UsuarioController {
     private UsuarioService usuarioService;
-    private AutenticacaoServiceImpl autenticacaoService;
 
-    public UsuarioController(UsuarioService usuarioService, AutenticacaoServiceImpl autenticacaoService) {
+    public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-        this.autenticacaoService = autenticacaoService;
     }
 
     @SecurityRequirement(name = "bearer-key")
     @PostMapping
     public ResponseEntity<CriarUsuarioRespostaDto> criarUsuario(@RequestBody @Valid CriarUsuarioDto dto) {
-        Usuario usuario = new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
-
-        String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
-
-        Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto().email(), senhaEncriptada);
-
-        usuarioService.criarUsuario(usuario, autenticacao);
-
-        CriarUsuarioRespostaDto resposta = new CriarUsuarioRespostaDto(usuario, autenticacao);
+        CriarUsuarioRespostaDto resposta = usuarioService.criarUsuario(dto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
