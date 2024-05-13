@@ -1,6 +1,6 @@
 package com.dbserver.votacaoBackend.domain.autenticacao.dto;
 
-public record ValidarVotoExternoRespostaDto(
+public record AutorizarVotoExternoRespostaDto(
     boolean valido
 ) {
     

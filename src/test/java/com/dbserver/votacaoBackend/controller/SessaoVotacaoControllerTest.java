@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
-import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutenticacaoDto;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
@@ -30,7 +29,6 @@ import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoExternoDt
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoInternoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.TipoDeVotoEnum;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
-import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
