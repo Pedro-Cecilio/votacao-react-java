@@ -9,6 +9,9 @@ import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.RespostaSessaoVotacaoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotacao;
+import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
+
 import java.time.LocalDateTime;
 
 import java.util.List;
@@ -29,7 +32,8 @@ public interface PautaMapper {
     @Mapping(target = "status", expression = "java(obterStatusSessaoVotacao(pauta.getSessaoVotacao()))")
     DetalhesPautaDto toDetalhesPautaDto(Pauta pauta);
 
-
+    UsuarioRespostaDto toUsuarioRespostaDto(Usuario usuario);
+    
     default StatusSessaoVotacao obterStatusSessaoVotacao(SessaoVotacao sessaoVotacao) {
         if (sessaoVotacao == null)
             throw new IllegalArgumentException("SessaoVotacao não deve ser nula.");

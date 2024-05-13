@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class PautaController {
     private PautaService pautaService;
 
-
     public PautaController(PautaService pautaService) {
         this.pautaService = pautaService;
     }
@@ -50,7 +49,6 @@ public class PautaController {
     public ResponseEntity<List<RespostaPautaDto>> listarPautas(
             @RequestParam(name = "categoria", required = false) final Categoria categoria) {
         List<RespostaPautaDto> resposta = this.pautaService.buscarPautasAtivas(categoria);
-
         return ResponseEntity.ok().body(resposta);
     }
 

@@ -9,9 +9,9 @@ import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 
 public interface PautaService {
-    public RespostaPautaDto criarPauta(CriarPautaDto dto);
+    RespostaPautaDto criarPauta(CriarPautaDto dto);
 
-    public List<RespostaPautaDto> buscarPautasUsuarioLogado(Categoria categoria);
+    List<RespostaPautaDto> buscarPautasUsuarioLogado(Categoria categoria);
 
     List<RespostaPautaDto> buscarPautasAtivas(Categoria categoria);
 
@@ -19,5 +19,6 @@ public interface PautaService {
 
     RespostaPautaDto buscarPautaAtivaPorId(Long pautaId);
 
-    public DetalhesPautaDto obterDetalhePautaSessaoVotacaoNaoNula(Long pautaId);
+    DetalhesPautaDto obterDetalhePautaSessaoVotacaoNaoNula(Long pautaId);
+
 }
