@@ -42,6 +42,7 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation 'net.datafaker:datafaker:2.2.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'    
 

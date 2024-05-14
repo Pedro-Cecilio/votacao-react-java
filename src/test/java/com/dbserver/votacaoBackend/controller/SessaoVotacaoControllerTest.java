@@ -21,19 +21,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
-import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.AbrirVotacaoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoExternoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoInternoDto;
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.TipoDeVotoEnum;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
+import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.SessaoVotacaoFixture;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -52,9 +52,6 @@ class SessaoVotacaoControllerTest {
     private TokenService tokenService;
     private String tokenAdmin;
     private String tokenUsuario;
-    private Usuario admin;
-    private Usuario usuario;
-    private String cpfUsuarioNaoCadastrado;
 
     private PautaRepository pautaRepository;
 
@@ -64,8 +61,8 @@ class SessaoVotacaoControllerTest {
     public SessaoVotacaoControllerTest(AutenticacaoRepository autenticacaoRepository,
             UsuarioRepository usuario, PautaRepository pautaRepository, MockMvc mockMvc,
             JacksonTester<AbrirVotacaoDto> abrirVotacaoDtoJson,
-            TokenService tokenService, UsuarioRepository usuarioRepository, 
-            JacksonTester<InserirVotoInternoDto> inserirVotoInternoDtoJson, 
+            TokenService tokenService, UsuarioRepository usuarioRepository,
+            JacksonTester<InserirVotoInternoDto> inserirVotoInternoDtoJson,
             JacksonTester<InserirVotoExternoDto> inserirVotoExternoDtoJson) {
 
         this.usuarioRepository = usuarioRepository;
@@ -81,27 +78,20 @@ class SessaoVotacaoControllerTest {
 
     @BeforeEach
     void configurar() {
-        this.admin = new Usuario("João", "Silva", "12345678900", true);
-        Autenticacao adminAuth = new Autenticacao("example@example.com",
-                "$2a$10$6V3ZuwVZxOfqS0IKfhqk1uUzdUe/8jl1flMBk5AVzmPSX2wYKd/vS");
-        this.usuario = new Usuario("Pedro", "Cecilio", "12345678911", false);
-        Autenticacao usuarioAuth = new Autenticacao("example2@example.com",
-                "$2a$10$6V3ZuwVZxOfqS0IKfhqk1uUzdUe/8jl1flMBk5AVzmPSX2wYKd/vS");
-        this.usuarioRepository.saveAll(List.of(this.admin, this.usuario));
+        Usuario admin = UsuarioFixture.usuarioAdmin();
+        Usuario usuario = UsuarioFixture.usuarioNaoAdmin();
+        this.usuarioRepository.saveAll(List.of(admin, usuario));
 
-        adminAuth.setUsuario(this.admin);
-        usuarioAuth.setUsuario(this.usuario);
+        Autenticacao adminAuth = AutenticacaoFixture.autenticacaoAdmin(admin);
+        Autenticacao usuarioAuth = AutenticacaoFixture.autenticacaoUsuario(usuario);
+
         this.autenticacaoRepository.saveAll(List.of(adminAuth, usuarioAuth));
 
         this.tokenAdmin = this.tokenService.gerarToken(adminAuth);
         this.tokenUsuario = this.tokenService.gerarToken(usuarioAuth);
 
-        this.pautaTransporte = new Pauta("Sabe dirigir?", Categoria.TRANSPORTE.toString(), this.admin);
-        
+        this.pautaTransporte = PautaFixture.pautaTransporte(admin);
         this.pautaRepository.save(pautaTransporte);
-
-
-        this.cpfUsuarioNaoCadastrado = "33322211100";
     }
 
     @AfterEach
@@ -117,7 +107,7 @@ class SessaoVotacaoControllerTest {
     void dadoPossuoAbrirVotacaoDtoCorretoQuandoTentoAbrirSessaoVotacaoEntaoRetornarRespostaSessaoVotacao()
             throws Exception {
 
-        AbrirVotacaoDto abrirVotacaoDto = new AbrirVotacaoDto(10L, this.pautaTransporte.getId());
+        AbrirVotacaoDto abrirVotacaoDto = SessaoVotacaoFixture.abrirVotacaoDtoValido(this.pautaTransporte.getId());
         String json = this.abrirVotacaoDtoJson.write(abrirVotacaoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -134,7 +124,8 @@ class SessaoVotacaoControllerTest {
     @ParameterizedTest
     @MethodSource("dadosInvalidosAbrirVotacao")
     @DisplayName("Não deve ser possível abrir sessão votação em uma pauta ao passar dados inválidos")
-    void dadoPossuoAbrirVotacaoDtoIncorretoQuandoTentoAbrirSessaoVotacaoEntaoRetornarRespostaErro(Long minutos, Long pautaId, String mensagemErro) throws Exception {
+    void dadoPossuoAbrirVotacaoDtoIncorretoQuandoTentoAbrirSessaoVotacaoEntaoRetornarRespostaErro(Long minutos,
+            Long pautaId, String mensagemErro) throws Exception {
 
         AbrirVotacaoDto abrirVotacaoDto = new AbrirVotacaoDto(minutos, pautaId);
         String json = this.abrirVotacaoDtoJson.write(abrirVotacaoDto).getJson();
@@ -152,19 +143,19 @@ class SessaoVotacaoControllerTest {
         return Stream.of(
                 Arguments.of(0L, 1L, "Minutos deve ser maior que 0."),
                 Arguments.of(null, 1L, "Minutos deve ser informado."),
-                Arguments.of(5L, null, "PautaId deve ser informada.")
-                );
+                Arguments.of(5L, null, "PautaId deve ser informada."));
     }
 
     @Test
     @DisplayName("Deve ser possível votar internamente em uma pauta")
-    void dadoPossuoFecharVotacaoDtoCorretoQuandoTentoVotarInternamenteEntaoRetornarRespostaSessaoVotacao() throws Exception{
-        SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5));
+    void dadoPossuoFecharVotacaoDtoCorretoQuandoTentoVotarInternamenteEntaoRetornarRespostaSessaoVotacao()
+            throws Exception {
+        SessaoVotacao sessaoVotacao = SessaoVotacaoFixture.sessaoVotacaoAtiva(pautaTransporte);
         pautaTransporte.setSessaoVotacao(sessaoVotacao);
-
         this.pautaRepository.save(pautaTransporte);
 
-        InserirVotoInternoDto inserirVotoInternoDto = new InserirVotoInternoDto(this.pautaTransporte.getId(), TipoDeVotoEnum.VOTO_POSITIVO );
+        InserirVotoInternoDto inserirVotoInternoDto = SessaoVotacaoFixture
+                .inserirVotoInternoPositivoDto(this.pautaTransporte.getId());
 
         String json = this.inserirVotoInternoDtoJson.write(inserirVotoInternoDto).getJson();
 
@@ -178,16 +169,18 @@ class SessaoVotacaoControllerTest {
                 .andExpect(jsonPath("$.pautaId").value(this.pautaTransporte.getId()))
                 .andExpect(jsonPath("$.votosPositivos").value(1));
     }
+
     @Test
     @DisplayName("Deve ser possível votar externamente em uma pauta")
-    void dadoPossuoFecharVotacaoDtoCorretoQuandoTentoVotarExternamenteEntaoRetornarRespostaSessaoVotacao() throws Exception{
-        SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(), LocalDateTime.now().plusMinutes(5));
+    void dadoPossuoFecharVotacaoDtoCorretoQuandoTentoVotarExternamenteEntaoRetornarRespostaSessaoVotacao()
+            throws Exception {
+        SessaoVotacao sessaoVotacao = SessaoVotacaoFixture.sessaoVotacaoAtiva(pautaTransporte);
         pautaTransporte.setSessaoVotacao(sessaoVotacao);
-
         this.pautaRepository.save(pautaTransporte);
 
-        InserirVotoExternoDto inserirVotoExternoDto = new InserirVotoExternoDto(this.pautaTransporte.getId(), TipoDeVotoEnum.VOTO_NEGATIVO, this.cpfUsuarioNaoCadastrado, null);
-        
+        InserirVotoExternoDto inserirVotoExternoDto = SessaoVotacaoFixture
+                .inserirVotoExternoNegativoDto(this.pautaTransporte.getId());
+
         String json = this.inserirVotoExternoDtoJson.write(inserirVotoExternoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders
