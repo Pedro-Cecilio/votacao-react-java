@@ -79,7 +79,6 @@ class PautaControllerTest {
                 autenticacao.setUsuario(this.usuarioCadastrado);
                 this.autenticacaoRepository.save(autenticacao);
                 this.token = this.tokenService.gerarToken(autenticacao);
-
         }
 
         @AfterEach
@@ -94,7 +93,7 @@ class PautaControllerTest {
         @DisplayName("Deve ser possível criar uma pauta corretamente")
         void dadoTenhoCriarPautaDtoComDadosCorretosQuandoTentoCriarPautaEntaoRetornarRespostaPautaDto()
                         throws Exception {
-                this.criarPautaDto = new CriarPautaDto("Você sabe dirigir?", Categoria.TRANSPORTE.toString());
+                this.criarPautaDto = PautaFixture.criarPautaDtoValido();
                 String json = this.criarPautaDtoJson.write(criarPautaDto).getJson();
 
                 mockMvc.perform(MockMvcRequestBuilders

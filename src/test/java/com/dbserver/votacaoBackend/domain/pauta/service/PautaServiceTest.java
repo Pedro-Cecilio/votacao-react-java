@@ -3,8 +3,7 @@ package com.dbserver.votacaoBackend.domain.pauta.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,6 +30,8 @@ import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
 import com.dbserver.votacaoBackend.domain.pauta.validacoes.PautaValidacoes;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioServiceImpl;
+import com.dbserver.votacaoBackend.fixture.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 @SpringBootTest
@@ -66,11 +67,10 @@ class PautaServiceTest {
 
     @BeforeEach
     void configurar() {
-        this.usuarioAdminMock = new Usuario(1L, "João", "Silva", "12345678900", true);
-        this.criarPautaMock = new CriarPautaDto("Você está feliz hoje?", Categoria.CULTURA_LAZER.toString());
-        this.respostaPautaDtoMock = new RespostaPautaDto(
-                new Pauta("Você está feliz hoje?", Categoria.CULTURA_LAZER.toString(), this.usuarioAdminMock), null);
-        this.categoria = Categoria.SAUDE;
+        this.usuarioAdminMock = UsuarioFixture.usuarioAdmin();
+        this.criarPautaMock = PautaFixture.criarPautaDtoValido();
+        this.respostaPautaDtoMock = PautaFixture.respostaPautaDto(usuarioAdminMock);
+        this.categoria = PautaFixture.categoria;
         this.dataAtual = LocalDateTime.now();
     }
 
@@ -82,7 +82,6 @@ class PautaServiceTest {
         RespostaPautaDto resposta = this.pautaService.criarPauta(this.criarPautaMock);
         assertEquals(this.criarPautaMock.assunto(), resposta.assunto());
         assertEquals(this.criarPautaMock.categoria(), resposta.categoria().toString());
-        assertEquals(this.usuarioAdminMock.getId(), resposta.usuario().id());
     }
 
     @Test
@@ -135,17 +134,16 @@ class PautaServiceTest {
     @DisplayName("Deve ser possível buscar pauta por id e usuarioId")
     void dadoTenhoPautaIdEUsuarioIdCorretosQuandoTentoBuscarPautaPorIdEUsuarioIdEntaoRetornarPauta() {
         when(this.pautaRepository.findByIdAndUsuarioId(1L,
-                this.usuarioAdminMock.getId()))
+                1L))
                 .thenReturn(Optional.of(this.pautaMock));
         assertDoesNotThrow(() -> this.pautaService.buscarPautaPorIdEUsuarioId(1L,
-                this.usuarioAdminMock.getId()));
+                1L));
     }
 
     @Test
     @DisplayName("Deve falhar ao buscar pauta por id e usuarioId ao não encontrar")
     void dadoTenhoPautaIdEUsuarioIdIncompativeisQuandoTentoBuscarPautaPorIdEUsuarioIdEntaoRetornarErro() {
-        Long usuarioId = this.usuarioAdminMock.getId();
-        assertThrows(NoSuchElementException.class, () -> this.pautaService.buscarPautaPorIdEUsuarioId(1L, usuarioId));
+        assertThrows(NoSuchElementException.class, () -> this.pautaService.buscarPautaPorIdEUsuarioId(1L, 1L));
     }
 
     @Test

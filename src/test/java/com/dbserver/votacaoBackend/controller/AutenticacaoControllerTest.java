@@ -146,12 +146,12 @@ class AutenticacaoControllerTest {
 
     private static Stream<Arguments> dadosInvalidosParaRealizarLogin() {
         return Stream.of(
-                Arguments.of("email", AutenticacaoFixture.senhaCorreta, "Email com formato inválido."),
-                Arguments.of("", AutenticacaoFixture.senhaCorreta, "Email deve ser informado."),
-                Arguments.of(null, AutenticacaoFixture.senhaCorreta, "Email deve ser informado."),
+                Arguments.of("email", AutenticacaoFixture.SENHA, "Email com formato inválido."),
+                Arguments.of("", AutenticacaoFixture.SENHA, "Email deve ser informado."),
+                Arguments.of(null, AutenticacaoFixture.SENHA, "Email deve ser informado."),
 
-                Arguments.of(AutenticacaoFixture.emailAdminCorreto, "", "Senha deve ser informada."),
-                Arguments.of(AutenticacaoFixture.emailAdminCorreto, null, "Senha deve ser informada."));
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, "", "Senha deve ser informada."),
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, null, "Senha deve ser informada."));
     }
 
     @Test

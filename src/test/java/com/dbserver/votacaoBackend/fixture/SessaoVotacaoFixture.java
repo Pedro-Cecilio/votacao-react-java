@@ -9,6 +9,7 @@ import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoExternoDt
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoInternoDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.TipoDeVotoEnum;
 
+
 public class SessaoVotacaoFixture {
     public static SessaoVotacao sessaoVotacaoAtiva(Pauta pauta) {
         return new SessaoVotacao(pauta, LocalDateTime.now(),
@@ -23,7 +24,29 @@ public class SessaoVotacaoFixture {
         return new InserirVotoInternoDto(pautaId, TipoDeVotoEnum.VOTO_POSITIVO);
     }
 
-    public static InserirVotoExternoDto inserirVotoExternoNegativoDto(Long pautaId){
-        return new InserirVotoExternoDto(pautaId, TipoDeVotoEnum.VOTO_NEGATIVO, UsuarioFixture.cpfNaoCadastrado, null);
+    public static InserirVotoExternoDto inserirVotoExternoNegativoDto(Long pautaId) {
+        return new InserirVotoExternoDto(pautaId, TipoDeVotoEnum.VOTO_NEGATIVO, UsuarioFixture.CPF_ALEATORIO,
+                null);
+    }
+
+    public static AbrirVotacaoDto abrirVotacaoDto() {
+        return new AbrirVotacaoDto(5L, 1L);
+    }
+
+    public static InserirVotoInternoDto inserirVotoInternoDto() {
+        return new InserirVotoInternoDto(1L, TipoDeVotoEnum.VOTO_POSITIVO);
+    }
+
+    public static InserirVotoInternoDto inserirVotoInternoDtoVotoNull() {
+        return new InserirVotoInternoDto(1L, null);
+    }
+
+    public static InserirVotoInternoDto inserirVotoInternoDtoVotoNegativo() {
+        return new InserirVotoInternoDto(1L, TipoDeVotoEnum.VOTO_NEGATIVO);
+    }
+
+    public static InserirVotoExternoDto inserirVotoExternoDtoUsuarioExistenteValido(){
+        return new InserirVotoExternoDto(1L, TipoDeVotoEnum.VOTO_POSITIVO,
+                                UsuarioFixture.CPF_ALEATORIO, "senhaValida");
     }
 }

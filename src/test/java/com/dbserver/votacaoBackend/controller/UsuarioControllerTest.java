@@ -62,6 +62,7 @@ class UsuarioControllerTest {
         this.usuarioCadastrado = UsuarioFixture.usuarioAdmin();
         this.usuarioRepository.save(this.usuarioCadastrado);
 
+        System.out.println(this.usuarioCadastrado.getCpf());
         Autenticacao autenticacao = AutenticacaoFixture.autenticacaoAdmin(usuarioCadastrado);
         this.autenticacaoRepository.save(autenticacao);
         
@@ -110,7 +111,7 @@ class UsuarioControllerTest {
                         "Email com formato inválido."),
                 Arguments.of(null, "senha123", "Pedro", "Cecilio", "12345678912", true, "Email com formato inválido."),
                 Arguments.of("", "senha123", "Pedro", "Cecilio", "12345678912", true, "Email com formato inválido."),
-                Arguments.of("example@example.com", "senha123", "Pedro", "Cecilio", "12345678912", true,
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, "senha123", "Pedro", "Cecilio", "12345678912", true,
                         "Email já cadastrado."),
 
                 Arguments.of("example2@example.com", null, "Pedro", "Cecilio", "12345678912", true,
@@ -134,7 +135,7 @@ class UsuarioControllerTest {
                 Arguments.of("example2@example.com", "senha123", "Pedro", "SobrenomeMuitoGrande.", "12345678912", true,
                         "Sobrenome deve conter entre 2 e 20 caracteres."),
 
-                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio.", "12345678900", true,
+                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio.", UsuarioFixture.CPF_ADMIN, true,
                         "Cpf já cadastrado."),
                 Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio.", "123456789abc", true,
                         "Cpf deve conter 11 caracteres numéricos."),
@@ -145,8 +146,8 @@ class UsuarioControllerTest {
 
     @ParameterizedTest
     @MethodSource("dadosInválidosParaCriarUsuário")
-    @DisplayName("Deve ser possível criar um usuário corretamente")
-    void test(String email, String senha, String nome, String sobrenome, String cpf, boolean admin, String mensagemErro)
+    @DisplayName("Deve falhar ao tentar criar um usuário corretamente")
+    void dadoPossuoDadosInvalidosQuandoTentoCriarNovoUsuarioDeveRetornarErro(String email, String senha, String nome, String sobrenome, String cpf, boolean admin, String mensagemErro)
             throws Exception {
         this.autenticacaoDto = new AutenticacaoDto(email,
                 senha);
@@ -198,7 +199,7 @@ class UsuarioControllerTest {
     @DisplayName("Deve retornar false ao verificar se usuário existe ao passar cpf não cadastrado")
     void dadoPossuoCpfDeUmUsuarioInexistenteQuandoVerificoSeEleExisteEntaoRetornarVerificarSeUsuarioExisteRespostaDtoFalse() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/usuario/existe?cpf=" + UsuarioFixture.cpfNaoCadastrado))
+                .get("/usuario/existe?cpf=" + UsuarioFixture.CPF_ALEATORIO))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.existe").value(false));
     }

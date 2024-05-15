@@ -11,17 +11,20 @@ import net.datafaker.Faker;
 public class UsuarioFixture {
     private static final Faker faker = new Faker(new Locale("pt-BR"));
 
-    public static String cpfNaoCadastrado = faker.number().digits(11);
+    public static final String CPF_ALEATORIO = faker.number().digits(11);
+    public static final String CPF_ADMIN = faker.number().digits(11);
+    public static final String CPF_USUARIO = faker.number().digits(11);
+
 
     public static Usuario usuarioAdmin() {
-        return new Usuario("João", "Silva", "12345678900", true);
+        return new Usuario(faker.name().firstName(), faker.name().lastName(), CPF_ADMIN, true);
     }
 
     public static Usuario usuarioNaoAdmin() {
-        return new Usuario("Pedro", "Cecilio", "12345678911", false);
+        return new Usuario(faker.name().firstName(), faker.name().lastName(), CPF_USUARIO, false);
     }
 
     public static CriarUsuarioDto criarUsuarioDto(AutenticacaoDto autenticacaoDto) {
-        return new CriarUsuarioDto(autenticacaoDto, "Pedro", "Cecilio", "12345678910", true);
+        return new CriarUsuarioDto(autenticacaoDto, faker.name().firstName(), faker.name().lastName(), CPF_ALEATORIO, false);
     }
 }
