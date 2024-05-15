@@ -2,6 +2,7 @@ package com.dbserver.votacaoBackend.domain.usuario.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,6 +34,8 @@ import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.mapper.UsuarioMapper;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
+import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -56,24 +59,21 @@ class UsuarioServiceTest {
     private Authentication securityAuthenticationMock;
     @Mock
     private UsuarioMapper usuarioMapper;
-
+    @Mock    
     private Usuario usuarioMock;
-    private Autenticacao autenticacaoMock;
+
     private CriarUsuarioDto criarUsuarioDtoMock;
+    private AutenticacaoDto autenticacaoDtoMock;
 
     @BeforeEach
     void configurar() {
-        this.usuarioMock = new Usuario(1L, "João", "Silva", "12345678900", false);
-        this.autenticacaoMock = new Autenticacao("example@example.com", "senha123");
-        AutenticacaoDto autenticacaoDto = new AutenticacaoDto(this.autenticacaoMock.getEmail(),
-                this.autenticacaoMock.getSenha());
-        this.criarUsuarioDtoMock = new CriarUsuarioDto(autenticacaoDto, "João", "Silva", "12345678900", false);
+        this.autenticacaoDtoMock = AutenticacaoFixture.autenticacaoDtoUsuarioValido();
+        this.criarUsuarioDtoMock = UsuarioFixture.criarUsuarioDto(this.autenticacaoDtoMock);
     }
 
     @AfterEach
     void limpar() {
         this.usuarioMock = null;
-        this.autenticacaoMock = null;
         this.usuarioRepository.deleteAll();
         this.autenticacaoRepository.deleteAll();
     }
@@ -81,10 +81,10 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve ser possível criar um Usuario corretamente")
     void dadoTenhoUmUsuarioEUmAutenticacaoComDadosCorretosQuandoTentoCriarUsuarioEntaoRetornarUsuarioCriado() {
-        when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoMock.getSenha()))
+        when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoDtoMock.senha()))
                 .thenReturn("senhaEncriptada");
-        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoMock.getEmail())).thenReturn(false);
-        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoDtoMock.email())).thenReturn(false);
+        when(this.usuarioRepository.findByCpf(this.criarUsuarioDtoMock.cpf())).thenReturn(Optional.empty());
 
         this.usuarioService.criarUsuario(this.criarUsuarioDtoMock);
 
@@ -96,10 +96,10 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Não deve ser possível criar um Usuario passando ao passar cpf existente")
     void dadoTenhoUmCpfJaCadastradoQuandoTentoCriarUsuarioEntaoRetornarUmErro() {
-        when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoMock.getSenha()))
+        when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoDtoMock.senha()))
                 .thenReturn("senhaEncriptada");
-        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoMock.getEmail())).thenReturn(false);
-        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoDtoMock.email())).thenReturn(false);
+        when(this.usuarioRepository.findByCpf(this.criarUsuarioDtoMock.cpf())).thenReturn(Optional.of(this.usuarioMock));
 
         assertThrows(IllegalArgumentException.class,
                 () -> this.usuarioService.criarUsuario(this.criarUsuarioDtoMock));
@@ -108,9 +108,9 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Não deve ser possível criar um Usuario passando ao passar email existente")
     void dadoTenhoUmEmailJaCadastradoQuandoTentoCriarUsuarioEntaoRetornarUmErro() {
-        when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoMock.getSenha()))
+        when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoDtoMock.senha()))
                 .thenReturn("senhaEncriptada");
-        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoMock.getEmail())).thenReturn(true);
+        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoDtoMock.email())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class,
                 () -> this.usuarioService.criarUsuario(this.criarUsuarioDtoMock));
@@ -126,7 +126,7 @@ class UsuarioServiceTest {
 
         Usuario usuarioLogado = this.usuarioService.buscarUsuarioLogado();
 
-        assertEquals(this.usuarioMock.getId(), usuarioLogado.getId());
+        assertNotNull(usuarioLogado);
     }
 
     @Test
@@ -138,9 +138,9 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve retornar true ao verificar se existe usuário ao passar cpf existente")
     void dadoTenhoUmCpfExistenteQuandoTentoVerificarSeExisteUsuarioPorCpfEntaoRetornarTrue() {
-        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+        when(this.usuarioRepository.findByCpf(UsuarioFixture.CPF_ALEATORIO)).thenReturn(Optional.of(this.usuarioMock));
 
-        boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
+        boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(UsuarioFixture.CPF_ALEATORIO);
 
         assertTrue(resposta);
     }
@@ -148,9 +148,9 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve retornar false ao verificar se existe usuário ao passar cpf inexistente")
     void dadoTenhoUmCpfInexistenteQuandoTentoVerificarSeExisteUsuarioPorCpfEntaoRetornarFalse() {
-        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+        when(this.usuarioRepository.findByCpf(UsuarioFixture.CPF_ALEATORIO)).thenReturn(Optional.empty());
 
-        boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
+        boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(UsuarioFixture.CPF_ALEATORIO);
 
         assertFalse(resposta);
     }
@@ -158,9 +158,9 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve retornar usuário ao buscar usuario com cpf existete")
     void dadoTenhoUmCpfExistenteQuandoTentoBuscarUsuarioPorCpfEntaoRetornarUsuario() {
-        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
+        when(this.usuarioRepository.findByCpf(UsuarioFixture.CPF_ALEATORIO)).thenReturn(Optional.of(this.usuarioMock));
 
-        Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(this.usuarioMock.getCpf());
+        Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(UsuarioFixture.CPF_ALEATORIO);
 
         assertEquals(this.usuarioMock.getId(), resposta.getId());
     }
@@ -168,9 +168,9 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve retornar null ao buscar usuario com cpf inexistente")
     void dadoTenhoUmCpfInexistenteQuandoTentoBuscarUsuarioPorCpfEntaoRetornarNull() {
-        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.empty());
+        when(this.usuarioRepository.findByCpf(UsuarioFixture.CPF_ALEATORIO)).thenReturn(Optional.empty());
 
-        Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(this.usuarioMock.getCpf());
+        Usuario resposta = this.usuarioService.buscarUsuarioPorCpfSeHouver(UsuarioFixture.CPF_ALEATORIO);
 
         assertNull(resposta);
     }

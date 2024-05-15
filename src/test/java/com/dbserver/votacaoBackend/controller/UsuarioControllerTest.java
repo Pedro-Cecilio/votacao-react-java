@@ -23,6 +23,8 @@ import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRe
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
+import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -36,7 +38,6 @@ import java.util.stream.Stream;
 class UsuarioControllerTest {
     private AutenticacaoRepository autenticacaoRepository;
     private UsuarioRepository usuarioRepository;
-    private Autenticacao autenticacao;
     private MockMvc mockMvc;
     private JacksonTester<CriarUsuarioDto> criarUsuarioDtoJson;
     private CriarUsuarioDto criarUsuarioDto;
@@ -58,12 +59,13 @@ class UsuarioControllerTest {
 
     @BeforeEach
     void configurar() {
-        this.usuarioCadastrado = new Usuario("João", "Silva", "12345678900", true);
-        this.autenticacao = new Autenticacao("example@example.com",
-                "$2a$10$6V3ZuwVZxOfqS0IKfhqk1uUzdUe/8jl1flMBk5AVzmPSX2wYKd/vS");
+        this.usuarioCadastrado = UsuarioFixture.usuarioAdmin();
         this.usuarioRepository.save(this.usuarioCadastrado);
-        this.autenticacao.setUsuario(this.usuarioCadastrado);
-        this.autenticacaoRepository.save(this.autenticacao);
+
+        System.out.println(this.usuarioCadastrado.getCpf());
+        Autenticacao autenticacao = AutenticacaoFixture.autenticacaoAdmin(usuarioCadastrado);
+        this.autenticacaoRepository.save(autenticacao);
+        
         this.token = this.tokenService.gerarToken(autenticacao);
 
     }
@@ -78,10 +80,9 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("Deve ser possível criar um usuário corretamente")
     void dadoCriarUsuarioDtoCorretoQuandoTentoCriarUsuarioEntaoRetornarCriarUsuarioRespostaDto() throws Exception {
-        this.autenticacaoDto = new AutenticacaoDto("example2@example.com",
-                "senha123");
+        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoUsuarioValido();
 
-        this.criarUsuarioDto = new CriarUsuarioDto(this.autenticacaoDto, "Pedro", "Cecilio", "12345678910", true);
+        this.criarUsuarioDto = UsuarioFixture.criarUsuarioDto(this.autenticacaoDto);
 
         String email = this.autenticacaoDto.email();
         String nome = this.criarUsuarioDto.nome();
@@ -110,7 +111,7 @@ class UsuarioControllerTest {
                         "Email com formato inválido."),
                 Arguments.of(null, "senha123", "Pedro", "Cecilio", "12345678912", true, "Email com formato inválido."),
                 Arguments.of("", "senha123", "Pedro", "Cecilio", "12345678912", true, "Email com formato inválido."),
-                Arguments.of("example@example.com", "senha123", "Pedro", "Cecilio", "12345678912", true,
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, "senha123", "Pedro", "Cecilio", "12345678912", true,
                         "Email já cadastrado."),
 
                 Arguments.of("example2@example.com", null, "Pedro", "Cecilio", "12345678912", true,
@@ -134,7 +135,7 @@ class UsuarioControllerTest {
                 Arguments.of("example2@example.com", "senha123", "Pedro", "SobrenomeMuitoGrande.", "12345678912", true,
                         "Sobrenome deve conter entre 2 e 20 caracteres."),
 
-                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio.", "12345678900", true,
+                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio.", UsuarioFixture.CPF_ADMIN, true,
                         "Cpf já cadastrado."),
                 Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio.", "123456789abc", true,
                         "Cpf deve conter 11 caracteres numéricos."),
@@ -145,8 +146,8 @@ class UsuarioControllerTest {
 
     @ParameterizedTest
     @MethodSource("dadosInválidosParaCriarUsuário")
-    @DisplayName("Deve ser possível criar um usuário corretamente")
-    void test(String email, String senha, String nome, String sobrenome, String cpf, boolean admin, String mensagemErro)
+    @DisplayName("Deve falhar ao tentar criar um usuário corretamente")
+    void dadoPossuoDadosInvalidosQuandoTentoCriarNovoUsuarioDeveRetornarErro(String email, String senha, String nome, String sobrenome, String cpf, boolean admin, String mensagemErro)
             throws Exception {
         this.autenticacaoDto = new AutenticacaoDto(email,
                 senha);
@@ -161,7 +162,6 @@ class UsuarioControllerTest {
                 .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.erro").value(mensagemErro));
-
     }
 
     @Test
@@ -199,7 +199,7 @@ class UsuarioControllerTest {
     @DisplayName("Deve retornar false ao verificar se usuário existe ao passar cpf não cadastrado")
     void dadoPossuoCpfDeUmUsuarioInexistenteQuandoVerificoSeEleExisteEntaoRetornarVerificarSeUsuarioExisteRespostaDtoFalse() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/usuario/existe?cpf=" + "11122233344"))
+                .get("/usuario/existe?cpf=" + UsuarioFixture.CPF_ALEATORIO))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.existe").value(false));
     }

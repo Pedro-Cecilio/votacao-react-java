@@ -25,10 +25,12 @@ import com.dbserver.votacaoBackend.domain.pauta.dto.CriarPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
+import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +38,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -47,7 +48,6 @@ import java.util.stream.Stream;
 class PautaControllerTest {
         private AutenticacaoRepository autenticacaoRepository;
         private UsuarioRepository usuarioRepository;
-        private Autenticacao autenticacao;
         private MockMvc mockMvc;
         private JacksonTester<CriarPautaDto> criarPautaDtoJson;
         private CriarPautaDto criarPautaDto;
@@ -73,14 +73,12 @@ class PautaControllerTest {
 
         @BeforeEach
         void configurar() {
-                this.usuarioCadastrado = new Usuario("João", "Silva", "12345678900", true);
-                this.autenticacao = new Autenticacao("example@example.com",
-                                "$2a$10$6V3ZuwVZxOfqS0IKfhqk1uUzdUe/8jl1flMBk5AVzmPSX2wYKd/vS");
+                this.usuarioCadastrado = UsuarioFixture.usuarioAdmin();
                 this.usuarioRepository.save(this.usuarioCadastrado);
-                this.autenticacao.setUsuario(this.usuarioCadastrado);
-                this.autenticacaoRepository.save(this.autenticacao);
+                Autenticacao autenticacao = AutenticacaoFixture.autenticacaoAdmin(usuarioCadastrado);
+                autenticacao.setUsuario(this.usuarioCadastrado);
+                this.autenticacaoRepository.save(autenticacao);
                 this.token = this.tokenService.gerarToken(autenticacao);
-
         }
 
         @AfterEach
@@ -93,8 +91,9 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Deve ser possível criar uma pauta corretamente")
-        void dadoTenhoCriarPautaDtoComDadosCorretosQuandoTentoCriarPautaEntaoRetornarRespostaPautaDto() throws Exception {
-                this.criarPautaDto = new CriarPautaDto("Você sabe dirigir?", Categoria.TRANSPORTE.toString());
+        void dadoTenhoCriarPautaDtoComDadosCorretosQuandoTentoCriarPautaEntaoRetornarRespostaPautaDto()
+                        throws Exception {
+                this.criarPautaDto = PautaFixture.criarPautaDtoValido();
                 String json = this.criarPautaDtoJson.write(criarPautaDto).getJson();
 
                 mockMvc.perform(MockMvcRequestBuilders
@@ -147,13 +146,7 @@ class PautaControllerTest {
         @Test
         @DisplayName("deve ser possível lista pautas do usuário logado")
         void dadoNaoEnvioCategoriaQuandoBuscoTodasMinhasPautasQuandoRetornarListaDePautas() throws Exception {
-                Pauta pautaSaude = new Pauta("Você está bem de saúde?", Categoria.SAUDE.toString(),
-                                this.usuarioCadastrado);
-
-                Pauta pautaTransporte = new Pauta("Sabe dirigir?", Categoria.TRANSPORTE.toString(),
-                                this.usuarioCadastrado);
-
-                List<Pauta> pautas = List.of(pautaSaude, pautaTransporte);
+                List<Pauta> pautas = PautaFixture.listaDePautas(this.usuarioCadastrado);
 
                 this.pautaRepository.saveAll(pautas);
 
@@ -173,13 +166,8 @@ class PautaControllerTest {
         @Test
         @DisplayName("deve ser possível lista pautas do usuário logado")
         void dadoEnvioCategoriaQuandoBuscoTodasMinhasPautasQuandoRetornarListaDePautas() throws Exception {
-                Pauta pautaSaude = new Pauta("Você está bem de saúde?", Categoria.SAUDE.toString(),
-                                this.usuarioCadastrado);
+                List<Pauta> pautas = PautaFixture.listaDePautas(this.usuarioCadastrado);
 
-                Pauta pautaTransporte = new Pauta("Sabe dirigir?", Categoria.TRANSPORTE.toString(),
-                                this.usuarioCadastrado);
-
-                List<Pauta> pautas = List.of(pautaSaude, pautaTransporte);
                 this.pautaRepository.saveAll(pautas);
 
                 MockHttpServletResponse resposta = mockMvc.perform(MockMvcRequestBuilders
@@ -199,18 +187,7 @@ class PautaControllerTest {
         @Test
         @DisplayName("deve ser possível listar todas pautas ativas")
         void dadoEstouLogadoQuandoBuscoTodasPautasAtivasQuandoRetornarListaDePautas() throws Exception {
-                Pauta pautaSaude = new Pauta("Você está bem de saúde?", Categoria.SAUDE.toString(),
-                                this.usuarioCadastrado);
-
-                Pauta pautaTransporte = new Pauta("Sabe dirigir?", Categoria.TRANSPORTE.toString(),
-                                this.usuarioCadastrado);
-
-                SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(),
-                                LocalDateTime.now().plusMinutes(5));
-
-                pautaTransporte.setSessaoVotacao(sessaoVotacao);
-
-                List<Pauta> pautas = List.of(pautaSaude, pautaTransporte);
+                List<Pauta> pautas = PautaFixture.listaDePautasUmaPautaAtiva(usuarioCadastrado);
                 this.pautaRepository.saveAll(pautas);
 
                 MockHttpServletResponse resposta = mockMvc.perform(MockMvcRequestBuilders
@@ -231,13 +208,7 @@ class PautaControllerTest {
         @Test
         @DisplayName("deve ser possível buscar pauta ativa por Id")
         void dadoPossuoPautaIdQuandoBuscoAtivaPorIdQuandoRetornarRespostaPautaDto() throws Exception {
-                Pauta pautaTransporte = new Pauta("Sabe dirigir?", Categoria.TRANSPORTE.toString(),
-                                this.usuarioCadastrado);
-
-                SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(),
-                                LocalDateTime.now().plusMinutes(5));
-
-                pautaTransporte.setSessaoVotacao(sessaoVotacao);
+                Pauta pautaTransporte = PautaFixture.pautaTransporteAtiva(this.usuarioCadastrado);
 
                 this.pautaRepository.save(pautaTransporte);
 
@@ -268,13 +239,7 @@ class PautaControllerTest {
         @Test
         @DisplayName("Deve ser possível buscar detalhes de uma pauta ")
         void dadoPossuoPautaIdQuandoBuscoDetalhesPautaQuandoRetornarRespostaPautaDto() throws Exception {
-                Pauta pautaTransporte = new Pauta("Sabe dirigir?", Categoria.TRANSPORTE.toString(),
-                                this.usuarioCadastrado);
-
-                SessaoVotacao sessaoVotacao = new SessaoVotacao(pautaTransporte, LocalDateTime.now(),
-                                LocalDateTime.now().plusMinutes(5));
-                                
-                pautaTransporte.setSessaoVotacao(sessaoVotacao);
+                Pauta pautaTransporte = PautaFixture.pautaTransporteAtiva(usuarioCadastrado);
 
                 this.pautaRepository.save(pautaTransporte);
 

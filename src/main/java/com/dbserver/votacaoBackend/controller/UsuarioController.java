@@ -3,8 +3,6 @@ package com.dbserver.votacaoBackend.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
-import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServiceImpl;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;

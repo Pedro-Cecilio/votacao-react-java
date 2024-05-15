@@ -24,6 +24,8 @@ import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutorizarVotoExternoD
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
+import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,29 +43,25 @@ class AutenticacaoControllerTest {
     private AutenticacaoDto autenticacaoDto;
     private MockMvc mockMvc;
     private JacksonTester<AutenticacaoDto> autenticacaoDtoJson;
-    private JacksonTester<AutorizarVotoExternoDto> AutorizarVotoExternoDtoJson;
-    private String senhaCorreta;
-    private AutorizarVotoExternoDto AutorizarVotoExternoDto;
+    private JacksonTester<AutorizarVotoExternoDto> autorizarVotoExternoDtoJson;
+    private AutorizarVotoExternoDto autorizarVotoExternoDto;
 
     @Autowired
     public AutenticacaoControllerTest(AutenticacaoRepository autenticacaoRepository,
             UsuarioRepository usuarioRepository, MockMvc mockMvc, JacksonTester<AutenticacaoDto> autenticacaoDtoJson,
-            JacksonTester<AutorizarVotoExternoDto> AutorizarVotoExternoDtoJson) {
+            JacksonTester<AutorizarVotoExternoDto> autorizarVotoExternoDtoJson) {
         this.usuarioRepository = usuarioRepository;
         this.autenticacaoRepository = autenticacaoRepository;
         this.mockMvc = mockMvc;
         this.autenticacaoDtoJson = autenticacaoDtoJson;
-        this.AutorizarVotoExternoDtoJson = AutorizarVotoExternoDtoJson;
+        this.autorizarVotoExternoDtoJson = autorizarVotoExternoDtoJson;
     }
 
     @BeforeEach
     void configurar() {
-        Usuario usuario = new Usuario("João", "Silva", "12345678900", true);
-        this.autenticacao = new Autenticacao("example@example.com",
-                "$2a$10$6V3ZuwVZxOfqS0IKfhqk1uUzdUe/8jl1flMBk5AVzmPSX2wYKd/vS");
-        this.senhaCorreta = "senha123";
+        Usuario usuario = UsuarioFixture.usuarioAdmin();
         this.usuarioRepository.save(usuario);
-        this.autenticacao.setUsuario(usuario);
+        this.autenticacao = AutenticacaoFixture.autenticacaoAdmin(usuario);
         this.autenticacaoRepository.save(this.autenticacao);
         this.autenticacaoDto = null;
     }
@@ -80,7 +78,7 @@ class AutenticacaoControllerTest {
     void dadoPossuoDadosDeAutenticacaCorretosoQuandoTentoRealizarLoginEntaoRetornarAutenticacaoRespostaDto()
             throws Exception {
 
-        this.autenticacaoDto = new AutenticacaoDto(this.autenticacao.getEmail(), this.senhaCorreta);
+        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoAdminValido();
 
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
 
@@ -98,7 +96,7 @@ class AutenticacaoControllerTest {
     void dadoPossuoUmaSenhaIncorretaQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
-        this.autenticacaoDto = new AutenticacaoDto(this.autenticacao.getEmail(), "senhaIncorreta");
+        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoSenhaIncorreta();
 
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
 
@@ -115,7 +113,7 @@ class AutenticacaoControllerTest {
     void dadoPossuoUmaEmailInexistenteQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
-        this.autenticacaoDto = new AutenticacaoDto("emailInexistente@email.com", this.senhaCorreta);
+        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoEmailIncorreto();
 
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
 
@@ -148,12 +146,12 @@ class AutenticacaoControllerTest {
 
     private static Stream<Arguments> dadosInvalidosParaRealizarLogin() {
         return Stream.of(
-                Arguments.of("email", "senha123", "Email com formato inválido."),
-                Arguments.of("", "senha123", "Email deve ser informado."),
-                Arguments.of(null, "senha123", "Email deve ser informado."),
+                Arguments.of("email", AutenticacaoFixture.SENHA, "Email com formato inválido."),
+                Arguments.of("", AutenticacaoFixture.SENHA, "Email deve ser informado."),
+                Arguments.of(null, AutenticacaoFixture.SENHA, "Email deve ser informado."),
 
-                Arguments.of("example@example.com", "", "Senha deve ser informada."),
-                Arguments.of("example@example.com", null, "Senha deve ser informada."));
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, "", "Senha deve ser informada."),
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, null, "Senha deve ser informada."));
     }
 
     @Test
@@ -162,9 +160,9 @@ class AutenticacaoControllerTest {
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 
-        this.AutorizarVotoExternoDto = new AutorizarVotoExternoDto(cpf, senhaCorreta);
+        this.autorizarVotoExternoDto = AutenticacaoFixture.autorizarVotoExternoDtoValido(cpf);
 
-        String json = this.AutorizarVotoExternoDtoJson.write(this.AutorizarVotoExternoDto).getJson();
+        String json = this.autorizarVotoExternoDtoJson.write(this.autorizarVotoExternoDto).getJson();
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -177,11 +175,9 @@ class AutenticacaoControllerTest {
     @DisplayName("Não deve ser possível validar usuário existente com ao passar cpf não cadastrado ao tentar votar externamente")
     void dadoCpfNaoCadastradoQuandoTentoValidarVotoExternoEntaoRetornarRespostaErro()
             throws Exception {
-        String cpf = "33322211100";
+        this.autorizarVotoExternoDto = AutenticacaoFixture.autorizarVotoExternoDtoCpfInvalido();
 
-        this.AutorizarVotoExternoDto = new AutorizarVotoExternoDto(cpf, senhaCorreta);
-
-        String json = this.AutorizarVotoExternoDtoJson.write(this.AutorizarVotoExternoDto).getJson();
+        String json = this.autorizarVotoExternoDtoJson.write(this.autorizarVotoExternoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")
@@ -197,9 +193,9 @@ class AutenticacaoControllerTest {
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 
-        this.AutorizarVotoExternoDto = new AutorizarVotoExternoDto(cpf, "senhaIncorreta");
+        this.autorizarVotoExternoDto = AutenticacaoFixture.autorizarVotoExternoDtoSenhaIncorreta(cpf);
 
-        String json = this.AutorizarVotoExternoDtoJson.write(this.AutorizarVotoExternoDto).getJson();
+        String json = this.autorizarVotoExternoDtoJson.write(this.autorizarVotoExternoDto).getJson();
         
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/auth/votoExterno")

@@ -32,6 +32,8 @@ import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRe
 import com.dbserver.votacaoBackend.domain.autenticacao.validacoes.AutenticacaoValidacoes;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.validacoes.UsuarioValidacoes;
+import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import com.dbserver.votacaoBackend.utils.Utils;
 
@@ -60,16 +62,20 @@ class AutenticacaoServiceTest {
 
         private Usuario usuarioMock;
         private Autenticacao autenticacaoMock;
-        private String senhaInvalida;
-        private String senhaValida = "senha123";
-        private String senhaValidaEncriptada = "$2a$10$/Y8PKwHdSFWafmyWpJDgHu2wFJ8ShhLGEJtfVAz15ZerS3O1rW8cm";
+        private String senha;
+        private String senhaEncriptada;
+        private AutenticacaoDto autenticacaoDto;
+        private AutorizarVotoExternoDto autorizarVotoExternoDto;
 
         @BeforeEach
         void configurar() {
-                this.usuarioMock = new Usuario(1L, "João", "Silva", "12345678900", false);
-                this.autenticacaoMock = new Autenticacao("example@example.com", senhaValidaEncriptada);
-                this.autenticacaoMock.setUsuario(usuarioMock);
-                this.senhaInvalida = "senhaInvalida";
+                this.usuarioMock = UsuarioFixture.usuarioAdmin();
+                this.autenticacaoMock = AutenticacaoFixture.autenticacaoAdmin(usuarioMock);
+                this.senha = AutenticacaoFixture.SENHA;
+                this.senhaEncriptada = this.autenticacaoMock.getSenha();
+                this.autorizarVotoExternoDto = AutenticacaoFixture
+                                .autorizarVotoExternoDtoValido(this.usuarioMock.getCpf());
+                this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoAdminValido();
         }
 
         @AfterEach
@@ -83,18 +89,16 @@ class AutenticacaoServiceTest {
         @DisplayName("Deve ser possível autenticar usuário corretamente")
         void dadoTenhoDadosDeAutenticacaoQuandoTentoAutenticarEntaoRetornarAutenticacaoRespostaDto() {
                 String token = "tokenValido";
-                AutenticacaoDto autenticacaoDto = new AutenticacaoDto(this.autenticacaoMock.getEmail(),
-                                autenticacaoMock.getSenha());
 
-                when(this.autenticacaoRepository.findByEmail(autenticacaoDto.email()))
+                when(this.autenticacaoRepository.findByEmail(this.autenticacaoDto.email()))
                                 .thenReturn(Optional.of(this.autenticacaoMock));
 
-                when(this.autenticacaoValidacoes.validarSenhaDaAutenticacao(autenticacaoDto.senha(),
-                                this.senhaValidaEncriptada)).thenReturn(true);
+                when(this.autenticacaoValidacoes.validarSenhaDaAutenticacao(this.autenticacaoDto.senha(),
+                                this.senhaEncriptada)).thenReturn(true);
 
                 when(this.tokenService.gerarToken(this.autenticacaoMock)).thenReturn(token);
 
-                AutenticacaoRespostaDto resposta = this.autenticacaoService.autenticarUsuario(autenticacaoDto);
+                AutenticacaoRespostaDto resposta = this.autenticacaoService.autenticarUsuario(this.autenticacaoDto);
 
                 verify(this.tokenService).gerarToken(this.autenticacaoMock);
                 assertEquals(token, resposta.token());
@@ -103,27 +107,23 @@ class AutenticacaoServiceTest {
         @Test
         @DisplayName("Deve falhar ao tentar autenticar usuário ao não encontrar autenticacao por email")
         void dadoTenhoEmailInexistenteQuandoTentoAutenticarEntaoRetornarErro() {
-                AutenticacaoDto autenticacaoDto = new AutenticacaoDto(this.autenticacaoMock.getEmail(),
-                                autenticacaoMock.getSenha());
 
-                when(this.autenticacaoRepository.findByEmail(autenticacaoDto.email()))
+                when(this.autenticacaoRepository.findByEmail(this.autenticacaoDto.email()))
                                 .thenReturn(Optional.empty());
 
                 assertThrows(BadCredentialsException.class,
-                                () -> this.autenticacaoService.autenticarUsuario(autenticacaoDto));
+                                () -> this.autenticacaoService.autenticarUsuario(this.autenticacaoDto));
         }
 
         @Test
         @DisplayName("Deve falhar ao tentar autenticar usuário ao informar senha incorreta")
         void dadoTenhoSenhaIncorretaQuandoTentoAutenticarEntaoRetornarErro() {
-                AutenticacaoDto autenticacaoDto = new AutenticacaoDto(this.autenticacaoMock.getEmail(),
-                                senhaInvalida);
 
-                when(this.autenticacaoRepository.findByEmail(autenticacaoDto.email()))
+                when(this.autenticacaoRepository.findByEmail(this.autenticacaoDto.email()))
                                 .thenReturn(Optional.of(this.autenticacaoMock));
 
-                when(this.autenticacaoValidacoes.validarSenhaDaAutenticacao(senhaInvalida,
-                                this.senhaValidaEncriptada)).thenReturn(false);
+                when(this.autenticacaoValidacoes.validarSenhaDaAutenticacao(this.senha,
+                                this.senhaEncriptada)).thenReturn(false);
 
                 assertThrows(BadCredentialsException.class,
                                 () -> this.autenticacaoService.autenticarUsuario(autenticacaoDto));
@@ -132,22 +132,22 @@ class AutenticacaoServiceTest {
         @Test
         @DisplayName("Deve ser possivel autorizar usuário votar externamente")
         void dadoPossuoDadosParaAutorizarVotoExternoCorretosQuandoTentoAutorizarDeveRetornarAutorizarVotoExternoComTrue() {
-                AutorizarVotoExternoDto dto = new AutorizarVotoExternoDto(this.usuarioMock.getCpf(),
-                                this.autenticacaoMock.getSenha());
-                AutorizarVotoExternoRespostaDto resposta = this.autenticacaoService.autorizarUsuarioVotoExterno(dto);
+
+                AutorizarVotoExternoRespostaDto resposta = this.autenticacaoService
+                                .autorizarUsuarioVotoExterno(this.autorizarVotoExternoDto);
                 assertTrue(resposta.valido());
         }
 
         @Test
         @DisplayName("Deve falhar ao autorizar usuário votar externamente ao passar cpf ou senha incompatíveis")
         void dadoPossuoDadosParaAutorizarVotoExternoIncorretosQuandoTentoAutorizarDeveRetornarErro() {
-                AutorizarVotoExternoDto dto = new AutorizarVotoExternoDto(this.usuarioMock.getCpf(),
-                                this.autenticacaoMock.getSenha());
+
                 doThrow(BadCredentialsException.class).when(this.autenticacaoValidacoes)
-                                .validarAutenticacaoPorCpfESenha(this.usuarioMock.getCpf(),
-                                                this.autenticacaoMock.getSenha());
+                                .validarAutenticacaoPorCpfESenha(this.autorizarVotoExternoDto.cpf(),
+                                                this.autorizarVotoExternoDto.senha());
                 assertThrows(BadCredentialsException.class,
-                                () -> this.autenticacaoService.autorizarUsuarioVotoExterno(dto));
+                                () -> this.autenticacaoService
+                                                .autorizarUsuarioVotoExterno(this.autorizarVotoExternoDto));
         }
 
         @Test
@@ -179,12 +179,12 @@ class AutenticacaoServiceTest {
 
         @Test
         @DisplayName("Deve ser possível encriptar senha da autenticação ao passar senha válida")
-        void dadoTenhoUmaSenhaValidaQuandoTentoEncriptarSenhaEntaoRetornarSenhaEncriptada() {
-                when(this.passwordEncoder.encode(this.senhaValida)).thenReturn(this.senhaValidaEncriptada);
+        void dadoTenhoUmasenhaQuandoTentoEncriptarSenhaEntaoRetornarSenhaEncriptada() {
+                when(this.passwordEncoder.encode(this.senha)).thenReturn(this.senhaEncriptada);
 
-                this.autenticacaoService.encriptarSenhaDaAutenticacao(this.senhaValida);
+                this.autenticacaoService.encriptarSenhaDaAutenticacao(this.senha);
 
-                verify(this.passwordEncoder).encode(this.senhaValida);
+                verify(this.passwordEncoder).encode(this.senha);
         }
 
         @Test
