@@ -40,9 +40,7 @@ public class UsuarioController {
     @SecurityRequirement(name = "bearer-key")
     @GetMapping("/usuarioLogado")
     public ResponseEntity<UsuarioRespostaDto> buscarUsuarioLogado() {
-        Usuario usuario = this.usuarioService.buscarUsuarioLogado();
-
-        UsuarioRespostaDto resposta = new UsuarioRespostaDto(usuario);
+        UsuarioRespostaDto resposta = this.usuarioService.buscarUsuarioLogadoComoDto();
 
         return ResponseEntity.ok().body(resposta);
     }

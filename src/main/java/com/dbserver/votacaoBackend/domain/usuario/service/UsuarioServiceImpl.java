@@ -10,6 +10,7 @@ import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServi
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.mapper.UsuarioMapper;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 
@@ -53,6 +54,17 @@ public class UsuarioServiceImpl implements UsuarioService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             return (Usuario) authentication.getPrincipal();
+        } catch (Exception e) {
+            throw new AccessDeniedException("Acesso negado.");
+        }
+    }
+
+    @Override
+    public UsuarioRespostaDto buscarUsuarioLogadoComoDto() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Usuario usuario = (Usuario) authentication.getPrincipal();
+            return usuarioMapper.toUsuarioRespostaDto(usuario);
         } catch (Exception e) {
             throw new AccessDeniedException("Acesso negado.");
         }

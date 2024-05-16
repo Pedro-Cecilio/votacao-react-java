@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
@@ -17,4 +18,6 @@ public interface UsuarioMapper {
     @Mapping(target = "cpf", source = "usuario.cpf")
     @Mapping(target = "admin", source = "usuario.admin")
     CriarUsuarioRespostaDto toCriarUsuarioRespostaDto(Usuario usuario, Autenticacao autenticacao);
+
+    UsuarioRespostaDto toUsuarioRespostaDto(Usuario usuario);
 }

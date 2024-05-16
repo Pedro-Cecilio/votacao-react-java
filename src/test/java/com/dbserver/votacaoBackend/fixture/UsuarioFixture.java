@@ -27,4 +27,8 @@ public class UsuarioFixture {
     public static CriarUsuarioDto criarUsuarioDto(AutenticacaoDto autenticacaoDto) {
         return new CriarUsuarioDto(autenticacaoDto, faker.name().firstName(), faker.name().lastName(), CPF_ALEATORIO, false);
     }
+
+    // public static Usuario buildComDto(CriarUsuarioDto dto) {
+    //     return new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
+    // }
 }

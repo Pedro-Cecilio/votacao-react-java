@@ -1,5 +1,6 @@
 package com.dbserver.votacaoBackend.domain.usuario.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -59,7 +60,7 @@ class UsuarioServiceTest {
     private Authentication securityAuthenticationMock;
     @Mock
     private UsuarioMapper usuarioMapper;
-    @Mock    
+    @Mock
     private Usuario usuarioMock;
 
     private CriarUsuarioDto criarUsuarioDtoMock;
@@ -85,7 +86,6 @@ class UsuarioServiceTest {
                 .thenReturn("senhaEncriptada");
         when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoDtoMock.email())).thenReturn(false);
         when(this.usuarioRepository.findByCpf(this.criarUsuarioDtoMock.cpf())).thenReturn(Optional.empty());
-
         this.usuarioService.criarUsuario(this.criarUsuarioDtoMock);
 
         verify(this.usuarioRepository, times(1)).save(any(Usuario.class));
@@ -99,7 +99,8 @@ class UsuarioServiceTest {
         when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoDtoMock.senha()))
                 .thenReturn("senhaEncriptada");
         when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoDtoMock.email())).thenReturn(false);
-        when(this.usuarioRepository.findByCpf(this.criarUsuarioDtoMock.cpf())).thenReturn(Optional.of(this.usuarioMock));
+        when(this.usuarioRepository.findByCpf(this.criarUsuarioDtoMock.cpf()))
+                .thenReturn(Optional.of(this.usuarioMock));
 
         assertThrows(IllegalArgumentException.class,
                 () -> this.usuarioService.criarUsuario(this.criarUsuarioDtoMock));
@@ -131,8 +132,27 @@ class UsuarioServiceTest {
 
     @Test
     @DisplayName("Deve falhar ao tentar buscar o usuário logado")
-    void dadoNãoTenhoUmUsuarioLogadoQuandoTentoBuscarUsuarioLogadoEntaoRetornarErro() {
+    void dadoNaoTenhoUmUsuarioLogadoQuandoTentoBuscarUsuarioLogadoEntaoRetornarErro() {
         assertThrows(AccessDeniedException.class, () -> this.usuarioService.buscarUsuarioLogado());
+    }
+
+    @Test
+    @DisplayName("Deve ser possível buscar o usuário logado como DTO")
+    void dadoTenhoUmUsuarioLogadoQuandoTentoBuscarUsuarioLogadoComoDtoEntaoRetornarUsuarioLogado() {
+        SecurityContextHolder.setContext(this.securityContext);
+
+        when(this.securityContext.getAuthentication()).thenReturn(this.securityAuthenticationMock);
+        when(securityAuthenticationMock.getPrincipal()).thenReturn(this.usuarioMock);
+
+        assertDoesNotThrow(()-> this.usuarioService.buscarUsuarioLogadoComoDto());
+
+        verify(usuarioMapper).toUsuarioRespostaDto(usuarioMock);
+    }
+
+    @Test
+    @DisplayName("Deve falhar ao tentar buscar o usuário logado como Dto")
+    void dadoNãoTenhoUmUsuarioLogadoQuandoTentoBuscarUsuarioLogadoComoDtoEntaoRetornarErro() {
+        assertThrows(AccessDeniedException.class, () -> this.usuarioService.buscarUsuarioLogadoComoDto());
     }
 
     @Test

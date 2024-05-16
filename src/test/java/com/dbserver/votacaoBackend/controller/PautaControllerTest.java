@@ -111,6 +111,19 @@ class PautaControllerTest {
                                 .andExpect(jsonPath("$.sessaoVotacao").isEmpty());
         }
 
+        private static Stream<Arguments> dadosInvalidosCriarPauta() {
+                return Stream.of(
+                                Arguments.of(null, Categoria.TRANSPORTE.toString(),
+                                                "Assunto deve ser informado."),
+                                Arguments.of("", Categoria.TRANSPORTE.toString(),
+                                                "Assunto deve ser informado."),
+                                Arguments.of("Você sabe dirigir?", null,
+                                                "Categoria deve ser informada."),
+                                Arguments.of("Você sabe dirigir?", " ",
+                                                "Categoria inválida."),
+                                Arguments.of("Você sabe dirigir?", "CATEGORIA_INVALIDA",
+                                                "Categoria inválida."));
+        }
         @ParameterizedTest
         @MethodSource("dadosInvalidosCriarPauta")
         @DisplayName("Deve ser possível criar uma pauta corretamente")
@@ -129,19 +142,7 @@ class PautaControllerTest {
                                 .andExpect(jsonPath("$.erro").value(mensagemErro));
         }
 
-        private static Stream<Arguments> dadosInvalidosCriarPauta() {
-                return Stream.of(
-                                Arguments.of(null, Categoria.TRANSPORTE.toString(),
-                                                "Assunto deve ser informado."),
-                                Arguments.of("", Categoria.TRANSPORTE.toString(),
-                                                "Assunto deve ser informado."),
-                                Arguments.of("Você sabe dirigir?", null,
-                                                "Categoria deve ser informada."),
-                                Arguments.of("Você sabe dirigir?", " ",
-                                                "Categoria inválida."),
-                                Arguments.of("Você sabe dirigir?", "CATEGORIA_INVALIDA",
-                                                "Categoria inválida."));
-        }
+        
 
         @Test
         @DisplayName("deve ser possível lista pautas do usuário logado")
