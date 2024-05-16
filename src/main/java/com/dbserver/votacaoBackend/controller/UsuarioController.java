@@ -3,7 +3,6 @@ package com.dbserver.votacaoBackend.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
@@ -47,9 +46,7 @@ public class UsuarioController {
 
     @GetMapping("/existe")
     public ResponseEntity<VerificarSeUsuarioExisteRespostaDto> verificarSeUsuarioExistePorCpf(@RequestParam(name = "cpf", required = false, defaultValue = "") final String cpf) {
-        boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
-
-        VerificarSeUsuarioExisteRespostaDto resposta = new VerificarSeUsuarioExisteRespostaDto(existe);
+        VerificarSeUsuarioExisteRespostaDto resposta = this.usuarioService.verificarSeExisteUsuarioPorCpfComoDto(cpf);
         
         return ResponseEntity.ok().body(resposta);
     }

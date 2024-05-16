@@ -33,10 +33,12 @@ import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRe
 import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServiceImpl;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.mapper.UsuarioMapper;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
 import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.VerificarSeUsuarioExisteRespostaDtoFixture;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -163,6 +165,28 @@ class UsuarioServiceTest {
         boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(UsuarioFixture.CPF_ALEATORIO);
 
         assertTrue(resposta);
+    }
+
+    @Test
+    @DisplayName("Deve retornar VerificarSeUsuarioExisteRespostaDto ao verificar se existe usuário ao passar cpf inexistente")
+    void dadoTenhoUmCpfInexistenteQuandoTentoVerificarSeExisteUsuarioPorCpfComoDtoEntaoRetornarFalse() {
+        when(this.usuarioRepository.findByCpf(UsuarioFixture.CPF_ALEATORIO)).thenReturn(Optional.empty());
+        VerificarSeUsuarioExisteRespostaDto dto = VerificarSeUsuarioExisteRespostaDtoFixture.gerarVerificarSeUsuarioExisteRespostaDtoFalse();
+        when(usuarioMapper.toVerificarSeUsuarioExisteRespostaDto(false)).thenReturn(dto);
+        VerificarSeUsuarioExisteRespostaDto resposta = this.usuarioService.verificarSeExisteUsuarioPorCpfComoDto(UsuarioFixture.CPF_ALEATORIO);
+
+        assertFalse(resposta.existe());
+    }
+
+    @Test
+    @DisplayName("Deve retornar true ao verificar se existe usuário como dto ao passar cpf existente")
+    void dadoTenhoUmCpfExistenteQuandoTentoVerificarSeExisteUsuarioPorCpfComoDtoEntaoRetornarTrue() {
+        when(this.usuarioRepository.findByCpf(UsuarioFixture.CPF_ALEATORIO)).thenReturn(Optional.of(this.usuarioMock));
+        VerificarSeUsuarioExisteRespostaDto dto = VerificarSeUsuarioExisteRespostaDtoFixture.gerarVerificarSeUsuarioExisteRespostaDtoTrue();
+        when(usuarioMapper.toVerificarSeUsuarioExisteRespostaDto(true)).thenReturn(dto);
+        VerificarSeUsuarioExisteRespostaDto resposta = this.usuarioService.verificarSeExisteUsuarioPorCpfComoDto(UsuarioFixture.CPF_ALEATORIO);
+
+        assertTrue(resposta.existe());
     }
 
     @Test

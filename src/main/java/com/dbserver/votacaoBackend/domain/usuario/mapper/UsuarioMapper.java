@@ -7,6 +7,7 @@ import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
@@ -20,4 +21,8 @@ public interface UsuarioMapper {
     CriarUsuarioRespostaDto toCriarUsuarioRespostaDto(Usuario usuario, Autenticacao autenticacao);
 
     UsuarioRespostaDto toUsuarioRespostaDto(Usuario usuario);
+
+    default VerificarSeUsuarioExisteRespostaDto toVerificarSeUsuarioExisteRespostaDto(boolean existe){
+        return new VerificarSeUsuarioExisteRespostaDto(existe);
+    };
 }

@@ -11,6 +11,7 @@ import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.mapper.UsuarioMapper;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 
@@ -61,18 +62,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioRespostaDto buscarUsuarioLogadoComoDto() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Usuario usuario = (Usuario) authentication.getPrincipal();
-            return usuarioMapper.toUsuarioRespostaDto(usuario);
-        } catch (Exception e) {
-            throw new AccessDeniedException("Acesso negado.");
-        }
+        Usuario usuario = this.buscarUsuarioLogado();
+        return usuarioMapper.toUsuarioRespostaDto(usuario);
     }
 
     @Override
     public boolean verificarSeExisteUsuarioPorCpf(String cpf) {
         return this.usuarioRepository.findByCpf(cpf).isPresent();
+    }
+
+    @Override
+    public VerificarSeUsuarioExisteRespostaDto verificarSeExisteUsuarioPorCpfComoDto(String cpf) {
+        boolean existe = verificarSeExisteUsuarioPorCpf(cpf);
+        return usuarioMapper.toVerificarSeUsuarioExisteRespostaDto(existe);
     }
 
     @Override
