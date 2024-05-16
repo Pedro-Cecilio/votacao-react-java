@@ -14,7 +14,7 @@ public interface AutenticacaoService {
 
     boolean verificarEmailJaEstaCadastrado(String email);
 
-    public AutenticacaoRespostaDto autenticarUsuario(AutenticacaoDto dto);
+    AutenticacaoRespostaDto autenticarUsuario(AutenticacaoDto dto);
 
-    public AutorizarVotoExternoRespostaDto autorizarUsuarioVotoExterno(AutorizarVotoExternoDto dto);
+    AutorizarVotoExternoRespostaDto autorizarUsuarioVotoExterno(AutorizarVotoExternoDto dto);
 }
