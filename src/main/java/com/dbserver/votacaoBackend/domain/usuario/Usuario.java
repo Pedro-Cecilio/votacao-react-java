@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+// @AllArgsConstructor
 public class Usuario {
     
     @Id

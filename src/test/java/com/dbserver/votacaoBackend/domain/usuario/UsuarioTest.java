@@ -11,6 +11,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+
 
 @SpringBootTest
 class UsuarioTest {
@@ -21,10 +23,10 @@ class UsuarioTest {
 
     @BeforeEach
     void configurar(){
-        this.usuarioMock = new Usuario(1L, "João", "Silva", "12345678900", true);
-        this.nomeValido = "Pedro";
-        this.sobrenomeValido = "Cecilio";
-        this.cpfValido = "12345678910";
+        this.usuarioMock = UsuarioFixture.usuarioAdmin();
+        this.nomeValido = UsuarioFixture.NOME_ALEATORIO;
+        this.sobrenomeValido = UsuarioFixture.SOBRENOME_ALEATORIO;
+        this.cpfValido = UsuarioFixture.CPF_ALEATORIO;
     }
 
     @AfterEach

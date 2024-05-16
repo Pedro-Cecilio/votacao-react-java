@@ -13,9 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.time.LocalDateTime;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
-import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
+import com.dbserver.votacaoBackend.fixture.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.SessaoVotacaoFixture;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.VotoFixture;
 
 @SpringBootTest
 class SessaoVotacaoTest {
@@ -31,20 +34,20 @@ class SessaoVotacaoTest {
 
     @BeforeEach
     void configurar() {
-        this.usuarioAdminMock = new Usuario(1L, "João", "Silva", "12345678900", true);
-        this.pautaMock = new Pauta("Você está feliz hoje?", Categoria.CULTURA_LAZER.toString(), this.usuarioAdminMock);
+        this.usuarioAdminMock = UsuarioFixture.usuarioAdmin();
+        this.pautaMock = PautaFixture.pautaTransporte(usuarioAdminMock);
         this.dataAbertura = LocalDateTime.now();
         this.novaDataAbertura = null;
         this.novaDataFechamento = null;
         this.dataFechamento = this.dataAbertura.plusMinutes(5);
-        this.sessaoVotacaoAtivaMock = new SessaoVotacao(this.pautaMock, this.dataAbertura, this.dataFechamento);
-        this.votoMock = new Voto(this.usuarioAdminMock.getCpf(), this.usuarioAdminMock);
+        this.sessaoVotacaoAtivaMock = SessaoVotacaoFixture.sessaoVotacaoAtiva(pautaMock);
+        this.votoMock = VotoFixture.gerarVotoInterno(UsuarioFixture.usuarioNaoAdmin());
     }
 
     @Test
     @DisplayName("Deve ser possível setar uma pauta corretamente")
     void dadoPossuoUmaPautaValidaQuandoTentoSetarPautaEntaoDefinirNovaPauta() {
-        Pauta pautaSetMock = new Pauta("Você sabe dirigir?", Categoria.TRANSPORTE.toString(), this.usuarioAdminMock);
+        Pauta pautaSetMock = PautaFixture.pautaSaude(this.usuarioAdminMock);
 
         assertDoesNotThrow(() -> this.sessaoVotacaoAtivaMock.setPauta(pautaSetMock));
         assertEquals(pautaSetMock, this.sessaoVotacaoAtivaMock.getPauta());

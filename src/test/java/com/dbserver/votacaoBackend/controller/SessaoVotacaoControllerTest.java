@@ -121,6 +121,13 @@ class SessaoVotacaoControllerTest {
                 .andExpect(jsonPath("$.sessaoAtiva").value(true));
     }
 
+    private static Stream<Arguments> dadosInvalidosAbrirVotacao() {
+        return Stream.of(
+                Arguments.of(0L, 1L, "Minutos deve ser maior que 0."),
+                Arguments.of(null, 1L, "Minutos deve ser informado."),
+                Arguments.of(5L, null, "PautaId deve ser informada."));
+    }
+    
     @ParameterizedTest
     @MethodSource("dadosInvalidosAbrirVotacao")
     @DisplayName("Não deve ser possível abrir sessão votação em uma pauta ao passar dados inválidos")
@@ -137,13 +144,6 @@ class SessaoVotacaoControllerTest {
                 .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.erro").value(mensagemErro));
-    }
-
-    private static Stream<Arguments> dadosInvalidosAbrirVotacao() {
-        return Stream.of(
-                Arguments.of(0L, 1L, "Minutos deve ser maior que 0."),
-                Arguments.of(null, 1L, "Minutos deve ser informado."),
-                Arguments.of(5L, null, "PautaId deve ser informada."));
     }
 
     @Test

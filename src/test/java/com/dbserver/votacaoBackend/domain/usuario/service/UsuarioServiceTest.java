@@ -62,8 +62,9 @@ class UsuarioServiceTest {
     private Authentication securityAuthenticationMock;
     @Mock
     private UsuarioMapper usuarioMapper;
-    @Mock
+
     private Usuario usuarioMock;
+    private Autenticacao autenticacaoMock;
 
     private CriarUsuarioDto criarUsuarioDtoMock;
     private AutenticacaoDto autenticacaoDtoMock;
@@ -72,6 +73,8 @@ class UsuarioServiceTest {
     void configurar() {
         this.autenticacaoDtoMock = AutenticacaoFixture.autenticacaoDtoUsuarioValido();
         this.criarUsuarioDtoMock = UsuarioFixture.criarUsuarioDto(this.autenticacaoDtoMock);
+        this.usuarioMock = UsuarioFixture.gerarUsuarioAtravesDoDto(this.criarUsuarioDtoMock);
+        this.autenticacaoMock = AutenticacaoFixture.gerarAutenticacaoComDadosDeUsuario();
     }
 
     @AfterEach
@@ -84,24 +87,28 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve ser possível criar um Usuario corretamente")
     void dadoTenhoUmUsuarioEUmAutenticacaoComDadosCorretosQuandoTentoCriarUsuarioEntaoRetornarUsuarioCriado() {
+        when(usuarioMapper.toUsuario(this.criarUsuarioDtoMock)).thenReturn(this.usuarioMock);
+
         when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoDtoMock.senha()))
-                .thenReturn("senhaEncriptada");
-        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoDtoMock.email())).thenReturn(false);
+                .thenReturn(AutenticacaoFixture.SENHA_ENCRIPTADA);
+        when(this.autenticacaoService.verificarEmailJaEstaCadastrado(this.autenticacaoDtoMock.email()))
+                .thenReturn(false);
         when(this.usuarioRepository.findByCpf(this.criarUsuarioDtoMock.cpf())).thenReturn(Optional.empty());
         this.usuarioService.criarUsuario(this.criarUsuarioDtoMock);
 
-        verify(this.usuarioRepository, times(1)).save(any(Usuario.class));
-        verify(this.autenticacaoService, times(1)).criarAutenticacao(any(Autenticacao.class), any(Usuario.class));
-        verify(this.usuarioMapper).toCriarUsuarioRespostaDto(any(Usuario.class), any(Autenticacao.class));
+        verify(this.usuarioRepository, times(1)).save(this.usuarioMock);
+        verify(this.autenticacaoService, times(1)).criarAutenticacao(this.autenticacaoMock, this.usuarioMock);
+        verify(this.usuarioMapper).toCriarUsuarioRespostaDto(this.usuarioMock, this.autenticacaoMock);
     }
 
     @Test
     @DisplayName("Não deve ser possível criar um Usuario passando ao passar cpf existente")
     void dadoTenhoUmCpfJaCadastradoQuandoTentoCriarUsuarioEntaoRetornarUmErro() {
+        when(usuarioMapper.toUsuario(this.criarUsuarioDtoMock)).thenReturn(this.usuarioMock);
         when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoDtoMock.senha()))
-                .thenReturn("senhaEncriptada");
+                .thenReturn(AutenticacaoFixture.SENHA_ENCRIPTADA);
         when(this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacaoDtoMock.email())).thenReturn(false);
-        when(this.usuarioRepository.findByCpf(this.criarUsuarioDtoMock.cpf()))
+        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf()))
                 .thenReturn(Optional.of(this.usuarioMock));
 
         assertThrows(IllegalArgumentException.class,
@@ -146,9 +153,9 @@ class UsuarioServiceTest {
         when(this.securityContext.getAuthentication()).thenReturn(this.securityAuthenticationMock);
         when(securityAuthenticationMock.getPrincipal()).thenReturn(this.usuarioMock);
 
-        assertDoesNotThrow(()-> this.usuarioService.buscarUsuarioLogadoComoDto());
+        assertDoesNotThrow(() -> this.usuarioService.buscarUsuarioLogadoComoDto());
 
-        verify(usuarioMapper).toUsuarioRespostaDto(usuarioMock);
+        verify(usuarioMapper).toUsuarioRespostaDto(this.usuarioMock);
     }
 
     @Test
@@ -160,9 +167,9 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve retornar true ao verificar se existe usuário ao passar cpf existente")
     void dadoTenhoUmCpfExistenteQuandoTentoVerificarSeExisteUsuarioPorCpfEntaoRetornarTrue() {
-        when(this.usuarioRepository.findByCpf(UsuarioFixture.CPF_ALEATORIO)).thenReturn(Optional.of(this.usuarioMock));
+        when(this.usuarioRepository.findByCpf(this.usuarioMock.getCpf())).thenReturn(Optional.of(this.usuarioMock));
 
-        boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(UsuarioFixture.CPF_ALEATORIO);
+        boolean resposta = this.usuarioService.verificarSeExisteUsuarioPorCpf(this.usuarioMock.getCpf());
 
         assertTrue(resposta);
     }
@@ -171,9 +178,11 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar VerificarSeUsuarioExisteRespostaDto ao verificar se existe usuário ao passar cpf inexistente")
     void dadoTenhoUmCpfInexistenteQuandoTentoVerificarSeExisteUsuarioPorCpfComoDtoEntaoRetornarFalse() {
         when(this.usuarioRepository.findByCpf(UsuarioFixture.CPF_ALEATORIO)).thenReturn(Optional.empty());
-        VerificarSeUsuarioExisteRespostaDto dto = VerificarSeUsuarioExisteRespostaDtoFixture.gerarVerificarSeUsuarioExisteRespostaDtoFalse();
+        VerificarSeUsuarioExisteRespostaDto dto = VerificarSeUsuarioExisteRespostaDtoFixture
+                .gerarVerificarSeUsuarioExisteRespostaDtoFalse();
         when(usuarioMapper.toVerificarSeUsuarioExisteRespostaDto(false)).thenReturn(dto);
-        VerificarSeUsuarioExisteRespostaDto resposta = this.usuarioService.verificarSeExisteUsuarioPorCpfComoDto(UsuarioFixture.CPF_ALEATORIO);
+        VerificarSeUsuarioExisteRespostaDto resposta = this.usuarioService
+                .verificarSeExisteUsuarioPorCpfComoDto(UsuarioFixture.CPF_ALEATORIO);
 
         assertFalse(resposta.existe());
     }
@@ -182,9 +191,11 @@ class UsuarioServiceTest {
     @DisplayName("Deve retornar true ao verificar se existe usuário como dto ao passar cpf existente")
     void dadoTenhoUmCpfExistenteQuandoTentoVerificarSeExisteUsuarioPorCpfComoDtoEntaoRetornarTrue() {
         when(this.usuarioRepository.findByCpf(UsuarioFixture.CPF_ALEATORIO)).thenReturn(Optional.of(this.usuarioMock));
-        VerificarSeUsuarioExisteRespostaDto dto = VerificarSeUsuarioExisteRespostaDtoFixture.gerarVerificarSeUsuarioExisteRespostaDtoTrue();
+        VerificarSeUsuarioExisteRespostaDto dto = VerificarSeUsuarioExisteRespostaDtoFixture
+                .gerarVerificarSeUsuarioExisteRespostaDtoTrue();
         when(usuarioMapper.toVerificarSeUsuarioExisteRespostaDto(true)).thenReturn(dto);
-        VerificarSeUsuarioExisteRespostaDto resposta = this.usuarioService.verificarSeExisteUsuarioPorCpfComoDto(UsuarioFixture.CPF_ALEATORIO);
+        VerificarSeUsuarioExisteRespostaDto resposta = this.usuarioService
+                .verificarSeExisteUsuarioPorCpfComoDto(UsuarioFixture.CPF_ALEATORIO);
 
         assertTrue(resposta.existe());
     }

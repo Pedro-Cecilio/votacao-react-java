@@ -33,7 +33,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public CriarUsuarioRespostaDto criarUsuario(CriarUsuarioDto dto) {
-        Usuario usuario = new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
+        Usuario usuario = usuarioMapper.toUsuario(dto);
 
         String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
 

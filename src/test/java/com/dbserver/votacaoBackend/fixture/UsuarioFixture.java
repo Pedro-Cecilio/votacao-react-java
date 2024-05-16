@@ -14,6 +14,8 @@ public class UsuarioFixture {
     public static final String CPF_ALEATORIO = faker.number().digits(11);
     public static final String CPF_ADMIN = faker.number().digits(11);
     public static final String CPF_USUARIO = faker.number().digits(11);
+    public static final String NOME_ALEATORIO = faker.name().firstName();
+    public static final String SOBRENOME_ALEATORIO = faker.name().firstName();
 
 
     public static Usuario usuarioAdmin() {
@@ -28,7 +30,7 @@ public class UsuarioFixture {
         return new CriarUsuarioDto(autenticacaoDto, faker.name().firstName(), faker.name().lastName(), CPF_ALEATORIO, false);
     }
 
-    // public static Usuario buildComDto(CriarUsuarioDto dto) {
-    //     return new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
-    // }
+    public static Usuario gerarUsuarioAtravesDoDto(CriarUsuarioDto dto) {
+        return new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
+    }
 }

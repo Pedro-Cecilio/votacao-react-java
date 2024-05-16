@@ -70,16 +70,21 @@ class PautaServiceTest {
         this.usuarioAdminMock = UsuarioFixture.usuarioAdmin();
         this.criarPautaMock = PautaFixture.criarPautaDtoValido();
         this.respostaPautaDtoMock = PautaFixture.respostaPautaDto(usuarioAdminMock);
-        this.categoria = PautaFixture.categoria;
+        this.categoria = PautaFixture.CATEGORIA_TRANSPORTE;
         this.dataAtual = LocalDateTime.now();
     }
 
     @Test
     @DisplayName("Deve ser possível criar uma pauta corretamente")
     void dadoTenhoUmaPautaComDadosCorretosQuandoTentoCriarPautaEntaoRetornarPautaCriada() {
+        Pauta pauta = PautaFixture.pautaTransporte(usuarioAdminMock);
+
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(usuarioAdminMock);
-        when(this.pautaMapper.toRespostaPautaDto(any(Pauta.class))).thenReturn(this.respostaPautaDtoMock);
+        when(this.pautaMapper.toPauta(criarPautaMock, usuarioAdminMock)).thenReturn(pauta);
+        when(this.pautaMapper.toRespostaPautaDto(pauta)).thenReturn(this.respostaPautaDtoMock);
+
         RespostaPautaDto resposta = this.pautaService.criarPauta(this.criarPautaMock);
+        
         assertEquals(this.criarPautaMock.assunto(), resposta.assunto());
         assertEquals(this.criarPautaMock.categoria(), resposta.categoria().toString());
     }

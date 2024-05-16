@@ -125,6 +125,16 @@ class AutenticacaoControllerTest {
                 .andExpect(jsonPath("$.erro").value("Dados de login inválidos."));
     }
 
+
+    private static Stream<Arguments> dadosInvalidosParaRealizarLogin() {
+        return Stream.of(
+                Arguments.of("email", AutenticacaoFixture.SENHA, "Email com formato inválido."),
+                Arguments.of("", AutenticacaoFixture.SENHA, "Email deve ser informado."),
+                Arguments.of(null, AutenticacaoFixture.SENHA, "Email deve ser informado."),
+
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, "", "Senha deve ser informada."),
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, null, "Senha deve ser informada."));
+    }
     @ParameterizedTest
     @DisplayName("Testes de login com dados inválidos")
     @MethodSource("dadosInvalidosParaRealizarLogin")
@@ -144,15 +154,7 @@ class AutenticacaoControllerTest {
                 .andExpect(jsonPath("$.erro").value(mensagemErro));
     }
 
-    private static Stream<Arguments> dadosInvalidosParaRealizarLogin() {
-        return Stream.of(
-                Arguments.of("email", AutenticacaoFixture.SENHA, "Email com formato inválido."),
-                Arguments.of("", AutenticacaoFixture.SENHA, "Email deve ser informado."),
-                Arguments.of(null, AutenticacaoFixture.SENHA, "Email deve ser informado."),
-
-                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, "", "Senha deve ser informada."),
-                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, null, "Senha deve ser informada."));
-    }
+    
 
     @Test
     @DisplayName("Deve ser possível validar usuário existente com dados para validar voto externo validos ao tentar votar externamente")

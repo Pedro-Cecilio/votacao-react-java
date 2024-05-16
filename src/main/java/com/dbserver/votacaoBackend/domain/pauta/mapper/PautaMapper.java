@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
+import com.dbserver.votacaoBackend.domain.pauta.dto.CriarPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.dto.DetalhesPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
@@ -18,6 +19,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface PautaMapper {
+
+    @Mapping(target = "sessaoVotacao", ignore = true)
+    Pauta toPauta(CriarPautaDto dto, Usuario usuario);
+
 
     List<RespostaPautaDto> toListRespostaPautaDto(List<Pauta> pautas);
     RespostaPautaDto toRespostaPautaDto(Pauta pauta);

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.VotoFixture;
 
 @SpringBootTest
 class VotoTest {
@@ -21,8 +23,8 @@ class VotoTest {
 
     @BeforeEach
     void configurar() {
-        this.usuario = new Usuario(1L, "João", "Silva", "12345678900", true);
-        this.votoMock = new Voto(this.usuario.getCpf(), this.usuario);
+        this.usuario = UsuarioFixture.usuarioAdmin();
+        this.votoMock = VotoFixture.gerarVotoInterno(usuario);
         this.novoCpfValido = "12345678910";
         this.novoCpfInvalido = "123456789";
     }

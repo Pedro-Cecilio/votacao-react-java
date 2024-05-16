@@ -21,6 +21,7 @@ import com.dbserver.votacaoBackend.domain.sessaoVotacao.validacoes.SessaoVotacao
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioServiceImpl;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
+import com.dbserver.votacaoBackend.domain.voto.mapper.VotoMapper;
 import com.dbserver.votacaoBackend.domain.voto.validacoes.VotoValidacoes;
 import com.dbserver.votacaoBackend.utils.Utils;
 
@@ -34,11 +35,17 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
     private SessaoVotacaoMapper sessaoVotacaoMapper;
     private SessaoVotacaoValidacoes sessaoVotacaoValidacoes;
     private VotoValidacoes votoValidacoes;
+    private VotoMapper votoMapper;
 
-    public SessaoVotacaoServiceImpl(SessaoVotacaoRepository sessaoVotacaoRepository, UsuarioServiceImpl usuarioService,
-            AutenticacaoValidacoes autenticacaoValidacoes, Utils utils, PautaServiceImpl pautaService,
-            SessaoVotacaoMapper sessaoVotacaoMapper, SessaoVotacaoValidacoes sessaoVotacaoValidacoes,
-            VotoValidacoes votoValidacoes) {
+    public SessaoVotacaoServiceImpl(SessaoVotacaoRepository sessaoVotacaoRepository,
+            UsuarioServiceImpl usuarioService,
+            AutenticacaoValidacoes autenticacaoValidacoes,
+            Utils utils,
+            PautaServiceImpl pautaService,
+            SessaoVotacaoMapper sessaoVotacaoMapper,
+            SessaoVotacaoValidacoes sessaoVotacaoValidacoes,
+            VotoValidacoes votoValidacoes,
+            VotoMapper votoMapper) {
         this.sessaoVotacaoRepository = sessaoVotacaoRepository;
         this.usuarioService = usuarioService;
         this.utils = utils;
@@ -47,6 +54,7 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
         this.sessaoVotacaoMapper = sessaoVotacaoMapper;
         this.sessaoVotacaoValidacoes = sessaoVotacaoValidacoes;
         this.votoValidacoes = votoValidacoes;
+        this.votoMapper = votoMapper;
     }
 
     @Override
@@ -62,7 +70,7 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
 
         LocalDateTime dataFechamento = dataAbertura.plusMinutes(dto.minutos());
 
-        SessaoVotacao sessaoVotacao = new SessaoVotacao(pauta, dataAbertura, dataFechamento);
+        SessaoVotacao sessaoVotacao = sessaoVotacaoMapper.toSessaoVotacao(pauta, dataAbertura, dataFechamento);
 
         this.sessaoVotacaoRepository.save(sessaoVotacao);
 
@@ -75,7 +83,7 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
 
         SessaoVotacao sessaoVotacao = this.buscarSessaoVotacaoAtivaPorPautaId(dto.pautaId());
 
-        Voto voto = new Voto(usuario.getCpf(), usuario);
+        Voto voto = votoMapper.toVoto(usuario.getCpf(), usuario);
 
         this.verificarSeUsuarioPodeVotarSessaoVotacao(sessaoVotacao, voto);
 
@@ -89,10 +97,10 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
     @Override
     public RespostaSessaoVotacaoDto inserirVotoExterno(InserirVotoExternoDto dto) {
         Usuario usuario = this.usuarioService.buscarUsuarioPorCpfSeHouver(dto.cpf());
-        Voto voto = new Voto(dto.cpf(), usuario);
+        Voto voto = votoMapper.toVoto(dto.cpf(), usuario);
         SessaoVotacao sessaoVotacao = this.buscarSessaoVotacaoAtivaPorPautaId(dto.pautaId());
 
-        this.verificarSePodeVotarExternamente(dto.cpf(),
+        this.validarSePodeVotarExternamente(dto.cpf(),
                 dto.senha());
         this.verificarSeUsuarioPodeVotarSessaoVotacao(sessaoVotacao, voto);
 
@@ -103,7 +111,7 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
         return sessaoVotacaoMapper.toRespostaSessaoVotacaoDto(sessaoVotacao);
     }
 
-    private void verificarSePodeVotarExternamente(String cpf, String senha) {
+    private void validarSePodeVotarExternamente(String cpf, String senha) {
         boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
 
         if (existe)

@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.fixture.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
 
 @SpringBootTest
 class PautaTest {
@@ -19,20 +21,15 @@ class PautaTest {
     private Usuario usuarioAdminMock;
     private Usuario usuarioNaoAdminMock;
     private Usuario usuarioSetMock;
-    private String assuntoValido;
-    private String categoriaInvalida;
 
 
     @BeforeEach
     void configurar() {
-        this.usuarioAdminMock = new Usuario(1L, "João", "Silva", "12345678900", true);
-        this.usuarioNaoAdminMock = new Usuario(1L, "Pedro", "Cecilio", "12345678912", false);
-        this.usuarioSetMock = new Usuario(1L, "Pedro", "Cecilio", "12345678912", true);
+        this.usuarioAdminMock = UsuarioFixture.usuarioAdmin();
+        this.usuarioNaoAdminMock = UsuarioFixture.usuarioNaoAdmin();
+        this.usuarioSetMock = UsuarioFixture.usuarioAdmin();
 
-        this.assuntoValido = "Você sabe dirigir?";
-        this.categoriaInvalida = "CATEGORIA_INVALIDA";
-
-        this.pautaMock = new Pauta("Você está feliz hoje?", Categoria.CULTURA_LAZER.toString(), this.usuarioAdminMock);
+        this.pautaMock = PautaFixture.pautaTransporte(usuarioAdminMock);
     }
     
     @Test
@@ -55,7 +52,8 @@ class PautaTest {
     @Test
     @DisplayName("Deve ser possível setar um assunto corretamente")
     void dadoTenhoUmAssuntoValidoQuandoTentoSetarAssuntoEntaoSetarAssunto(){
-        assertDoesNotThrow(()-> this.pautaMock.setAssunto(this.assuntoValido));
+        String novoAssunto = "Você sabe dirigir?";
+        assertDoesNotThrow(()-> this.pautaMock.setAssunto(novoAssunto));
         assertEquals(this.pautaMock.getAssunto(), this.pautaMock.getAssunto());
     }
 
@@ -74,7 +72,8 @@ class PautaTest {
     @Test
     @DisplayName("Não deve ser possível setar uma categoria inválida")
     void dadoTenhoUmaCategoriaInvalidaQuandoTentoSetarCategoriaEntaoRetornarErro(){
-        assertThrows(IllegalArgumentException.class, ()-> this.pautaMock.setCategoria(this.categoriaInvalida));
+        String categoriaInvalida = "CATEGORIA_INVALIDA";
+        assertThrows(IllegalArgumentException.class, ()-> this.pautaMock.setCategoria(categoriaInvalida));
     }
  
 }

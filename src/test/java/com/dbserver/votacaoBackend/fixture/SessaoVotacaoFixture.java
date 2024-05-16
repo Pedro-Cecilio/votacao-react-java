@@ -15,6 +15,10 @@ public class SessaoVotacaoFixture {
         return new SessaoVotacao(pauta, LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(5));
     }
+    public static SessaoVotacao sessaoVotacaoInativa(Pauta pauta) {
+        return new SessaoVotacao(pauta, LocalDateTime.now(),
+                LocalDateTime.now());
+    }
 
     public static AbrirVotacaoDto abrirVotacaoDtoValido(Long pautaId) {
         return new AbrirVotacaoDto(10L, pautaId);

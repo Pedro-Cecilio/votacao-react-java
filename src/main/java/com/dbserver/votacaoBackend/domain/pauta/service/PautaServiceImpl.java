@@ -42,7 +42,7 @@ public class PautaServiceImpl implements PautaService {
         this.pautaValidacoes.validarCriarPautaDtoNaoNula(dto);
 
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
-        Pauta pauta = new Pauta(dto.assunto(), dto.categoria(), usuario);
+        Pauta pauta = pautaMapper.toPauta(dto, usuario);
 
         this.pautaRepository.save(pauta);
 
