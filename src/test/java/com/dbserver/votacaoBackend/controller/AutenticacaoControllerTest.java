@@ -24,8 +24,10 @@ import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutorizarVotoExternoD
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
-import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutorizarVotoExternoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -75,10 +77,10 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível realizar login corretamente")
-    void dadoPossuoDadosDeAutenticacaCorretosoQuandoTentoRealizarLoginEntaoRetornarAutenticacaoRespostaDto()
+    void dadoPossuoDadosDeAutenticacaCorretosQuandoTentoRealizarLoginEntaoRetornarAutenticacaoRespostaDto()
             throws Exception {
 
-        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoAdminValido();
+        this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoAdminValido();
 
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
 
@@ -96,7 +98,7 @@ class AutenticacaoControllerTest {
     void dadoPossuoUmaSenhaIncorretaQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
-        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoSenhaIncorreta();
+        this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoSenhaIncorreta();
 
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
 
@@ -113,7 +115,7 @@ class AutenticacaoControllerTest {
     void dadoPossuoUmaEmailInexistenteQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
-        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoEmailIncorreto();
+        this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoEmailIncorreto();
 
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
 
@@ -125,6 +127,16 @@ class AutenticacaoControllerTest {
                 .andExpect(jsonPath("$.erro").value("Dados de login inválidos."));
     }
 
+
+    private static Stream<Arguments> dadosInvalidosParaRealizarLogin() {
+        return Stream.of(
+                Arguments.of("email", AutenticacaoFixture.SENHA, "Email com formato inválido."),
+                Arguments.of("", AutenticacaoFixture.SENHA, "Email deve ser informado."),
+                Arguments.of(null, AutenticacaoFixture.SENHA, "Email deve ser informado."),
+
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, "", "Senha deve ser informada."),
+                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, null, "Senha deve ser informada."));
+    }
     @ParameterizedTest
     @DisplayName("Testes de login com dados inválidos")
     @MethodSource("dadosInvalidosParaRealizarLogin")
@@ -144,23 +156,15 @@ class AutenticacaoControllerTest {
                 .andExpect(jsonPath("$.erro").value(mensagemErro));
     }
 
-    private static Stream<Arguments> dadosInvalidosParaRealizarLogin() {
-        return Stream.of(
-                Arguments.of("email", AutenticacaoFixture.SENHA, "Email com formato inválido."),
-                Arguments.of("", AutenticacaoFixture.SENHA, "Email deve ser informado."),
-                Arguments.of(null, AutenticacaoFixture.SENHA, "Email deve ser informado."),
-
-                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, "", "Senha deve ser informada."),
-                Arguments.of(AutenticacaoFixture.EMAIL_ADMIN_CORRETO, null, "Senha deve ser informada."));
-    }
+    
 
     @Test
-    @DisplayName("Deve ser possível validar usuário existente com dados para validar voto externo validos ao tentar votar externamente")
+    @DisplayName("Deve ser possível validar usuário existente com dados para validar voto externo válidos ao tentar votar externamente")
     void dadoPossuoDadosValidarVotoExternoCorretosQuandoTentoValidarVotoExternoEntaoRetornarValidarVotoExternoComTrue()
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 
-        this.autorizarVotoExternoDto = AutenticacaoFixture.autorizarVotoExternoDtoValido(cpf);
+        this.autorizarVotoExternoDto = AutorizarVotoExternoDtoFixture.autorizarVotoExternoDtoValido(cpf);
 
         String json = this.autorizarVotoExternoDtoJson.write(this.autorizarVotoExternoDto).getJson();
         mockMvc.perform(MockMvcRequestBuilders
@@ -172,10 +176,10 @@ class AutenticacaoControllerTest {
     }
 
     @Test
-    @DisplayName("Não deve ser possível validar usuário existente com ao passar cpf não cadastrado ao tentar votar externamente")
+    @DisplayName("Não deve ser possível validar usuário existente ao passar cpf não cadastrado ao tentar votar externamente")
     void dadoCpfNaoCadastradoQuandoTentoValidarVotoExternoEntaoRetornarRespostaErro()
             throws Exception {
-        this.autorizarVotoExternoDto = AutenticacaoFixture.autorizarVotoExternoDtoCpfInvalido();
+        this.autorizarVotoExternoDto = AutorizarVotoExternoDtoFixture.autorizarVotoExternoDtoCpfInvalido();
 
         String json = this.autorizarVotoExternoDtoJson.write(this.autorizarVotoExternoDto).getJson();
 
@@ -193,7 +197,7 @@ class AutenticacaoControllerTest {
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 
-        this.autorizarVotoExternoDto = AutenticacaoFixture.autorizarVotoExternoDtoSenhaIncorreta(cpf);
+        this.autorizarVotoExternoDto = AutorizarVotoExternoDtoFixture.autorizarVotoExternoDtoSenhaIncorreta(cpf);
 
         String json = this.autorizarVotoExternoDtoJson.write(this.autorizarVotoExternoDto).getJson();
         

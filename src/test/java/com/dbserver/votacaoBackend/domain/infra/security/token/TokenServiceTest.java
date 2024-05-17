@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 
 @SpringBootTest
@@ -28,9 +30,8 @@ class TokenServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        this.usuario = new Usuario(1L, "João", "Silva", "12345678900", true);
-        this.autenticacao = new Autenticacao("example@example.com", "senha123");
-        this.autenticacao.setUsuario(this.usuario);
+        this.usuario = UsuarioFixture.usuarioAdmin();
+        this.autenticacao = AutenticacaoFixture.autenticacaoAdmin(usuario);
     }
 
     @Test
@@ -42,9 +43,9 @@ class TokenServiceTest {
     }
 
     @Test
-    @DisplayName("Deve falhar ao tentar criar um token com autenticação sem usuário")
+    @DisplayName("Deve falhar ao tentar criar um token com autenticação sem usuário definido")
     void dadoPossuoUmaAutenticacaoSemUsuarioQuandoTentoCriarTokenEntaoRetornarErro() {
-        Autenticacao autenticacao = new Autenticacao("example@example.com", "senha123");
+        Autenticacao autenticacao = AutenticacaoFixture.gerarAutenticacaoComDadosDeUsuario();
 
         assertThrows(IllegalArgumentException.class, () -> this.tokenService.gerarToken(autenticacao));
     }
@@ -58,7 +59,6 @@ class TokenServiceTest {
     @Test
     @DisplayName("Deve ser possível validar um token corretamente")
     void dadoPossuoUmTokenValidoQuandoTentoValidarTokenEntaoRetornarToken() {
-
         String token = this.tokenService.gerarToken(this.autenticacao);
         String resposta = this.tokenService.validarToken(token);
         assertEquals(resposta, autenticacao.getEmail());

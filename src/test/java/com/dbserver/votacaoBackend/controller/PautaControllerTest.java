@@ -28,9 +28,10 @@ import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.enums.StatusSessaoVotacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
-import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
-import com.dbserver.votacaoBackend.fixture.PautaFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.CriarPautaDtoFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -93,7 +94,7 @@ class PautaControllerTest {
         @DisplayName("Deve ser possível criar uma pauta corretamente")
         void dadoTenhoCriarPautaDtoComDadosCorretosQuandoTentoCriarPautaEntaoRetornarRespostaPautaDto()
                         throws Exception {
-                this.criarPautaDto = PautaFixture.criarPautaDtoValido();
+                this.criarPautaDto = CriarPautaDtoFixture.criarPautaDtoValido();
                 String json = this.criarPautaDtoJson.write(criarPautaDto).getJson();
 
                 mockMvc.perform(MockMvcRequestBuilders
@@ -111,9 +112,22 @@ class PautaControllerTest {
                                 .andExpect(jsonPath("$.sessaoVotacao").isEmpty());
         }
 
+        private static Stream<Arguments> dadosInvalidosCriarPauta() {
+                return Stream.of(
+                                Arguments.of(null, Categoria.TRANSPORTE.toString(),
+                                                "Assunto deve ser informado."),
+                                Arguments.of("", Categoria.TRANSPORTE.toString(),
+                                                "Assunto deve ser informado."),
+                                Arguments.of("Você sabe dirigir?", null,
+                                                "Categoria deve ser informada."),
+                                Arguments.of("Você sabe dirigir?", " ",
+                                                "Categoria inválida."),
+                                Arguments.of("Você sabe dirigir?", "CATEGORIA_INVALIDA",
+                                                "Categoria inválida."));
+        }
         @ParameterizedTest
         @MethodSource("dadosInvalidosCriarPauta")
-        @DisplayName("Deve ser possível criar uma pauta corretamente")
+        @DisplayName("Não deve ser possível criar uma pauta ao informar dados inválidos")
         void dadoTenhoCriarPautaDtoComDadosInvalidosQuandoTentoCriarPautaEntaoRetornarRespostaErro(String assunto,
                         String categoria, String mensagemErro) throws Exception {
 
@@ -129,23 +143,11 @@ class PautaControllerTest {
                                 .andExpect(jsonPath("$.erro").value(mensagemErro));
         }
 
-        private static Stream<Arguments> dadosInvalidosCriarPauta() {
-                return Stream.of(
-                                Arguments.of(null, Categoria.TRANSPORTE.toString(),
-                                                "Assunto deve ser informado."),
-                                Arguments.of("", Categoria.TRANSPORTE.toString(),
-                                                "Assunto deve ser informado."),
-                                Arguments.of("Você sabe dirigir?", null,
-                                                "Categoria deve ser informada."),
-                                Arguments.of("Você sabe dirigir?", " ",
-                                                "Categoria inválida."),
-                                Arguments.of("Você sabe dirigir?", "CATEGORIA_INVALIDA",
-                                                "Categoria inválida."));
-        }
+        
 
         @Test
-        @DisplayName("deve ser possível lista pautas do usuário logado")
-        void dadoNaoEnvioCategoriaQuandoBuscoTodasMinhasPautasQuandoRetornarListaDePautas() throws Exception {
+        @DisplayName("Deve ser possível listar pautas do usuário logado")
+        void dadoNaoEnvioCategoriaQuandoBuscoTodasMinhasPautasEntaoRetornarListaDePautas() throws Exception {
                 List<Pauta> pautas = PautaFixture.listaDePautas(this.usuarioCadastrado);
 
                 this.pautaRepository.saveAll(pautas);
@@ -164,8 +166,8 @@ class PautaControllerTest {
         }
 
         @Test
-        @DisplayName("deve ser possível lista pautas do usuário logado")
-        void dadoEnvioCategoriaQuandoBuscoTodasMinhasPautasQuandoRetornarListaDePautas() throws Exception {
+        @DisplayName("Deve ser possível listar pautas do usuário logado por categoria")
+        void dadoEnvioCategoriaQuandoBuscoTodasMinhasPautasEntaoetornarListaDePautas() throws Exception {
                 List<Pauta> pautas = PautaFixture.listaDePautas(this.usuarioCadastrado);
 
                 this.pautaRepository.saveAll(pautas);
@@ -186,7 +188,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("deve ser possível listar todas pautas ativas")
-        void dadoEstouLogadoQuandoBuscoTodasPautasAtivasQuandoRetornarListaDePautas() throws Exception {
+        void dadoEstouLogadoQuandoBuscoTodasPautasAtivasEntaoRetornarListaDePautas() throws Exception {
                 List<Pauta> pautas = PautaFixture.listaDePautasUmaPautaAtiva(usuarioCadastrado);
                 this.pautaRepository.saveAll(pautas);
 
@@ -207,7 +209,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("deve ser possível buscar pauta ativa por Id")
-        void dadoPossuoPautaIdQuandoBuscoAtivaPorIdQuandoRetornarRespostaPautaDto() throws Exception {
+        void dadoPossuoPautaIdQuandoBuscoAtivaPorIdEntaoRetornarRespostaPautaDto() throws Exception {
                 Pauta pautaTransporte = PautaFixture.pautaTransporteAtiva(this.usuarioCadastrado);
 
                 this.pautaRepository.save(pautaTransporte);
@@ -225,7 +227,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Não deve ser possível buscar pauta ativa por Id ao passar id de pauta não ativa")
-        void dadoPossuoPautaIdInvalidoQuandoBuscoAtivaPorIdQuandoRetornarRespostaErro() throws Exception {
+        void dadoPossuoPautaIdInvalidoQuandoBuscoAtivaPorIdEntaoRetornarRespostaErro() throws Exception {
 
                 mockMvc.perform(MockMvcRequestBuilders
                                 .get("/pauta/{id}", 50)
@@ -238,7 +240,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Deve ser possível buscar detalhes de uma pauta ")
-        void dadoPossuoPautaIdQuandoBuscoDetalhesPautaQuandoRetornarRespostaPautaDto() throws Exception {
+        void dadoPossuoPautaIdQuandoBuscoDetalhesPautaEntaoRetornarRespostaPautaDto() throws Exception {
                 Pauta pautaTransporte = PautaFixture.pautaTransporteAtiva(usuarioCadastrado);
 
                 this.pautaRepository.save(pautaTransporte);
@@ -254,7 +256,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Não deve ser possível buscar detalhes de uma pauta ao passar id inválido ou de pauta não ativa")
-        void dadoPossuoPautaIdInvalidoQuandoBuscoDetalhesPautaQuandoRetornarRespostaErro() throws Exception {
+        void dadoPossuoPautaIdInvalidoQuandoBuscoDetalhesPautaEntaoRetornarRespostaErro() throws Exception {
                 mockMvc.perform(MockMvcRequestBuilders
                                 .get("/pauta/detalhes/{id}", 1)
                                 .header("Authorization", "Bearer " + this.token)

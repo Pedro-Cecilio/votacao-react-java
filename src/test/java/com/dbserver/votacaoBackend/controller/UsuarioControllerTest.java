@@ -23,8 +23,10 @@ import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRe
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
-import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.CriarUsuarioDtoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -80,9 +82,9 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("Deve ser possível criar um usuário corretamente")
     void dadoCriarUsuarioDtoCorretoQuandoTentoCriarUsuarioEntaoRetornarCriarUsuarioRespostaDto() throws Exception {
-        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoUsuarioValido();
+        this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoUsuarioValido();
 
-        this.criarUsuarioDto = UsuarioFixture.criarUsuarioDto(this.autenticacaoDto);
+        this.criarUsuarioDto = CriarUsuarioDtoFixture.criarUsuarioDto(this.autenticacaoDto);
 
         String email = this.autenticacaoDto.email();
         String nome = this.criarUsuarioDto.nome();
@@ -105,7 +107,7 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$.admin").value(admin));
     }
 
-    private static Stream<Arguments> dadosInválidosParaCriarUsuário() {
+    private static Stream<Arguments> dadosInvalidosParaCriarUsuário() {
         return Stream.of(
                 Arguments.of("email", "senha123", "Pedro", "Cecilio", "12345678912", true,
                         "Email com formato inválido."),
@@ -145,8 +147,8 @@ class UsuarioControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("dadosInválidosParaCriarUsuário")
-    @DisplayName("Deve falhar ao tentar criar um usuário corretamente")
+    @MethodSource("dadosInvalidosParaCriarUsuário")
+    @DisplayName("Deve falhar ao tentar criar um usuário com dados inválids")
     void dadoPossuoDadosInvalidosQuandoTentoCriarNovoUsuarioDeveRetornarErro(String email, String senha, String nome, String sobrenome, String cpf, boolean admin, String mensagemErro)
             throws Exception {
         this.autenticacaoDto = new AutenticacaoDto(email,
@@ -186,7 +188,7 @@ class UsuarioControllerTest {
     }
     
     @Test
-    @DisplayName("Deve retornar true ao verificar se usuario existe ao passar cpf cadastrado")
+    @DisplayName("Deve retornar true ao verificar se usuário existe ao passar cpf cadastrado")
     void dadoPossuoCpfDeUmUsuarioExistenteQuandoVerificoSeEleExisteEntaoRetornarVerificarSeUsuarioExisteRespostaDtoTrue() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/usuario/existe?cpf=" + this.usuarioCadastrado.getCpf())

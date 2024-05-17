@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,8 +31,10 @@ import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRe
 import com.dbserver.votacaoBackend.domain.autenticacao.validacoes.AutenticacaoValidacoes;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.validacoes.UsuarioValidacoes;
-import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutorizarVotoExternoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import com.dbserver.votacaoBackend.utils.Utils;
 
@@ -73,16 +74,9 @@ class AutenticacaoServiceTest {
                 this.autenticacaoMock = AutenticacaoFixture.autenticacaoAdmin(usuarioMock);
                 this.senha = AutenticacaoFixture.SENHA;
                 this.senhaEncriptada = this.autenticacaoMock.getSenha();
-                this.autorizarVotoExternoDto = AutenticacaoFixture
+                this.autorizarVotoExternoDto = AutorizarVotoExternoDtoFixture
                                 .autorizarVotoExternoDtoValido(this.usuarioMock.getCpf());
-                this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoAdminValido();
-        }
-
-        @AfterEach
-        void limpar() {
-                this.usuarioMock = null;
-                this.autenticacaoMock = null;
-                this.autenticacaoRepository.deleteAll();
+                this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoAdminValido();
         }
 
         @Test
@@ -210,7 +204,7 @@ class AutenticacaoServiceTest {
 
         @Test
         @DisplayName("Deve ser possível verificar se email esta cadastrado e retornar true ao encontrar")
-        void dadoTenhoEmailCadastradoQuandoVerificoSeEstaCadastradoRetornarTrue() {
+        void dadoTenhoEmailCadastradoQuandoVerificoSeEstaCadastradoEntaoRetornarTrue() {
                 when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                                 .thenReturn(Optional.of(this.autenticacaoMock));
 
@@ -223,7 +217,7 @@ class AutenticacaoServiceTest {
 
         @Test
         @DisplayName("Deve ser possível verificar se email esta cadastrado e retornar false ao não encontrar")
-        void dadoTenhoEmailNaoCadastradoQuandoVerificoSeEstaCadastradoRetornarTrue() {
+        void dadoTenhoEmailNaoCadastradoQuandoVerificoSeEstaCadastradoEntaoRetornarFalse() {
                 when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                                 .thenReturn(Optional.empty());
 

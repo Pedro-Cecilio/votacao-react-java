@@ -30,8 +30,10 @@ import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
 import com.dbserver.votacaoBackend.domain.pauta.validacoes.PautaValidacoes;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioServiceImpl;
-import com.dbserver.votacaoBackend.fixture.PautaFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.CriarPautaDtoFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.RespostaPautaDtoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 @SpringBootTest
@@ -68,18 +70,23 @@ class PautaServiceTest {
     @BeforeEach
     void configurar() {
         this.usuarioAdminMock = UsuarioFixture.usuarioAdmin();
-        this.criarPautaMock = PautaFixture.criarPautaDtoValido();
-        this.respostaPautaDtoMock = PautaFixture.respostaPautaDto(usuarioAdminMock);
-        this.categoria = PautaFixture.categoria;
+        this.criarPautaMock = CriarPautaDtoFixture.criarPautaDtoValido();
+        this.respostaPautaDtoMock = RespostaPautaDtoFixture.respostaPautaDto(usuarioAdminMock);
+        this.categoria = PautaFixture.CATEGORIA_TRANSPORTE;
         this.dataAtual = LocalDateTime.now();
     }
 
     @Test
     @DisplayName("Deve ser possível criar uma pauta corretamente")
     void dadoTenhoUmaPautaComDadosCorretosQuandoTentoCriarPautaEntaoRetornarPautaCriada() {
+        Pauta pauta = PautaFixture.pautaTransporte(usuarioAdminMock);
+
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(usuarioAdminMock);
-        when(this.pautaMapper.toRespostaPautaDto(any(Pauta.class))).thenReturn(this.respostaPautaDtoMock);
+        when(this.pautaMapper.toPauta(criarPautaMock, usuarioAdminMock)).thenReturn(pauta);
+        when(this.pautaMapper.toRespostaPautaDto(pauta)).thenReturn(this.respostaPautaDtoMock);
+
         RespostaPautaDto resposta = this.pautaService.criarPauta(this.criarPautaMock);
+        
         assertEquals(this.criarPautaMock.assunto(), resposta.assunto());
         assertEquals(this.criarPautaMock.categoria(), resposta.categoria().toString());
     }
@@ -93,7 +100,7 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve ser possível todas buscar pautas do usuário logado")
-    void dadoTenhoUsuarioIdCorretoECategoriaNullQuandoTentobuscarPautasUsuarioLogadoEntaoRetornarListaDePautas() {
+    void dadoTenhoUsuarioIdCorretoECategoriaNullQuandoTentoBuscarPautasUsuarioLogadoEntaoRetornarListaDePautas() {
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(usuarioAdminMock);
         this.pautaService.buscarPautasUsuarioLogado(null);
         verify(this.pautaRepository, times(1)).findAllByUsuarioIdOrderByCreatedAtDesc(this.usuarioAdminMock.getId());
@@ -165,7 +172,7 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve ser possível obter detalhes da pauta com sessão votação não nula")
-    void dadoTenhoPautaIdEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaDeveRetornarDetalhes(){
+    void dadoTenhoPautaIdEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaEntaoDeveRetornarDetalhes(){
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioAdminMock);
         when(this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(1L, this.usuarioAdminMock.getId()))
                 .thenReturn(Optional.of(this.pautaMock));
@@ -174,7 +181,7 @@ class PautaServiceTest {
     }
     @Test
     @DisplayName("Deve falhar ao tentar obter detalhes da pauta com sessão votação não nula, ao não encontrar pauta com id informado")
-    void dadoTenhPautaIdInexistenteEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaDeveRetornarErro(){
+    void dadoTenhoPautaIdInexistenteEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaEntaoDeveRetornarErro(){
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioAdminMock);
         when(this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(1L, this.usuarioAdminMock.getId()))
                 .thenReturn(Optional.empty());

@@ -17,8 +17,8 @@ import com.auth0.jwt.exceptions.MissingClaimException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
-import com.dbserver.votacaoBackend.infra.exeptions.CriarJwtExeption;
-import com.dbserver.votacaoBackend.infra.exeptions.ValidarJwtExeption;
+import com.dbserver.votacaoBackend.infra.exceptions.CriarJwtExeption;
+import com.dbserver.votacaoBackend.infra.exceptions.ValidarJwtExeption;
 
 @Service
 public class TokenService implements ITokenService{

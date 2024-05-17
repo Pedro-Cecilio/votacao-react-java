@@ -1,20 +1,21 @@
-package com.dbserver.votacaoBackend.fixture;
+package com.dbserver.votacaoBackend.fixture.pauta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.dto.CriarPautaDto;
-import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.SessaoVotacaoFixture;
 
 public class PautaFixture {
 
-    public static Categoria categoria = Categoria.TRANSPORTE;
+    public static final Categoria CATEGORIA_TRANSPORTE = Categoria.TRANSPORTE;
+    public static final String ASSUNTO_TRANSPORTE = "Sabe dirigir?";
     
     public static Pauta pautaTransporte(Usuario usuario) {
-        return new Pauta("Sabe dirigir?", categoria.toString(),
+        return new Pauta(ASSUNTO_TRANSPORTE, CATEGORIA_TRANSPORTE.toString(),
                 usuario);
     }
 
@@ -26,14 +27,10 @@ public class PautaFixture {
     }
 
     public static CriarPautaDto criarPautaDtoValido() {
-        return new CriarPautaDto("Sabe dirigir?", categoria.toString());
+        return new CriarPautaDto(ASSUNTO_TRANSPORTE, CATEGORIA_TRANSPORTE.toString());
     }
 
-    public static RespostaPautaDto respostaPautaDto(Usuario usuario) {
-        return new RespostaPautaDto(pautaTransporte(usuario), null);
-    }
-
-    private static Pauta pautaSaude(Usuario usuario) {
+    public static Pauta pautaSaude(Usuario usuario) {
         return new Pauta("Você está bem de saúde?", Categoria.SAUDE.toString(),
                 usuario);
     }

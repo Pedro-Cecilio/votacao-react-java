@@ -10,6 +10,8 @@ import com.dbserver.votacaoBackend.domain.autenticacao.service.AutenticacaoServi
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.mapper.UsuarioMapper;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
 
@@ -31,7 +33,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public CriarUsuarioRespostaDto criarUsuario(CriarUsuarioDto dto) {
-        Usuario usuario = new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
+        Usuario usuario = usuarioMapper.toUsuario(dto);
 
         String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
 
@@ -59,8 +61,20 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public UsuarioRespostaDto buscarUsuarioLogadoComoDto() {
+        Usuario usuario = this.buscarUsuarioLogado();
+        return usuarioMapper.toUsuarioRespostaDto(usuario);
+    }
+
+    @Override
     public boolean verificarSeExisteUsuarioPorCpf(String cpf) {
         return this.usuarioRepository.findByCpf(cpf).isPresent();
+    }
+
+    @Override
+    public VerificarSeUsuarioExisteRespostaDto verificarSeExisteUsuarioPorCpfComoDto(String cpf) {
+        boolean existe = verificarSeExisteUsuarioPorCpf(cpf);
+        return usuarioMapper.toVerificarSeUsuarioExisteRespostaDto(existe);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.dbserver.votacaoBackend.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
@@ -40,18 +39,14 @@ public class UsuarioController {
     @SecurityRequirement(name = "bearer-key")
     @GetMapping("/usuarioLogado")
     public ResponseEntity<UsuarioRespostaDto> buscarUsuarioLogado() {
-        Usuario usuario = this.usuarioService.buscarUsuarioLogado();
-
-        UsuarioRespostaDto resposta = new UsuarioRespostaDto(usuario);
+        UsuarioRespostaDto resposta = this.usuarioService.buscarUsuarioLogadoComoDto();
 
         return ResponseEntity.ok().body(resposta);
     }
 
     @GetMapping("/existe")
     public ResponseEntity<VerificarSeUsuarioExisteRespostaDto> verificarSeUsuarioExistePorCpf(@RequestParam(name = "cpf", required = false, defaultValue = "") final String cpf) {
-        boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
-
-        VerificarSeUsuarioExisteRespostaDto resposta = new VerificarSeUsuarioExisteRespostaDto(existe);
+        VerificarSeUsuarioExisteRespostaDto resposta = this.usuarioService.verificarSeExisteUsuarioPorCpfComoDto(cpf);
         
         return ResponseEntity.ok().body(resposta);
     }

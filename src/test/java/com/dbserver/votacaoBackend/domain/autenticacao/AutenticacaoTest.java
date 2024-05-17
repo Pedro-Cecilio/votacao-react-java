@@ -11,6 +11,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+
 
 @SpringBootTest
 class AutenticacaoTest {
@@ -21,9 +23,9 @@ class AutenticacaoTest {
 
     @BeforeEach
     void configurar(){
-        this.autenticacaoMock = new Autenticacao("example@example.com", "senha123");
-        this.emailValido = "test@example.com";
-        this.senhaValida = "password123";
+        this.autenticacaoMock = AutenticacaoFixture.gerarAutenticacaoComDadosDeUsuario();
+        this.emailValido = AutenticacaoFixture.EMAIL_ALEATORIO;
+        this.senhaValida = AutenticacaoFixture.SENHA_ALEATORIA;
     
     }
     @AfterEach

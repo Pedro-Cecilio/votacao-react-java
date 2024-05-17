@@ -3,11 +3,14 @@ package com.dbserver.votacaoBackend.domain.usuario.service;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.UsuarioRespostaDto;
+import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
 
 public interface UsuarioService {
-    public CriarUsuarioRespostaDto criarUsuario(CriarUsuarioDto dto);
+    CriarUsuarioRespostaDto criarUsuario(CriarUsuarioDto dto);
     Usuario buscarUsuarioLogado();
     boolean verificarSeExisteUsuarioPorCpf(String cpf);
+    VerificarSeUsuarioExisteRespostaDto verificarSeExisteUsuarioPorCpfComoDto(String cpf);
     Usuario buscarUsuarioPorCpfSeHouver(String cpf);
-
+    UsuarioRespostaDto buscarUsuarioLogadoComoDto();
 }

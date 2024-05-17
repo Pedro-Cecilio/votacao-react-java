@@ -10,10 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.time.LocalDateTime;
-
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.SessaoVotacaoFixture;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -41,8 +40,7 @@ class SessaoVotacaoValidacoesTest {
     @Test
     @DisplayName("Deve validar corretamente ao passar sessao votacao ativa ")
     void dadoPossuoSessaoVotacaoAtivaQuandoTentoValidarEntaoRetornarValidarCorretamente() {
-        this.sessaoVotacaoMock = new SessaoVotacao(this.pautaMock, LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(5));
+        this.sessaoVotacaoMock = SessaoVotacaoFixture.sessaoVotacaoAtiva(pautaMock);
 
         assertDoesNotThrow(() -> this.sessaoVotacaoValidacoes.validarSessaoVotacaoAtiva(sessaoVotacaoMock));
     }
@@ -50,7 +48,7 @@ class SessaoVotacaoValidacoesTest {
     @Test
     @DisplayName("Deve retornar erro ao passar sessao votacao inativa ")
     void dadoPossuoSessaoVotacaoInativaQuandoTentoValidarEntaoRetornarValidarCorretamente() {
-        this.sessaoVotacaoMock = new SessaoVotacao(this.pautaMock, LocalDateTime.now(), LocalDateTime.now());
+        this.sessaoVotacaoMock = SessaoVotacaoFixture.sessaoVotacaoInativa(pautaMock);
 
         assertThrows(IllegalStateException.class,
                 () -> this.sessaoVotacaoValidacoes.validarSessaoVotacaoAtiva(sessaoVotacaoMock));

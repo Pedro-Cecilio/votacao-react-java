@@ -1,4 +1,4 @@
-package com.dbserver.votacaoBackend.infra.exeptions;
+package com.dbserver.votacaoBackend.infra.exceptions;
 
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
