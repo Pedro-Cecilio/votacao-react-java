@@ -1,4 +1,4 @@
-package com.dbserver.votacaoBackend.fixture;
+package com.dbserver.votacaoBackend.fixture.voto;
 
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.voto.Voto;

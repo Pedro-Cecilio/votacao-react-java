@@ -28,10 +28,12 @@ import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoExternoDt
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.dto.InserirVotoInternoDto;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
-import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
-import com.dbserver.votacaoBackend.fixture.PautaFixture;
-import com.dbserver.votacaoBackend.fixture.SessaoVotacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.AbrirVotacaoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.InserirVotoInternoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.SessaoVotacaoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import java.util.List;
@@ -107,7 +109,7 @@ class SessaoVotacaoControllerTest {
     void dadoPossuoAbrirVotacaoDtoCorretoQuandoTentoAbrirSessaoVotacaoEntaoRetornarRespostaSessaoVotacao()
             throws Exception {
 
-        AbrirVotacaoDto abrirVotacaoDto = SessaoVotacaoFixture.abrirVotacaoDtoValido(this.pautaTransporte.getId());
+        AbrirVotacaoDto abrirVotacaoDto = AbrirVotacaoDtoFixture.abrirVotacaoDtoValido(this.pautaTransporte.getId());
         String json = this.abrirVotacaoDtoJson.write(abrirVotacaoDto).getJson();
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -154,7 +156,7 @@ class SessaoVotacaoControllerTest {
         pautaTransporte.setSessaoVotacao(sessaoVotacao);
         this.pautaRepository.save(pautaTransporte);
 
-        InserirVotoInternoDto inserirVotoInternoDto = SessaoVotacaoFixture
+        InserirVotoInternoDto inserirVotoInternoDto = InserirVotoInternoDtoFixture
                 .inserirVotoInternoPositivoDto(this.pautaTransporte.getId());
 
         String json = this.inserirVotoInternoDtoJson.write(inserirVotoInternoDto).getJson();
@@ -178,7 +180,7 @@ class SessaoVotacaoControllerTest {
         pautaTransporte.setSessaoVotacao(sessaoVotacao);
         this.pautaRepository.save(pautaTransporte);
 
-        InserirVotoExternoDto inserirVotoExternoDto = SessaoVotacaoFixture
+        InserirVotoExternoDto inserirVotoExternoDto = InserirVotoInternoDtoFixture
                 .inserirVotoExternoNegativoDto(this.pautaTransporte.getId());
 
         String json = this.inserirVotoExternoDtoJson.write(inserirVotoExternoDto).getJson();

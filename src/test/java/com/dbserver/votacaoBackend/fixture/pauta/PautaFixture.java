@@ -1,13 +1,13 @@
-package com.dbserver.votacaoBackend.fixture;
+package com.dbserver.votacaoBackend.fixture.pauta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.dto.CriarPautaDto;
-import com.dbserver.votacaoBackend.domain.pauta.dto.RespostaPautaDto;
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.SessaoVotacaoFixture;
 
 public class PautaFixture {
 
@@ -28,10 +28,6 @@ public class PautaFixture {
 
     public static CriarPautaDto criarPautaDtoValido() {
         return new CriarPautaDto(ASSUNTO_TRANSPORTE, CATEGORIA_TRANSPORTE.toString());
-    }
-
-    public static RespostaPautaDto respostaPautaDto(Usuario usuario) {
-        return new RespostaPautaDto(pautaTransporte(usuario), null);
     }
 
     public static Pauta pautaSaude(Usuario usuario) {

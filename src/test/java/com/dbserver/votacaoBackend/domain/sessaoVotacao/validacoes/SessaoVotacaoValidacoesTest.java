@@ -10,11 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.time.LocalDateTime;
-
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
-import com.dbserver.votacaoBackend.fixture.SessaoVotacaoFixture;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.SessaoVotacaoFixture;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)

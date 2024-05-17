@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
-import com.dbserver.votacaoBackend.fixture.PautaFixture;
-import com.dbserver.votacaoBackend.fixture.SessaoVotacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
-import com.dbserver.votacaoBackend.fixture.VotoFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.SessaoVotacaoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.voto.VotoFixture;
 
 @SpringBootTest
 class SessaoVotacaoTest {

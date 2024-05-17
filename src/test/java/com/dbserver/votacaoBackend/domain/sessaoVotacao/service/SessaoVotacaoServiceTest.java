@@ -37,10 +37,13 @@ import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioServiceImpl;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 import com.dbserver.votacaoBackend.domain.voto.mapper.VotoMapper;
 import com.dbserver.votacaoBackend.domain.voto.validacoes.VotoValidacoes;
-import com.dbserver.votacaoBackend.fixture.PautaFixture;
-import com.dbserver.votacaoBackend.fixture.SessaoVotacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
-import com.dbserver.votacaoBackend.fixture.VotoFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.AbrirVotacaoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.InserirVotoExternoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.InserirVotoInternoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.sessaoVotacao.SessaoVotacaoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.voto.VotoFixture;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 @SpringBootTest
@@ -110,7 +113,7 @@ class SessaoVotacaoServiceTest {
         @Test
         @DisplayName("Deve ser possível abrir uma votação corretamente")
         void dadoPossuoUmSessaoVotacaoValidaQuandoTentoAbrirSessaoVotacaoEntaoRetornarSessaoVotacao() {
-                AbrirVotacaoDto dto = SessaoVotacaoFixture.abrirVotacaoDto();
+                AbrirVotacaoDto dto = AbrirVotacaoDtoFixture.abrirVotacaoDto();
 
                 when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioDonoDaPautaMock);
                 when(this.pautaService.buscarPautaPorIdEUsuarioId(dto.pautaId(), this.usuarioDonoDaPautaMock.getId()))
@@ -122,7 +125,7 @@ class SessaoVotacaoServiceTest {
 
                 this.sessaoVotacaoService.abrirVotacao(dto);
 
-                verify(this.sessaoVotacaoRepository).save(any(SessaoVotacao.class));
+                verify(this.sessaoVotacaoRepository).save(this.sessaoVotacaoMock);
                 verify(this.sessaoVotacaoMapper).toRespostaSessaoVotacaoDto(any(SessaoVotacao.class));
         }
 
@@ -130,7 +133,7 @@ class SessaoVotacaoServiceTest {
         @DisplayName("Não deve ser possível abrir uma votação ao passar que possua uma pauta com sessãoVotacao diferente de null")
         void dadoPossuoUmSessaoVotacaoComPautaInvalidaQuandoTentoAbrirSessaoVotacaoEntaoRetornarErro() {
                 this.pautaMock.setSessaoVotacao(sessaoVotacaoMock);
-                AbrirVotacaoDto dto = SessaoVotacaoFixture.abrirVotacaoDto();
+                AbrirVotacaoDto dto = AbrirVotacaoDtoFixture.abrirVotacaoDto();
 
                 when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioDonoDaPautaMock);
                 when(this.pautaService.buscarPautaPorIdEUsuarioId(dto.pautaId(), this.usuarioDonoDaPautaMock.getId()))
@@ -142,7 +145,7 @@ class SessaoVotacaoServiceTest {
         @Test
         @DisplayName("Deve ser possível inserir voto interno positivo corretamente")
         void dadoPossuoDadosValidosQuandoTentoInserirVotoInternoPositivoEntaoRetornarSessaoVotacao() {
-                InserirVotoInternoDto dto = SessaoVotacaoFixture.inserirVotoInternoDto();
+                InserirVotoInternoDto dto = InserirVotoInternoDtoFixture.inserirVotoInternoDto();
                 Voto voto = VotoFixture.gerarVotoInterno(this.usuarioVotanteMock);
 
                 when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioVotanteMock);
@@ -161,7 +164,7 @@ class SessaoVotacaoServiceTest {
         @Test
         @DisplayName("Deve ser possível inserir voto negativo corretamente")
         void dadoPossuoDadosValidosQuandoTentoInserirVotoNegativoEntaoRetornarSessaoVotacao() {
-                InserirVotoInternoDto dto = SessaoVotacaoFixture.inserirVotoInternoDtoVotoNegativo();
+                InserirVotoInternoDto dto = InserirVotoInternoDtoFixture.inserirVotoInternoDtoVotoNegativo();
                 Voto voto = VotoFixture.gerarVotoInterno(this.usuarioVotanteMock);
 
                 when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioVotanteMock);
@@ -180,7 +183,7 @@ class SessaoVotacaoServiceTest {
         @Test
         @DisplayName("Deve retornar erro ao tentar inserir com tipo de voto nulo")
         void dadoTipoDeVotoNullQuandoTentoInserirVotoEntaoRetornarErro() {
-                InserirVotoInternoDto dto = SessaoVotacaoFixture.inserirVotoInternoDtoVotoNull();
+                InserirVotoInternoDto dto = InserirVotoInternoDtoFixture.inserirVotoInternoDtoVotoNull();
                 Voto voto = VotoFixture.gerarVotoInterno(this.usuarioVotanteMock);
 
                 when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioVotanteMock);
@@ -197,7 +200,7 @@ class SessaoVotacaoServiceTest {
         @Test
         @DisplayName("Deve retornar erro ao tentar inserir voto em pauta que não está ativa")
         void dadoPautaInativaQuandoTentoInserirVotoEntaoRetornarErro() {
-                InserirVotoInternoDto dto = SessaoVotacaoFixture.inserirVotoInternoDto();
+                InserirVotoInternoDto dto = InserirVotoInternoDtoFixture.inserirVotoInternoDto();
 
                 when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioVotanteMock);
                 when(utils.obterDataAtual()).thenReturn(dataAbertura);
@@ -209,7 +212,7 @@ class SessaoVotacaoServiceTest {
         @Test
         @DisplayName("Deve retornar erro quando criador tentar votar na pauta criada")
         void dadoSouDonoDaPautaQuandoTentoInserirVotoEntaoRetornarErro() {
-                InserirVotoInternoDto dto = SessaoVotacaoFixture.inserirVotoInternoDto();
+                InserirVotoInternoDto dto = InserirVotoInternoDtoFixture.inserirVotoInternoDto();
                 Voto voto = VotoFixture.gerarVotoInterno(this.usuarioDonoDaPautaMock);
 
                 when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioDonoDaPautaMock);
@@ -227,7 +230,7 @@ class SessaoVotacaoServiceTest {
         @DisplayName("Deve retornar erro ao tentar votar duas vezes na mesma pauta")
         void dadoSouUsuarioVotanteQuandoTentoInserirVotoDuasVezesNaMesmaPautaEntaoRetornarErro() {
                 this.sessaoVotacaoMock.setVotosPositivos(votoDoUsuarioVotanteMock);
-                InserirVotoInternoDto dto = SessaoVotacaoFixture.inserirVotoInternoDto();
+                InserirVotoInternoDto dto = InserirVotoInternoDtoFixture.inserirVotoInternoDto();
                 Voto voto = VotoFixture.gerarVotoInterno(this.usuarioVotanteMock);
 
                 when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioVotanteMock);
@@ -244,7 +247,7 @@ class SessaoVotacaoServiceTest {
         @Test
         @DisplayName("Deve ser possível inserir voto externo positivo corretamente")
         void dadoPossuoDadosValidosQuandoTentoInserirVotoExternoPositivoEntaoRetornarSessaoVotacao() {
-                InserirVotoExternoDto dto = SessaoVotacaoFixture.inserirVotoExternoDtoUsuarioExistenteValido();
+                InserirVotoExternoDto dto = InserirVotoExternoDtoFixture.inserirVotoExternoDtoUsuarioExistenteValido();
                 Voto voto = VotoFixture.gerarVotoExterno(dto.cpf(), null);
                 when(utils.obterDataAtual()).thenReturn(dataAbertura);
                 when(this.sessaoVotacaoRepository.findByPautaIdAndSessaoVotacaoAtiva(dto.pautaId(), dataAbertura))

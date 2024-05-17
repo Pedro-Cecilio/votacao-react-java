@@ -24,8 +24,10 @@ import com.dbserver.votacaoBackend.domain.autenticacao.dto.AutorizarVotoExternoD
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
-import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutorizarVotoExternoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -78,7 +80,7 @@ class AutenticacaoControllerTest {
     void dadoPossuoDadosDeAutenticacaCorretosoQuandoTentoRealizarLoginEntaoRetornarAutenticacaoRespostaDto()
             throws Exception {
 
-        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoAdminValido();
+        this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoAdminValido();
 
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
 
@@ -96,7 +98,7 @@ class AutenticacaoControllerTest {
     void dadoPossuoUmaSenhaIncorretaQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
-        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoSenhaIncorreta();
+        this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoSenhaIncorreta();
 
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
 
@@ -113,7 +115,7 @@ class AutenticacaoControllerTest {
     void dadoPossuoUmaEmailInexistenteQuandoTentoRealizarLoginEntaoRetornarRespostaErro()
             throws Exception {
 
-        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoEmailIncorreto();
+        this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoEmailIncorreto();
 
         String json = this.autenticacaoDtoJson.write(this.autenticacaoDto).getJson();
 
@@ -162,7 +164,7 @@ class AutenticacaoControllerTest {
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 
-        this.autorizarVotoExternoDto = AutenticacaoFixture.autorizarVotoExternoDtoValido(cpf);
+        this.autorizarVotoExternoDto = AutorizarVotoExternoDtoFixture.autorizarVotoExternoDtoValido(cpf);
 
         String json = this.autorizarVotoExternoDtoJson.write(this.autorizarVotoExternoDto).getJson();
         mockMvc.perform(MockMvcRequestBuilders
@@ -177,7 +179,7 @@ class AutenticacaoControllerTest {
     @DisplayName("Não deve ser possível validar usuário existente com ao passar cpf não cadastrado ao tentar votar externamente")
     void dadoCpfNaoCadastradoQuandoTentoValidarVotoExternoEntaoRetornarRespostaErro()
             throws Exception {
-        this.autorizarVotoExternoDto = AutenticacaoFixture.autorizarVotoExternoDtoCpfInvalido();
+        this.autorizarVotoExternoDto = AutorizarVotoExternoDtoFixture.autorizarVotoExternoDtoCpfInvalido();
 
         String json = this.autorizarVotoExternoDtoJson.write(this.autorizarVotoExternoDto).getJson();
 
@@ -195,7 +197,7 @@ class AutenticacaoControllerTest {
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
 
-        this.autorizarVotoExternoDto = AutenticacaoFixture.autorizarVotoExternoDtoSenhaIncorreta(cpf);
+        this.autorizarVotoExternoDto = AutorizarVotoExternoDtoFixture.autorizarVotoExternoDtoSenhaIncorreta(cpf);
 
         String json = this.autorizarVotoExternoDtoJson.write(this.autorizarVotoExternoDto).getJson();
         

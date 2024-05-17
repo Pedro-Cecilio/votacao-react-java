@@ -30,8 +30,10 @@ import com.dbserver.votacaoBackend.domain.pauta.repository.PautaRepository;
 import com.dbserver.votacaoBackend.domain.pauta.validacoes.PautaValidacoes;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioServiceImpl;
-import com.dbserver.votacaoBackend.fixture.PautaFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.CriarPautaDtoFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.RespostaPautaDtoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 @SpringBootTest
@@ -68,8 +70,8 @@ class PautaServiceTest {
     @BeforeEach
     void configurar() {
         this.usuarioAdminMock = UsuarioFixture.usuarioAdmin();
-        this.criarPautaMock = PautaFixture.criarPautaDtoValido();
-        this.respostaPautaDtoMock = PautaFixture.respostaPautaDto(usuarioAdminMock);
+        this.criarPautaMock = CriarPautaDtoFixture.criarPautaDtoValido();
+        this.respostaPautaDtoMock = RespostaPautaDtoFixture.respostaPautaDto(usuarioAdminMock);
         this.categoria = PautaFixture.CATEGORIA_TRANSPORTE;
         this.dataAtual = LocalDateTime.now();
     }

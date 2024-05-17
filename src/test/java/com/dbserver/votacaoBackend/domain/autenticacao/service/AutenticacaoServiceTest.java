@@ -32,8 +32,10 @@ import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRe
 import com.dbserver.votacaoBackend.domain.autenticacao.validacoes.AutenticacaoValidacoes;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.validacoes.UsuarioValidacoes;
-import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutorizarVotoExternoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 import com.dbserver.votacaoBackend.utils.Utils;
 
@@ -73,9 +75,9 @@ class AutenticacaoServiceTest {
                 this.autenticacaoMock = AutenticacaoFixture.autenticacaoAdmin(usuarioMock);
                 this.senha = AutenticacaoFixture.SENHA;
                 this.senhaEncriptada = this.autenticacaoMock.getSenha();
-                this.autorizarVotoExternoDto = AutenticacaoFixture
+                this.autorizarVotoExternoDto = AutorizarVotoExternoDtoFixture
                                 .autorizarVotoExternoDtoValido(this.usuarioMock.getCpf());
-                this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoAdminValido();
+                this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoAdminValido();
         }
 
         @AfterEach

@@ -23,8 +23,10 @@ import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRe
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
-import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.CriarUsuarioDtoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 import com.dbserver.votacaoBackend.infra.security.token.TokenService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -80,9 +82,9 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("Deve ser possível criar um usuário corretamente")
     void dadoCriarUsuarioDtoCorretoQuandoTentoCriarUsuarioEntaoRetornarCriarUsuarioRespostaDto() throws Exception {
-        this.autenticacaoDto = AutenticacaoFixture.autenticacaoDtoUsuarioValido();
+        this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoUsuarioValido();
 
-        this.criarUsuarioDto = UsuarioFixture.criarUsuarioDto(this.autenticacaoDto);
+        this.criarUsuarioDto = CriarUsuarioDtoFixture.criarUsuarioDto(this.autenticacaoDto);
 
         String email = this.autenticacaoDto.email();
         String nome = this.criarUsuarioDto.nome();

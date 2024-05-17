@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,9 +35,11 @@ import com.dbserver.votacaoBackend.domain.usuario.dto.CriarUsuarioDto;
 import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
 import com.dbserver.votacaoBackend.domain.usuario.mapper.UsuarioMapper;
 import com.dbserver.votacaoBackend.domain.usuario.repository.UsuarioRepository;
-import com.dbserver.votacaoBackend.fixture.AutenticacaoFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
-import com.dbserver.votacaoBackend.fixture.VerificarSeUsuarioExisteRespostaDtoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoDtoFixture;
+import com.dbserver.votacaoBackend.fixture.autenticacao.AutenticacaoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.CriarUsuarioDtoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.VerificarSeUsuarioExisteRespostaDtoFixture;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -71,8 +72,8 @@ class UsuarioServiceTest {
 
     @BeforeEach
     void configurar() {
-        this.autenticacaoDtoMock = AutenticacaoFixture.autenticacaoDtoUsuarioValido();
-        this.criarUsuarioDtoMock = UsuarioFixture.criarUsuarioDto(this.autenticacaoDtoMock);
+        this.autenticacaoDtoMock = AutenticacaoDtoFixture.autenticacaoDtoUsuarioValido();
+        this.criarUsuarioDtoMock = CriarUsuarioDtoFixture.criarUsuarioDto(this.autenticacaoDtoMock);
         this.usuarioMock = UsuarioFixture.gerarUsuarioAtravesDoDto(this.criarUsuarioDtoMock);
         this.autenticacaoMock = AutenticacaoFixture.gerarAutenticacaoComDadosDeUsuario();
     }

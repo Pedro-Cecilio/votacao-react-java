@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
-import com.dbserver.votacaoBackend.fixture.PautaFixture;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.pauta.PautaFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
 
 @SpringBootTest
 class PautaTest {

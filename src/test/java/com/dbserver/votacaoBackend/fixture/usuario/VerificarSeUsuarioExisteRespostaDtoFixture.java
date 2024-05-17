@@ -1,4 +1,4 @@
-package com.dbserver.votacaoBackend.fixture;
+package com.dbserver.votacaoBackend.fixture.usuario;
 
 import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRespostaDto;
 

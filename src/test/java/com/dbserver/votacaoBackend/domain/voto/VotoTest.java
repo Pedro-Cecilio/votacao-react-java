@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
-import com.dbserver.votacaoBackend.fixture.UsuarioFixture;
-import com.dbserver.votacaoBackend.fixture.VotoFixture;
+import com.dbserver.votacaoBackend.fixture.usuario.UsuarioFixture;
+import com.dbserver.votacaoBackend.fixture.voto.VotoFixture;
 
 @SpringBootTest
 class VotoTest {
