@@ -80,13 +80,6 @@ class AutenticacaoServiceTest {
                 this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoAdminValido();
         }
 
-        @AfterEach
-        void limpar() {
-                this.usuarioMock = null;
-                this.autenticacaoMock = null;
-                this.autenticacaoRepository.deleteAll();
-        }
-
         @Test
         @DisplayName("Deve ser possível autenticar usuário corretamente")
         void dadoTenhoDadosDeAutenticacaoQuandoTentoAutenticarEntaoRetornarAutenticacaoRespostaDto() {

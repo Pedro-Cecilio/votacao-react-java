@@ -11,6 +11,7 @@ public class UsuarioFixture {
     private static final Faker faker = new Faker(new Locale("pt-BR"));
 
     public static final String CPF_ALEATORIO = faker.number().digits(11);
+    public static final String CPF_INVALIDO = faker.number().digits(10);
     public static final String CPF_ADMIN = faker.number().digits(11);
     public static final String CPF_USUARIO = faker.number().digits(11);
     public static final String NOME_ALEATORIO = faker.name().firstName();

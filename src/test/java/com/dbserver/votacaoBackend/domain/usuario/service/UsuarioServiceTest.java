@@ -78,12 +78,6 @@ class UsuarioServiceTest {
         this.autenticacaoMock = AutenticacaoFixture.gerarAutenticacaoComDadosDeUsuario();
     }
 
-    @AfterEach
-    void limpar() {
-        this.usuarioMock = null;
-        this.usuarioRepository.deleteAll();
-        this.autenticacaoRepository.deleteAll();
-    }
 
     @Test
     @DisplayName("Deve ser possível criar um Usuario corretamente")

@@ -133,6 +133,7 @@ class SessaoVotacaoTest {
     void dadoPossuoUmaSessaoVotacaoAtivaQuandoTentoObterAtivaEntaoRetornarTrue(){
         assertTrue(this.sessaoVotacaoAtivaMock.isAtiva());
     }
+
     @Test
     @DisplayName("Deve obter ativa false")
     void dadoNaoPossuoUmaSessaoVotacaoAtivaQuandoTentoObterAtivaEntaoRetornarTrue(){

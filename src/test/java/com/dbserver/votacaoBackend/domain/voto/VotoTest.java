@@ -17,28 +17,25 @@ import com.dbserver.votacaoBackend.fixture.voto.VotoFixture;
 class VotoTest {
 
     private Voto votoMock;
-    private Usuario usuario;
-    private String novoCpfValido;
-    private String novoCpfInvalido;
 
     @BeforeEach
     void configurar() {
-        this.usuario = UsuarioFixture.usuarioAdmin();
+        Usuario usuario = UsuarioFixture.usuarioAdmin();
         this.votoMock = VotoFixture.gerarVotoInterno(usuario);
-        this.novoCpfValido = "12345678910";
-        this.novoCpfInvalido = "123456789";
     }
 
     @Test
     @DisplayName("Deve ser possível definir cpf valido")
     void dadoPossuoCpfValidoQuandoSetarCpfEntaoSetarCpf() {
-        assertDoesNotThrow(() -> this.votoMock.setCpf(this.novoCpfValido));
-        assertEquals(this.novoCpfValido, this.votoMock.getCpf());
+        String novoCpfValido = UsuarioFixture.CPF_ALEATORIO;
+        assertDoesNotThrow(() -> this.votoMock.setCpf(novoCpfValido));
+        assertEquals(novoCpfValido, this.votoMock.getCpf());
     }
     @Test
     @DisplayName("Deve retornar um erro ao tentar definir cpf inválido")
     void dadoPossuoCpfInalidoQuandoSetarCpfEntaoRetornarErro() {
-        assertThrows(IllegalArgumentException.class, () -> this.votoMock.setCpf(this.novoCpfInvalido));
+        String novoCpfInvalido = UsuarioFixture.CPF_INVALIDO;
+        assertThrows(IllegalArgumentException.class, () -> this.votoMock.setCpf(novoCpfInvalido));
     }
     @Test
     @DisplayName("Deve retornar um erro ao tentar definir cpf nulo")
