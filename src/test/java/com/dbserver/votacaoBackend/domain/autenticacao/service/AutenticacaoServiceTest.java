@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -205,7 +204,7 @@ class AutenticacaoServiceTest {
 
         @Test
         @DisplayName("Deve ser possível verificar se email esta cadastrado e retornar true ao encontrar")
-        void dadoTenhoEmailCadastradoQuandoVerificoSeEstaCadastradoRetornarTrue() {
+        void dadoTenhoEmailCadastradoQuandoVerificoSeEstaCadastradoEntaoRetornarTrue() {
                 when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                                 .thenReturn(Optional.of(this.autenticacaoMock));
 
@@ -218,7 +217,7 @@ class AutenticacaoServiceTest {
 
         @Test
         @DisplayName("Deve ser possível verificar se email esta cadastrado e retornar false ao não encontrar")
-        void dadoTenhoEmailNaoCadastradoQuandoVerificoSeEstaCadastradoRetornarTrue() {
+        void dadoTenhoEmailNaoCadastradoQuandoVerificoSeEstaCadastradoEntaoRetornarFalse() {
                 when(this.autenticacaoRepository.findByEmail(this.autenticacaoMock.getEmail()))
                                 .thenReturn(Optional.empty());
 

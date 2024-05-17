@@ -150,7 +150,7 @@ class SessaoVotacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível votar internamente em uma pauta")
-    void dadoPossuoFecharVotacaoDtoCorretoQuandoTentoVotarInternamenteEntaoRetornarRespostaSessaoVotacao()
+    void dadoPossuoInserirVotoInternoDtoCorretoQuandoTentoVotarInternamenteEntaoRetornarRespostaSessaoVotacao()
             throws Exception {
         SessaoVotacao sessaoVotacao = SessaoVotacaoFixture.sessaoVotacaoAtiva(pautaTransporte);
         pautaTransporte.setSessaoVotacao(sessaoVotacao);
@@ -174,7 +174,7 @@ class SessaoVotacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível votar externamente em uma pauta")
-    void dadoPossuoFecharVotacaoDtoCorretoQuandoTentoVotarExternamenteEntaoRetornarRespostaSessaoVotacao()
+    void dadoPossuoInserirVotoExternoDtoDtoCorretoQuandoTentoVotarExternamenteEntaoRetornarRespostaSessaoVotacao()
             throws Exception {
         SessaoVotacao sessaoVotacao = SessaoVotacaoFixture.sessaoVotacaoAtiva(pautaTransporte);
         pautaTransporte.setSessaoVotacao(sessaoVotacao);

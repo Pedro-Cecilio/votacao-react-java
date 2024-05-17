@@ -127,7 +127,7 @@ class PautaControllerTest {
         }
         @ParameterizedTest
         @MethodSource("dadosInvalidosCriarPauta")
-        @DisplayName("Deve ser possível criar uma pauta corretamente")
+        @DisplayName("Não deve ser possível criar uma pauta ao informar dados inválidos")
         void dadoTenhoCriarPautaDtoComDadosInvalidosQuandoTentoCriarPautaEntaoRetornarRespostaErro(String assunto,
                         String categoria, String mensagemErro) throws Exception {
 
@@ -146,8 +146,8 @@ class PautaControllerTest {
         
 
         @Test
-        @DisplayName("deve ser possível lista pautas do usuário logado")
-        void dadoNaoEnvioCategoriaQuandoBuscoTodasMinhasPautasQuandoRetornarListaDePautas() throws Exception {
+        @DisplayName("Deve ser possível listar pautas do usuário logado")
+        void dadoNaoEnvioCategoriaQuandoBuscoTodasMinhasPautasEntaoRetornarListaDePautas() throws Exception {
                 List<Pauta> pautas = PautaFixture.listaDePautas(this.usuarioCadastrado);
 
                 this.pautaRepository.saveAll(pautas);
@@ -166,8 +166,8 @@ class PautaControllerTest {
         }
 
         @Test
-        @DisplayName("deve ser possível lista pautas do usuário logado")
-        void dadoEnvioCategoriaQuandoBuscoTodasMinhasPautasQuandoRetornarListaDePautas() throws Exception {
+        @DisplayName("Deve ser possível listar pautas do usuário logado por categoria")
+        void dadoEnvioCategoriaQuandoBuscoTodasMinhasPautasEntaoetornarListaDePautas() throws Exception {
                 List<Pauta> pautas = PautaFixture.listaDePautas(this.usuarioCadastrado);
 
                 this.pautaRepository.saveAll(pautas);
@@ -188,7 +188,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("deve ser possível listar todas pautas ativas")
-        void dadoEstouLogadoQuandoBuscoTodasPautasAtivasQuandoRetornarListaDePautas() throws Exception {
+        void dadoEstouLogadoQuandoBuscoTodasPautasAtivasEntaoRetornarListaDePautas() throws Exception {
                 List<Pauta> pautas = PautaFixture.listaDePautasUmaPautaAtiva(usuarioCadastrado);
                 this.pautaRepository.saveAll(pautas);
 
@@ -209,7 +209,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("deve ser possível buscar pauta ativa por Id")
-        void dadoPossuoPautaIdQuandoBuscoAtivaPorIdQuandoRetornarRespostaPautaDto() throws Exception {
+        void dadoPossuoPautaIdQuandoBuscoAtivaPorIdEntaoRetornarRespostaPautaDto() throws Exception {
                 Pauta pautaTransporte = PautaFixture.pautaTransporteAtiva(this.usuarioCadastrado);
 
                 this.pautaRepository.save(pautaTransporte);
@@ -227,7 +227,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Não deve ser possível buscar pauta ativa por Id ao passar id de pauta não ativa")
-        void dadoPossuoPautaIdInvalidoQuandoBuscoAtivaPorIdQuandoRetornarRespostaErro() throws Exception {
+        void dadoPossuoPautaIdInvalidoQuandoBuscoAtivaPorIdEntaoRetornarRespostaErro() throws Exception {
 
                 mockMvc.perform(MockMvcRequestBuilders
                                 .get("/pauta/{id}", 50)
@@ -240,7 +240,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Deve ser possível buscar detalhes de uma pauta ")
-        void dadoPossuoPautaIdQuandoBuscoDetalhesPautaQuandoRetornarRespostaPautaDto() throws Exception {
+        void dadoPossuoPautaIdQuandoBuscoDetalhesPautaEntaoRetornarRespostaPautaDto() throws Exception {
                 Pauta pautaTransporte = PautaFixture.pautaTransporteAtiva(usuarioCadastrado);
 
                 this.pautaRepository.save(pautaTransporte);
@@ -256,7 +256,7 @@ class PautaControllerTest {
 
         @Test
         @DisplayName("Não deve ser possível buscar detalhes de uma pauta ao passar id inválido ou de pauta não ativa")
-        void dadoPossuoPautaIdInvalidoQuandoBuscoDetalhesPautaQuandoRetornarRespostaErro() throws Exception {
+        void dadoPossuoPautaIdInvalidoQuandoBuscoDetalhesPautaEntaoRetornarRespostaErro() throws Exception {
                 mockMvc.perform(MockMvcRequestBuilders
                                 .get("/pauta/detalhes/{id}", 1)
                                 .header("Authorization", "Bearer " + this.token)

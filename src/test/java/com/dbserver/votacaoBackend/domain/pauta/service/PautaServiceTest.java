@@ -100,7 +100,7 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve ser possível todas buscar pautas do usuário logado")
-    void dadoTenhoUsuarioIdCorretoECategoriaNullQuandoTentobuscarPautasUsuarioLogadoEntaoRetornarListaDePautas() {
+    void dadoTenhoUsuarioIdCorretoECategoriaNullQuandoTentoBuscarPautasUsuarioLogadoEntaoRetornarListaDePautas() {
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(usuarioAdminMock);
         this.pautaService.buscarPautasUsuarioLogado(null);
         verify(this.pautaRepository, times(1)).findAllByUsuarioIdOrderByCreatedAtDesc(this.usuarioAdminMock.getId());
@@ -172,7 +172,7 @@ class PautaServiceTest {
 
     @Test
     @DisplayName("Deve ser possível obter detalhes da pauta com sessão votação não nula")
-    void dadoTenhoPautaIdEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaDeveRetornarDetalhes(){
+    void dadoTenhoPautaIdEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaEntaoDeveRetornarDetalhes(){
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioAdminMock);
         when(this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(1L, this.usuarioAdminMock.getId()))
                 .thenReturn(Optional.of(this.pautaMock));
@@ -181,7 +181,7 @@ class PautaServiceTest {
     }
     @Test
     @DisplayName("Deve falhar ao tentar obter detalhes da pauta com sessão votação não nula, ao não encontrar pauta com id informado")
-    void dadoTenhPautaIdInexistenteEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaDeveRetornarErro(){
+    void dadoTenhoPautaIdInexistenteEEstouLogadoNaAplicacaoQuandoTentoObterDetalhesDaPautaEntaoDeveRetornarErro(){
         when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioAdminMock);
         when(this.pautaRepository.findByIdAndUsuarioIdAndSessaoVotacaoNotNull(1L, this.usuarioAdminMock.getId()))
                 .thenReturn(Optional.empty());

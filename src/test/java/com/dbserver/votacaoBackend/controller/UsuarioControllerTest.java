@@ -107,7 +107,7 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$.admin").value(admin));
     }
 
-    private static Stream<Arguments> dadosInválidosParaCriarUsuário() {
+    private static Stream<Arguments> dadosInvalidosParaCriarUsuário() {
         return Stream.of(
                 Arguments.of("email", "senha123", "Pedro", "Cecilio", "12345678912", true,
                         "Email com formato inválido."),
@@ -147,8 +147,8 @@ class UsuarioControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("dadosInválidosParaCriarUsuário")
-    @DisplayName("Deve falhar ao tentar criar um usuário corretamente")
+    @MethodSource("dadosInvalidosParaCriarUsuário")
+    @DisplayName("Deve falhar ao tentar criar um usuário com dados inválids")
     void dadoPossuoDadosInvalidosQuandoTentoCriarNovoUsuarioDeveRetornarErro(String email, String senha, String nome, String sobrenome, String cpf, boolean admin, String mensagemErro)
             throws Exception {
         this.autenticacaoDto = new AutenticacaoDto(email,
@@ -188,7 +188,7 @@ class UsuarioControllerTest {
     }
     
     @Test
-    @DisplayName("Deve retornar true ao verificar se usuario existe ao passar cpf cadastrado")
+    @DisplayName("Deve retornar true ao verificar se usuário existe ao passar cpf cadastrado")
     void dadoPossuoCpfDeUmUsuarioExistenteQuandoVerificoSeEleExisteEntaoRetornarVerificarSeUsuarioExisteRespostaDtoTrue() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/usuario/existe?cpf=" + this.usuarioCadastrado.getCpf())

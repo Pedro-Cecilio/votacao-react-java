@@ -11,7 +11,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -97,7 +96,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Não deve ser possível criar um Usuario passando ao passar cpf existente")
+    @DisplayName("Deve falhar ao tentar criar um Usuario ao passar cpf existente")
     void dadoTenhoUmCpfJaCadastradoQuandoTentoCriarUsuarioEntaoRetornarUmErro() {
         when(usuarioMapper.toUsuario(this.criarUsuarioDtoMock)).thenReturn(this.usuarioMock);
         when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoDtoMock.senha()))
@@ -111,7 +110,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Não deve ser possível criar um Usuario passando ao passar email existente")
+    @DisplayName("Deve falhar ao tentar criar um Usuario passando ao passar email existente")
     void dadoTenhoUmEmailJaCadastradoQuandoTentoCriarUsuarioEntaoRetornarUmErro() {
         when(this.autenticacaoService.encriptarSenhaDaAutenticacao(this.autenticacaoDtoMock.senha()))
                 .thenReturn("senhaEncriptada");
@@ -155,7 +154,7 @@ class UsuarioServiceTest {
 
     @Test
     @DisplayName("Deve falhar ao tentar buscar o usuário logado como Dto")
-    void dadoNãoTenhoUmUsuarioLogadoQuandoTentoBuscarUsuarioLogadoComoDtoEntaoRetornarErro() {
+    void dadoNaoTenhoUmUsuarioLogadoQuandoTentoBuscarUsuarioLogadoComoDtoEntaoRetornarErro() {
         assertThrows(AccessDeniedException.class, () -> this.usuarioService.buscarUsuarioLogadoComoDto());
     }
 

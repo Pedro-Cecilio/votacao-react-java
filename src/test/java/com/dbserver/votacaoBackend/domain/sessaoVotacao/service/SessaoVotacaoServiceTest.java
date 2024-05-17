@@ -112,7 +112,7 @@ class SessaoVotacaoServiceTest {
 
         @Test
         @DisplayName("Deve ser possível abrir uma votação corretamente")
-        void dadoPossuoUmSessaoVotacaoValidaQuandoTentoAbrirSessaoVotacaoEntaoRetornarSessaoVotacao() {
+        void dadoSessaoVotacaoValidaQuandoTentoAbrirSessaoVotacaoEntaoRetornarSessaoVotacao() {
                 AbrirVotacaoDto dto = AbrirVotacaoDtoFixture.abrirVotacaoDto();
 
                 when(this.usuarioService.buscarUsuarioLogado()).thenReturn(this.usuarioDonoDaPautaMock);
@@ -131,7 +131,7 @@ class SessaoVotacaoServiceTest {
 
         @Test
         @DisplayName("Não deve ser possível abrir uma votação ao passar que possua uma pauta com sessãoVotacao diferente de null")
-        void dadoPossuoUmSessaoVotacaoComPautaInvalidaQuandoTentoAbrirSessaoVotacaoEntaoRetornarErro() {
+        void dadoSessaoVotacaoComPautaInvalidaQuandoTentoAbrirSessaoVotacaoEntaoRetornarErro() {
                 this.pautaMock.setSessaoVotacao(sessaoVotacaoMock);
                 AbrirVotacaoDto dto = AbrirVotacaoDtoFixture.abrirVotacaoDto();
 
@@ -144,7 +144,7 @@ class SessaoVotacaoServiceTest {
 
         @Test
         @DisplayName("Deve ser possível inserir voto interno positivo corretamente")
-        void dadoPossuoDadosValidosQuandoTentoInserirVotoInternoPositivoEntaoRetornarSessaoVotacao() {
+        void dadoDadosValidosQuandoTentoInserirVotoInternoPositivoEntaoRetornarSessaoVotacao() {
                 InserirVotoInternoDto dto = InserirVotoInternoDtoFixture.inserirVotoInternoDto();
                 Voto voto = VotoFixture.gerarVotoInterno(this.usuarioVotanteMock);
 

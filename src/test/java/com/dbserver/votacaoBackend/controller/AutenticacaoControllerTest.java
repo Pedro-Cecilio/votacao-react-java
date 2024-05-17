@@ -77,7 +77,7 @@ class AutenticacaoControllerTest {
 
     @Test
     @DisplayName("Deve ser possível realizar login corretamente")
-    void dadoPossuoDadosDeAutenticacaCorretosoQuandoTentoRealizarLoginEntaoRetornarAutenticacaoRespostaDto()
+    void dadoPossuoDadosDeAutenticacaCorretosQuandoTentoRealizarLoginEntaoRetornarAutenticacaoRespostaDto()
             throws Exception {
 
         this.autenticacaoDto = AutenticacaoDtoFixture.autenticacaoDtoAdminValido();
@@ -159,7 +159,7 @@ class AutenticacaoControllerTest {
     
 
     @Test
-    @DisplayName("Deve ser possível validar usuário existente com dados para validar voto externo validos ao tentar votar externamente")
+    @DisplayName("Deve ser possível validar usuário existente com dados para validar voto externo válidos ao tentar votar externamente")
     void dadoPossuoDadosValidarVotoExternoCorretosQuandoTentoValidarVotoExternoEntaoRetornarValidarVotoExternoComTrue()
             throws Exception {
         String cpf = this.autenticacao.getUsuario().getCpf();
@@ -176,7 +176,7 @@ class AutenticacaoControllerTest {
     }
 
     @Test
-    @DisplayName("Não deve ser possível validar usuário existente com ao passar cpf não cadastrado ao tentar votar externamente")
+    @DisplayName("Não deve ser possível validar usuário existente ao passar cpf não cadastrado ao tentar votar externamente")
     void dadoCpfNaoCadastradoQuandoTentoValidarVotoExternoEntaoRetornarRespostaErro()
             throws Exception {
         this.autorizarVotoExternoDto = AutorizarVotoExternoDtoFixture.autorizarVotoExternoDtoCpfInvalido();
