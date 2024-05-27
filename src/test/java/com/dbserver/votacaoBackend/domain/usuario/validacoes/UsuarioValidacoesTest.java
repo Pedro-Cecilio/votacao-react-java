@@ -26,13 +26,13 @@ class UsuarioValidacoesTest {
     @Test
     @DisplayName("Deve validar ao passar usuário não nulo")
     void dadoUsuarioNaoNuloQuandoTentoValidarSeNaoENuloDeveValidarCorretamente() {
-        assertDoesNotThrow(() -> this.usuarioValidacoes.validarUsuarioNaoNulo(usuarioMock));
+        assertDoesNotThrow(() -> UsuarioValidacoes.validarUsuarioNaoNulo(usuarioMock));
     }
 
     @Test
     @DisplayName("Deve retornar erro ao validar ao passar usuário nulo")
     void dadoUsuarioNuloQuandoTentoValidarSeNaoENuloDeveRetornarErro() {
-        assertThrows(IllegalArgumentException.class, () -> this.usuarioValidacoes.validarUsuarioNaoNulo(null));
+        assertThrows(IllegalArgumentException.class, () -> UsuarioValidacoes.validarUsuarioNaoNulo(null));
     }
 
     @Test

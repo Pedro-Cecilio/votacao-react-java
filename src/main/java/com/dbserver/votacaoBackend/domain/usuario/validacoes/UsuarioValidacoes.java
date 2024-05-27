@@ -29,9 +29,9 @@ public class UsuarioValidacoes {
             throw new IllegalArgumentException("Cpf deve conter 11 caracteres numéricos.");
     }
 
-    public void validarUsuarioNaoNulo(Usuario usuario) {
+    public static void validarUsuarioNaoNulo(Usuario usuario) {
         if (usuario == null)
-            throw new IllegalArgumentException("Usuario não deve ser nulo.");
+            throw new IllegalArgumentException("Usuario deve ser informado.");
     }
 
 }

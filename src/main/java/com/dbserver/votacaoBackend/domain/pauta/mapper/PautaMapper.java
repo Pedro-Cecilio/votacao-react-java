@@ -20,11 +20,14 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface PautaMapper {
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "sessaoVotacao", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     Pauta toPauta(CriarPautaDto dto, Usuario usuario);
 
 
     List<RespostaPautaDto> toListRespostaPautaDto(List<Pauta> pautas);
+
     RespostaPautaDto toRespostaPautaDto(Pauta pauta);
 
     @Mapping(target = "pautaId", expression = "java(sessaoVotacao.getPauta().getId())")

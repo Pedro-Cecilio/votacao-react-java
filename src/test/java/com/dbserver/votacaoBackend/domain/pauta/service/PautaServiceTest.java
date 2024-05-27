@@ -88,7 +88,7 @@ class PautaServiceTest {
         RespostaPautaDto resposta = this.pautaService.criarPauta(this.criarPautaMock);
         
         assertEquals(this.criarPautaMock.assunto(), resposta.assunto());
-        assertEquals(this.criarPautaMock.categoria(), resposta.categoria().toString());
+        assertEquals(this.criarPautaMock.categoria(), resposta.categoria());
     }
 
     @Test

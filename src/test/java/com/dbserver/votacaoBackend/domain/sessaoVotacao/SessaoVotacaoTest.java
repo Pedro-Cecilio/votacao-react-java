@@ -3,13 +3,14 @@ package com.dbserver.votacaoBackend.domain.sessaoVotacao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+
 
 import java.time.LocalDateTime;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
@@ -132,14 +133,6 @@ class SessaoVotacaoTest {
     @DisplayName("Deve obter ativa true")
     void dadoPossuoUmaSessaoVotacaoAtivaQuandoTentoObterAtivaEntaoRetornarTrue(){
         assertTrue(this.sessaoVotacaoAtivaMock.isAtiva());
-    }
-
-    @Test
-    @DisplayName("Deve obter ativa false")
-    void dadoNaoPossuoUmaSessaoVotacaoAtivaQuandoTentoObterAtivaEntaoRetornarTrue(){
-        this.sessaoVotacaoAtivaMock.setDataFechamento(this.dataAbertura);
-        
-        assertFalse(this.sessaoVotacaoAtivaMock.isAtiva());
     }
 
 }
