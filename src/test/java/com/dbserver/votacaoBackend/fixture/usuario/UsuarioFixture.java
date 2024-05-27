@@ -19,14 +19,26 @@ public class UsuarioFixture {
 
 
     public static Usuario usuarioAdmin() {
-        return new Usuario(faker.name().firstName(), faker.name().lastName(), CPF_ADMIN, true);
+        return Usuario.builder().nome(faker.name().firstName())
+        .sobrenome(faker.name().lastName())
+        .cpf(CPF_ADMIN)
+        .admin(true)
+        .build();
     }
 
     public static Usuario usuarioNaoAdmin() {
-        return new Usuario(faker.name().firstName(), faker.name().lastName(), CPF_USUARIO, false);
+        return Usuario.builder().nome(faker.name().firstName())
+        .sobrenome(faker.name().lastName())
+        .cpf(CPF_USUARIO)
+        .admin(false)
+        .build();
     }
 
     public static Usuario gerarUsuarioAtravesDoDto(CriarUsuarioDto dto) {
-        return new Usuario(dto.nome(), dto.sobrenome(), dto.cpf(), dto.admin());
+        return Usuario.builder().nome(dto.nome())
+        .sobrenome(dto.sobrenome())
+        .cpf(dto.cpf())
+        .admin(dto.admin())
+        .build();
     }
 }
