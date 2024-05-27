@@ -66,12 +66,7 @@ public class AutenticacaoServiceImpl implements AutenticacaoService {
 
     @Override
     public String encriptarSenhaDaAutenticacao(String senha) {
-        if (senha == null || senha.trim().isEmpty())
-            throw new IllegalArgumentException("Senha deve ser informada.");
-
-        if (senha.trim().length() < 8)
-            throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo.");
-
+        AutenticacaoValidacoes.validarFormatoDaSenha(senha);
         return this.passwordEncoder.encode(senha);
     }
 

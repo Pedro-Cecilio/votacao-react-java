@@ -28,21 +28,19 @@ public class AutenticacaoFixture {
     public static final String EMAIL_ALEATORIO = faker.internet().emailAddress();
 
     public static Autenticacao autenticacaoAdmin(Usuario usuario) {
-        Autenticacao autenticacao = new Autenticacao(EMAIL_ADMIN_CORRETO,
-                SENHA_ENCRIPTADA);
+        Autenticacao autenticacao = Autenticacao.builder().email(EMAIL_ADMIN_CORRETO).senha(SENHA_ENCRIPTADA).build();
         autenticacao.setUsuario(usuario);
         return autenticacao;
     }
 
     public static Autenticacao autenticacaoUsuario(Usuario usuario) {
-        Autenticacao autenticacao = new Autenticacao(EMAIL_USUARIO_CORRETO,
-                SENHA_ENCRIPTADA);
+        Autenticacao autenticacao = Autenticacao.builder().email(EMAIL_USUARIO_CORRETO).senha(SENHA_ENCRIPTADA).build();
         autenticacao.setUsuario(usuario);
         return autenticacao;
     }
 
     public static Autenticacao gerarAutenticacaoComDadosDeUsuario() {
-        return new Autenticacao(EMAIL_USUARIO_CORRETO, SENHA_ENCRIPTADA);
+        return Autenticacao.builder().email(EMAIL_USUARIO_CORRETO).senha(SENHA_ENCRIPTADA).build();
     }
 
 }

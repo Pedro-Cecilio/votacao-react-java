@@ -1,8 +1,8 @@
 package com.dbserver.votacaoBackend.domain.autenticacao;
 
-import com.dbserver.votacaoBackend.domain.usuario.Usuario;
-import com.dbserver.votacaoBackend.utils.Utils;
 
+import com.dbserver.votacaoBackend.domain.autenticacao.validacoes.AutenticacaoValidacoes;
+import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,8 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
+@AllArgsConstructor
+@Builder
 public class Autenticacao {
 
     @Id
@@ -38,25 +42,13 @@ public class Autenticacao {
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private Usuario usuario;
 
-    public Autenticacao(String email, String senha) {
-        setEmail(email);
-        setSenha(senha);
-    }
-
-    public void setEmail(String email) {
-        if (email == null || !Utils.validarRegex(Utils.REGEX_EMAIL, email.trim()))
-            throw new IllegalArgumentException("Email com formato inválido.");
-        this.email = email.trim();
-    }
-
-    public void setSenha(String senha) {
-        if (senha == null)
-            throw new IllegalArgumentException("Senha deve ser informada.");
-
-        if (senha.trim().length() < 8)
-            throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo.");
-
-        this.senha = senha;
-    }
+    public static class AutenticacaoBuilder{
+        public Autenticacao build(){
+            Autenticacao autenticacao = new Autenticacao(this.id, this.email, this.senha, this.usuario);
+            AutenticacaoValidacoes.validarFormatoDaSenha(this.senha);
+            AutenticacaoValidacoes.validarFormatoDoEmail(email);
+            return autenticacao;
+        }
+    } 
 
 }

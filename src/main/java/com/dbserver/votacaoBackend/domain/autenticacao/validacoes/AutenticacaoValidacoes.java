@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.dbserver.votacaoBackend.domain.autenticacao.Autenticacao;
 import com.dbserver.votacaoBackend.domain.autenticacao.repository.AutenticacaoRepository;
+import com.dbserver.votacaoBackend.utils.Utils;
 
 @Component
 public class AutenticacaoValidacoes {
@@ -17,6 +18,21 @@ public class AutenticacaoValidacoes {
         this.autenticacaoRepository = autenticacaoRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
+    public static void validarFormatoDaSenha(String senha){
+        if (senha == null || senha.isEmpty())
+            throw new IllegalArgumentException("Senha deve ser informada.");
+
+        if (senha.trim().length() < 8)
+            throw new IllegalArgumentException("Senha deve conter 8 caracteres no mínimo.");
+    }
+
+    public static void validarFormatoDoEmail(String email){
+            if (email == null || !Utils.validarRegex(Utils.REGEX_EMAIL, email.trim()))
+                throw new IllegalArgumentException("Email com formato inválido.");
+          
+    }
+
 
     public boolean validarSenhaDaAutenticacao(String senhaEsperada, String senhaEncriptada) {
         if(senhaEsperada == null || senhaEncriptada == null) return false;
