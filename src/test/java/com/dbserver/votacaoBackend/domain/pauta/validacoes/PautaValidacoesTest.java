@@ -34,7 +34,7 @@ class PautaValidacoesTest {
 
     @Test
     @DisplayName("Deve retornar erro ao validar se criarPautaDto não é nula, ao receber criarPautaDto nula")
-    void dadoTenhoPautaNulaQuandoTentoValidarSeNaoENulaEntaoRetornarErro(){
+    void dadoTenhoCriarPautaDtoaNuloQuandoTentoValidarSeNaoENulaEntaoRetornarErro(){
         assertThrows(IllegalArgumentException.class, () -> this.pautaValidacoes.validarCriarPautaDtoNaoNula(null));
     }
 
@@ -73,6 +73,12 @@ class PautaValidacoesTest {
     @DisplayName("Deve retornar erro ao validar se o assunto da pauta é informado, ao receber assunto vazio")
     void dadoTenhoAssuntoVazioQuandoTentoValidarSeInformadoEntaoRetornarErro(){
         assertThrows(IllegalArgumentException.class, () -> PautaValidacoes.validarAssunto(""));
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro ao validar se pauta não é nula ao informar pauta nula")
+    void dadoTenhoPautaNulaQuandoTentoValidarSeNaoENulaEntaoRetornarErro(){
+        assertThrows(IllegalArgumentException.class, () -> PautaValidacoes.validarPautaNaoNula(null));
     }
 
 }

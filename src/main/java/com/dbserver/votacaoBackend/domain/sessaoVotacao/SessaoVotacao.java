@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
+import com.dbserver.votacaoBackend.domain.pauta.validacoes.PautaValidacoes;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.validacoes.SessaoVotacaoValidacoes;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 
 import jakarta.persistence.CascadeType;
@@ -18,12 +20,16 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class SessaoVotacao {
 
     @Id
@@ -35,10 +41,10 @@ public class SessaoVotacao {
     private Pauta pauta;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private List<Voto> votosPositivos = new ArrayList<>();
+    private List<Voto> votosPositivos;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private List<Voto> votosNegativos = new ArrayList<>();
+    private List<Voto> votosNegativos;
 
     @Column
     private LocalDateTime dataAbertura;
@@ -49,39 +55,16 @@ public class SessaoVotacao {
     @Transient
     private boolean ativa;
 
-    public SessaoVotacao(Pauta pauta, LocalDateTime dataAbertura, LocalDateTime dataFechamento) {
-        setPauta(pauta);
-        setDataAbertura(dataAbertura);
-        setDataFechamento(dataFechamento);
-    }
+    public static class SessaoVotacaoBuilder {
+        private List<Voto> votosPositivos = new ArrayList<>();
+        private List<Voto> votosNegativos = new ArrayList<>();
 
-    public void setPauta(Pauta pauta) {
-        if (pauta == null)
-            throw new IllegalArgumentException("Pauta não deve ser nula");
-
-        this.pauta = pauta;
-    }
-
-    public void setDataAbertura(LocalDateTime dataAbertura) {
-        LocalDateTime dataAtual = LocalDateTime.now().withNano(0);
-
-        if (dataAbertura == null)
-            throw new IllegalArgumentException("A data de abertura não deve ser nula.");
-
-        if (dataAbertura.isBefore(dataAtual))
-            throw new IllegalArgumentException("A data de abertura não deve ser menor que a data atual");
-
-        this.dataAbertura = dataAbertura;
-    }
-
-    public void setDataFechamento(LocalDateTime dataFechamento) {
-        if (dataFechamento == null)
-            throw new IllegalArgumentException("A data de abertura não deve ser nula.");
-
-        if (dataFechamento.isBefore(this.dataAbertura))
-            throw new IllegalArgumentException("A data de fechamento deve ser maior que a data de abertura.");
-
-        this.dataFechamento = dataFechamento;
+        public SessaoVotacao build() {
+            PautaValidacoes.validarPautaNaoNula(this.pauta);
+            SessaoVotacaoValidacoes.validarDataDeAbertura(this.dataAbertura);
+            SessaoVotacaoValidacoes.validarDataDeFechamento(this.dataFechamento, this.dataAbertura);
+            return new SessaoVotacao(id, pauta, votosPositivos, votosNegativos, dataAbertura, dataFechamento, false);
+        }
     }
 
     public void setVotosPositivos(Voto voto) {
@@ -99,9 +82,6 @@ public class SessaoVotacao {
     }
 
     public boolean isAtiva() {
-        if (this.dataFechamento == null)
-            return false;
-            
         return LocalDateTime.now().isBefore(this.dataFechamento);
     }
 

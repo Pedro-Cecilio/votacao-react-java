@@ -1,6 +1,7 @@
 package com.dbserver.votacaoBackend.domain.voto;
 
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
+import com.dbserver.votacaoBackend.domain.usuario.validacoes.UsuarioValidacoes;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 import jakarta.persistence.Column;
@@ -11,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +21,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
 public class Voto {
 
     @Id
@@ -33,15 +38,10 @@ public class Voto {
     @JoinColumn(name = "usuario_id", nullable = true)
     private Usuario usuario;
 
-    public Voto(String cpf, Usuario usuario) {
-        setCpf(cpf);
-        this.usuario = usuario;
-    }
-
-    public void setCpf(String cpf) {
-        if (cpf == null || !Utils.validarRegex(Utils.REGEX_CPF, cpf.trim()))
-            throw new IllegalArgumentException("Cpf deve conter 11 caracteres numéricos.");
-
-        this.cpf = cpf.trim();
+    public static class VotoBuilder{
+        public Voto build(){
+            UsuarioValidacoes.validarFormatoCpf(cpf);
+            return new Voto(this.id, this.cpf, this.usuario);
+        }
     }
 }

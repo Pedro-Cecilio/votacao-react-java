@@ -14,6 +14,8 @@ public interface SessaoVotacaoMapper {
 
     @Mapping(target = "votosPositivos", ignore = true)
     @Mapping(target = "votosNegativos", ignore = true)
+    @Mapping(target = "pauta", source = "pauta")
+    @Mapping(target = "ativa", ignore = true)
     SessaoVotacao toSessaoVotacao(Pauta pauta, LocalDateTime dataAbertura, LocalDateTime dataFechamento);
 
     @Mapping(target = "pautaId", expression = "java(sessaoVotacao.getPauta().getId())")
