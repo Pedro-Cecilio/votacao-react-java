@@ -39,7 +39,6 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
 
     public SessaoVotacaoServiceImpl(SessaoVotacaoRepository sessaoVotacaoRepository,
             UsuarioServiceImpl usuarioService,
-            AutenticacaoValidacoes autenticacaoValidacoes,
             Utils utils,
             PautaServiceImpl pautaService,
             SessaoVotacaoMapper sessaoVotacaoMapper,
@@ -49,7 +48,6 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
         this.sessaoVotacaoRepository = sessaoVotacaoRepository;
         this.usuarioService = usuarioService;
         this.utils = utils;
-        this.autenticacaoValidacoes = autenticacaoValidacoes;
         this.pautaService = pautaService;
         this.sessaoVotacaoMapper = sessaoVotacaoMapper;
         this.sessaoVotacaoValidacoes = sessaoVotacaoValidacoes;
@@ -80,42 +78,31 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
     @Override
     public RespostaSessaoVotacaoDto inserirVotoInterno(InserirVotoInternoDto dto) {
         Usuario usuario = this.usuarioService.buscarUsuarioLogado();
-
         SessaoVotacao sessaoVotacao = this.buscarSessaoVotacaoAtivaPorPautaId(dto.pautaId());
 
-        Voto voto = votoMapper.toVoto(usuario.getCpf(), usuario);
-
-        this.verificarSeUsuarioPodeVotarSessaoVotacao(sessaoVotacao, voto);
-
-        inserirVotoPorTipoDeVoto(sessaoVotacao, voto, dto.tipoDeVoto());
-
-        this.sessaoVotacaoRepository.save(sessaoVotacao);
-
-        return sessaoVotacaoMapper.toRespostaSessaoVotacaoDto(sessaoVotacao);
+        return inserirVoto(usuario.getCpf(), usuario, sessaoVotacao, dto.tipoDeVoto());
     }
 
     @Override
     public RespostaSessaoVotacaoDto inserirVotoExterno(InserirVotoExternoDto dto) {
         Usuario usuario = this.usuarioService.buscarUsuarioPorCpfSeHouver(dto.cpf());
-        Voto voto = votoMapper.toVoto(dto.cpf(), usuario);
         SessaoVotacao sessaoVotacao = this.buscarSessaoVotacaoAtivaPorPautaId(dto.pautaId());
-
-        this.validarSePodeVotarExternamente(dto.cpf(),
+        this.sessaoVotacaoValidacoes.validarSePodeVotarExternamente(dto.cpf(),
                 dto.senha());
+
+        return inserirVoto(dto.cpf(), usuario, sessaoVotacao, dto.tipoDeVoto());
+    }
+
+    private RespostaSessaoVotacaoDto inserirVoto(String cpf, Usuario usuario, SessaoVotacao sessaoVotacao, TipoDeVotoEnum tipoDeVoto){
+        Voto voto = votoMapper.toVoto(cpf, usuario);
+
         this.verificarSeUsuarioPodeVotarSessaoVotacao(sessaoVotacao, voto);
 
-        inserirVotoPorTipoDeVoto(sessaoVotacao, voto, dto.tipoDeVoto());
+        inserirVotoPorTipoDeVoto(sessaoVotacao, voto, tipoDeVoto);
 
         this.sessaoVotacaoRepository.save(sessaoVotacao);
 
         return sessaoVotacaoMapper.toRespostaSessaoVotacaoDto(sessaoVotacao);
-    }
-
-    private void validarSePodeVotarExternamente(String cpf, String senha) {
-        boolean existe = this.usuarioService.verificarSeExisteUsuarioPorCpf(cpf);
-
-        if (existe)
-            this.autenticacaoValidacoes.validarAutenticacaoPorCpfESenha(cpf, senha);
     }
 
     private SessaoVotacao buscarSessaoVotacaoAtivaPorPautaId(Long pautaId) {
@@ -153,4 +140,5 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
 
         return sessaoVotacao;
     }
+
 }

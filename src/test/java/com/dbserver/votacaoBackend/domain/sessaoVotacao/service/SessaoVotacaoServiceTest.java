@@ -252,8 +252,6 @@ class SessaoVotacaoServiceTest {
                 when(utils.obterDataAtual()).thenReturn(dataAbertura);
                 when(this.sessaoVotacaoRepository.findByPautaIdAndSessaoVotacaoAtiva(dto.pautaId(), dataAbertura))
                                 .thenReturn(Optional.of(this.sessaoVotacaoMock));
-                when(this.usuarioService.verificarSeExisteUsuarioPorCpf(dto.cpf()))
-                                .thenReturn(false);
                 when(this.votoMapper.toVoto(dto.cpf(), null))
                                 .thenReturn(voto);
                 assertDoesNotThrow(() -> this.sessaoVotacaoService.inserirVotoExterno(dto));
