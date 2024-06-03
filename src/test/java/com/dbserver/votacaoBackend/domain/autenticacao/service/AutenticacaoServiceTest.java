@@ -157,7 +157,6 @@ class AutenticacaoServiceTest {
         @Test
         @DisplayName("Não deve ser possível criar uma autenticacao ao passar usuario nulo")
         void dadoTenhoUmUsuarioNuloEDadosDeAutenticacaoQuandoTentoCriarAutenticacaoEntaoRetornarErro() {
-                doThrow(IllegalArgumentException.class).when(this.usuarioValidacoes).validarUsuarioNaoNulo(null);
                 assertThrows(IllegalArgumentException.class,
                                 () -> this.autenticacaoService.criarAutenticacao(this.autenticacaoMock, null));
         }

@@ -13,10 +13,13 @@ public class PautaFixture {
 
     public static final Categoria CATEGORIA_TRANSPORTE = Categoria.TRANSPORTE;
     public static final String ASSUNTO_TRANSPORTE = "Sabe dirigir?";
-    
+
     public static Pauta pautaTransporte(Usuario usuario) {
-        return new Pauta(ASSUNTO_TRANSPORTE, CATEGORIA_TRANSPORTE.toString(),
-                usuario);
+        return Pauta.builder()
+                .assunto(ASSUNTO_TRANSPORTE)
+                .categoria(CATEGORIA_TRANSPORTE)
+                .usuario(usuario)
+                .build();
     }
 
     public static Pauta pautaTransporteAtiva(Usuario usuario) {
@@ -27,13 +30,17 @@ public class PautaFixture {
     }
 
     public static CriarPautaDto criarPautaDtoValido() {
-        return new CriarPautaDto(ASSUNTO_TRANSPORTE, CATEGORIA_TRANSPORTE.toString());
+        return new CriarPautaDto(ASSUNTO_TRANSPORTE, CATEGORIA_TRANSPORTE);
     }
 
     public static Pauta pautaSaude(Usuario usuario) {
-        return new Pauta("Você está bem de saúde?", Categoria.SAUDE.toString(),
-                usuario);
+        return Pauta.builder()
+                .assunto("Você está bem de saúde?")
+                .categoria(Categoria.SAUDE)
+                .usuario(usuario)
+                .build();
     }
+
     public static List<Pauta> listaDePautas(Usuario usuario) {
         List<Pauta> lista = new ArrayList<>();
         lista.add(pautaSaude(usuario));

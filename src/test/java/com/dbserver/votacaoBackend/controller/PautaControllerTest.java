@@ -77,7 +77,6 @@ class PautaControllerTest {
                 this.usuarioCadastrado = UsuarioFixture.usuarioAdmin();
                 this.usuarioRepository.save(this.usuarioCadastrado);
                 Autenticacao autenticacao = AutenticacaoFixture.autenticacaoAdmin(usuarioCadastrado);
-                autenticacao.setUsuario(this.usuarioCadastrado);
                 this.autenticacaoRepository.save(autenticacao);
                 this.token = this.tokenService.gerarToken(autenticacao);
         }
@@ -114,22 +113,19 @@ class PautaControllerTest {
 
         private static Stream<Arguments> dadosInvalidosCriarPauta() {
                 return Stream.of(
-                                Arguments.of(null, Categoria.TRANSPORTE.toString(),
+                                Arguments.of(null, Categoria.TRANSPORTE,
                                                 "Assunto deve ser informado."),
-                                Arguments.of("", Categoria.TRANSPORTE.toString(),
+                                Arguments.of("", Categoria.TRANSPORTE,
                                                 "Assunto deve ser informado."),
                                 Arguments.of("Você sabe dirigir?", null,
-                                                "Categoria deve ser informada."),
-                                Arguments.of("Você sabe dirigir?", " ",
-                                                "Categoria inválida."),
-                                Arguments.of("Você sabe dirigir?", "CATEGORIA_INVALIDA",
-                                                "Categoria inválida."));
+                                                "Categoria deve ser informada."));
         }
+
         @ParameterizedTest
         @MethodSource("dadosInvalidosCriarPauta")
         @DisplayName("Não deve ser possível criar uma pauta ao informar dados inválidos")
         void dadoTenhoCriarPautaDtoComDadosInvalidosQuandoTentoCriarPautaEntaoRetornarRespostaErro(String assunto,
-                        String categoria, String mensagemErro) throws Exception {
+                        Categoria categoria, String mensagemErro) throws Exception {
 
                 this.criarPautaDto = new CriarPautaDto(assunto, categoria);
                 String json = this.criarPautaDtoJson.write(criarPautaDto).getJson();
@@ -142,8 +138,6 @@ class PautaControllerTest {
                                 .andExpect(status().isBadRequest())
                                 .andExpect(jsonPath("$.erro").value(mensagemErro));
         }
-
-        
 
         @Test
         @DisplayName("Deve ser possível listar pautas do usuário logado")

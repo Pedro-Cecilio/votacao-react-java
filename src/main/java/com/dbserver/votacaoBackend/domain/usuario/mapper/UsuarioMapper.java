@@ -15,6 +15,7 @@ import com.dbserver.votacaoBackend.domain.usuario.dto.VerificarSeUsuarioExisteRe
 public interface UsuarioMapper {
     public static final UsuarioMapper INSTANCE = Mappers.getMapper(UsuarioMapper.class);
     
+    @Mapping(target = "id", ignore = true)
     Usuario toUsuario(CriarUsuarioDto dto);
 
     @Mapping(target = "id", source = "usuario.id")
@@ -29,5 +30,5 @@ public interface UsuarioMapper {
 
     default VerificarSeUsuarioExisteRespostaDto toVerificarSeUsuarioExisteRespostaDto(boolean existe){
         return new VerificarSeUsuarioExisteRespostaDto(existe);
-    };
+    }
 }

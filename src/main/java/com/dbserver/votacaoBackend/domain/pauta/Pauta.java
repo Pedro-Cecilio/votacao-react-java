@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.dbserver.votacaoBackend.domain.pauta.enums.Categoria;
+import com.dbserver.votacaoBackend.domain.pauta.validacoes.PautaValidacoes;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 
@@ -22,6 +23,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +33,8 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class Pauta {
 
     @Id
@@ -53,35 +58,14 @@ public class Pauta {
 
     @CreatedDate
     private LocalDateTime createdAt;
-     
-    public Pauta(String assunto, String categoria, Usuario usuario) {
-        setAssunto(assunto);
-        setUsuario(usuario);
-        setCategoria(categoria);
-    }
 
-    public void setUsuario(Usuario usuario) {
-        if (usuario == null)
-            throw new IllegalArgumentException("Usuario deve ser informado.");
-
-        if (!usuario.isAdmin())
-            throw new IllegalArgumentException("Usuario deve ser admin.");
-
-        this.usuario = usuario;
-    }
-
-    public void setAssunto(String assunto) {
-        if (assunto == null || assunto.trim().isEmpty())
-            throw new IllegalArgumentException("Assunto deve ser informado.");
-
-        this.assunto = assunto;
-    }
-
-    public void setCategoria(String categoria) {
-        try {
-            this.categoria = Categoria.valueOf(categoria);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Categoria inválida.");
+    public static class PautaBuilder {
+        public Pauta build() {
+            Pauta pauta = new Pauta(this.id, this.assunto, this.categoria, this.sessaoVotacao, this.usuario,
+                    this.createdAt);
+            PautaValidacoes.validarAssunto(assunto);
+            PautaValidacoes.validarUsuarioDaPauta(usuario);
+            return pauta;
         }
     }
 

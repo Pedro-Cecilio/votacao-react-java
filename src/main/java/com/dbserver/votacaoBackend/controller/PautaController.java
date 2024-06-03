@@ -31,7 +31,6 @@ public class PautaController {
     @PostMapping
     public ResponseEntity<RespostaPautaDto> criarPauta(@Valid @RequestBody CriarPautaDto dto) {
         RespostaPautaDto resposta = this.pautaService.criarPauta(dto);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 

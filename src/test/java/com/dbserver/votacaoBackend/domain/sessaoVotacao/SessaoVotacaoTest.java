@@ -9,10 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.time.LocalDateTime;
+
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
+import com.dbserver.votacaoBackend.domain.sessaoVotacao.validacoes.SessaoVotacaoValidacoes;
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 import com.dbserver.votacaoBackend.fixture.pauta.PautaFixture;
@@ -26,81 +27,14 @@ class SessaoVotacaoTest {
     private Pauta pautaMock;
     private Usuario usuarioAdminMock;
     private SessaoVotacao sessaoVotacaoAtivaMock;
-    private LocalDateTime dataAbertura;
-    private LocalDateTime dataFechamento;
-    private LocalDateTime novaDataAbertura;
-    private LocalDateTime novaDataFechamento;
     private Voto votoMock;
 
     @BeforeEach
     void configurar() {
         this.usuarioAdminMock = UsuarioFixture.usuarioAdmin();
         this.pautaMock = PautaFixture.pautaTransporte(usuarioAdminMock);
-        this.dataAbertura = LocalDateTime.now();
-        this.novaDataAbertura = null;
-        this.novaDataFechamento = null;
-        this.dataFechamento = this.dataAbertura.plusMinutes(5);
         this.sessaoVotacaoAtivaMock = SessaoVotacaoFixture.sessaoVotacaoAtiva(pautaMock);
         this.votoMock = VotoFixture.gerarVotoInterno(UsuarioFixture.usuarioNaoAdmin());
-    }
-
-    @Test
-    @DisplayName("Deve ser possível setar uma pauta corretamente")
-    void dadoPossuoUmaPautaValidaQuandoTentoSetarPautaEntaoDefinirNovaPauta() {
-        Pauta pautaSetMock = PautaFixture.pautaSaude(this.usuarioAdminMock);
-
-        assertDoesNotThrow(() -> this.sessaoVotacaoAtivaMock.setPauta(pautaSetMock));
-        assertEquals(pautaSetMock, this.sessaoVotacaoAtivaMock.getPauta());
-    }
-
-    @Test
-    @DisplayName("Não deve ser possível setar uma pauta nula")
-    void dadoPossuoUmaPautaNulaQuandoTentoSetarPautaEntaoRetornarErro() {
-        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoAtivaMock.setPauta(null));
-    }
-
-    @Test
-    @DisplayName("Deve ser possível setar uma data de abertura corretamente")
-    void dadoPossuoUmaDataDeAberturaValidaQuandoTentoSetarDataDeAberturaEntaoDefinirNovaDataDeAbertura() {
-        this.novaDataAbertura = this.dataFechamento.minusMinutes(5);
-
-        assertDoesNotThrow(() -> this.sessaoVotacaoAtivaMock.setDataAbertura(novaDataAbertura));
-        assertTrue(this.sessaoVotacaoAtivaMock.getDataAbertura().isEqual(novaDataAbertura));
-    }
-    @Test
-    @DisplayName("Não deve ser possível setar uma data de abertura nula")
-    void dadoPossuoUmaDataDeAberturaNulaQuandoTentoSetarDataDeAberturaEntaoRetornarRErro() {
-        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoAtivaMock.setDataAbertura(null));
-    }
-
-    @Test
-    @DisplayName("Não deve ser possível setar uma data de abertura menor que a data atual")
-    void dadoPossuoUmaDataDeAberturaMenorQueDataAtualQuandoTentoSetarDataDeAberturaEntaoRetornarErro() {
-        this.novaDataAbertura = LocalDateTime.now().minusMinutes(5);
-
-        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoAtivaMock.setDataAbertura(this.novaDataAbertura));
-    }
-    
-    @Test
-    @DisplayName("Deve ser possível setar data de fechamento corretamente")
-    void dadoPossuoUmaDataDeFechamentoValidaQuandoTentoSetarDataDeFechamentoEntaoDefinirNovaDataDeFechamento() {
-        this.novaDataFechamento = this.dataAbertura.plusMinutes(4);
-
-        assertDoesNotThrow(() -> this.sessaoVotacaoAtivaMock.setDataFechamento(this.novaDataFechamento));
-        assertEquals(this.novaDataFechamento, this.sessaoVotacaoAtivaMock.getDataFechamento());
-    }
-
-    @Test
-    @DisplayName("Não deve ser possível setar uma data de fechamento nula")
-    void dadoPossuoUmaDataDeFechamentoNulaQuandoTentoSetarDataDeFechamentoEntaoRetornarErro() {
-        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoAtivaMock.setDataAbertura(null));
-    }
-    @Test
-    @DisplayName("Não deve ser possível setar uma data de fechamento menor que a data de abertura")
-    void dadoPossuoUmaDataDeFechamentoMenorQueDataAberturaQuandoTentoSetarDataDeFechamentoEntaoRetornarErro() {
-        this.novaDataFechamento = this.dataAbertura.minusMinutes(5);
-
-        assertThrows(IllegalArgumentException.class, () -> this.sessaoVotacaoAtivaMock.setDataAbertura(this.novaDataFechamento));
     }
 
     @Test
@@ -134,12 +68,47 @@ class SessaoVotacaoTest {
         assertTrue(this.sessaoVotacaoAtivaMock.isAtiva());
     }
 
+     @Test
+    @DisplayName("Deve validar data de abertura válida")
+    void dadoDataDeAberturaValidaQuandoValidarEntaoNaoRetornarErro() {
+        LocalDateTime dataAbertura = LocalDateTime.now().plusHours(1);
+        assertDoesNotThrow(() -> SessaoVotacaoValidacoes.validarDataDeAbertura(dataAbertura));
+    }
+
     @Test
-    @DisplayName("Deve obter ativa false")
-    void dadoNaoPossuoUmaSessaoVotacaoAtivaQuandoTentoObterAtivaEntaoRetornarTrue(){
-        this.sessaoVotacaoAtivaMock.setDataFechamento(this.dataAbertura);
-        
-        assertFalse(this.sessaoVotacaoAtivaMock.isAtiva());
+    @DisplayName("Deve retornar erro ao validar data de abertura nula")
+    void dadoDataDeAberturaNulaQuandoValidarEntaoRetornarErro() {
+        assertThrows(IllegalArgumentException.class, () -> SessaoVotacaoValidacoes.validarDataDeAbertura(null));
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro ao validar data de abertura menor que a data atual")
+    void dadoDataDeAberturaNoPassadoQuandoValidarEntaoRetornarErro() {
+        LocalDateTime dataAbertura = LocalDateTime.now().minusHours(1);
+        assertThrows(IllegalArgumentException.class, () -> SessaoVotacaoValidacoes.validarDataDeAbertura(dataAbertura));
+    }
+
+    @Test
+    @DisplayName("Deve validar data de fechamento válida")
+    void dadoDataDeFechamentoValidaQuandoValidarEntaoNaoRetornarErro() {
+        LocalDateTime dataAbertura = LocalDateTime.now().plusHours(1);
+        LocalDateTime dataFechamento = dataAbertura.plusHours(2);
+        assertDoesNotThrow(() -> SessaoVotacaoValidacoes.validarDataDeFechamento(dataFechamento, dataAbertura));
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro ao validar data de fechamento nula")
+    void dadoDataDeFechamentoNulaQuandoValidarEntaoRetornarErro() {
+        LocalDateTime dataAbertura = LocalDateTime.now().plusHours(1);
+        assertThrows(IllegalArgumentException.class, () -> SessaoVotacaoValidacoes.validarDataDeFechamento(null, dataAbertura));
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro ao validar data de fechamento menor que a data de abertura")
+    void dadoDataDeFechamentoAntesDaDataDeAberturaQuandoValidarEntaoRetornarErro() {
+        LocalDateTime dataAbertura = LocalDateTime.now().plusHours(1);
+        LocalDateTime dataFechamento = dataAbertura.minusHours(1);
+        assertThrows(IllegalArgumentException.class, () -> SessaoVotacaoValidacoes.validarDataDeFechamento(dataFechamento, dataAbertura));
     }
 
 }

@@ -2,7 +2,6 @@ package com.dbserver.votacaoBackend.domain.sessaoVotacao.dto;
 
 import java.time.LocalDateTime;
 
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 
 public record RespostaSessaoVotacaoDto(
 
@@ -19,7 +18,4 @@ public record RespostaSessaoVotacaoDto(
         
         boolean sessaoAtiva
         ) {
-    public RespostaSessaoVotacaoDto(SessaoVotacao sessaoVotacao){
-        this(sessaoVotacao.getId(), sessaoVotacao.getPauta().getId(), sessaoVotacao.getVotosPositivos().size(), sessaoVotacao.getVotosNegativos().size(), sessaoVotacao.getDataAbertura(), sessaoVotacao.getDataFechamento(), sessaoVotacao.isAtiva());
-    }
 }

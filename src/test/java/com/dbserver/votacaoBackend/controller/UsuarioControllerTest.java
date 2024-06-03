@@ -137,11 +137,11 @@ class UsuarioControllerTest {
                 Arguments.of("example2@example.com", "senha123", "Pedro", "SobrenomeMuitoGrande.", "12345678912", true,
                         "Sobrenome deve conter entre 2 e 20 caracteres."),
 
-                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio.", UsuarioFixture.CPF_ADMIN, true,
+                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio", UsuarioFixture.CPF_ADMIN, true,
                         "Cpf já cadastrado."),
-                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio.", "123456789abc", true,
+                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio", "123456789abc", true,
                         "Cpf deve conter 11 caracteres numéricos."),
-                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio.", "12345678", true,
+                Arguments.of("example2@example.com", "senha123", "Pedro", "Cecilio", "12345678", true,
                         "Cpf deve conter 11 caracteres numéricos."));
 
     }

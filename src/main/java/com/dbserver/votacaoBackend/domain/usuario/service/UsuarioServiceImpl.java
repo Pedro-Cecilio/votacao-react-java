@@ -37,7 +37,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         String senhaEncriptada = this.autenticacaoService.encriptarSenhaDaAutenticacao(dto.autenticacaoDto().senha());
 
-        Autenticacao autenticacao = new Autenticacao(dto.autenticacaoDto().email(), senhaEncriptada);
+        Autenticacao autenticacao = Autenticacao.builder()
+                .email(dto.autenticacaoDto().email())
+                .senha(senhaEncriptada)
+                .build();
 
         if (this.autenticacaoService.verificarEmailJaEstaCadastrado(autenticacao.getEmail()))
             throw new IllegalArgumentException("Email já cadastrado.");

@@ -8,12 +8,19 @@ import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 
 public class SessaoVotacaoFixture {
     public static SessaoVotacao sessaoVotacaoAtiva(Pauta pauta) {
-        return new SessaoVotacao(pauta, LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(5));
+        return SessaoVotacao.builder()
+            .pauta(pauta)
+            .dataAbertura(LocalDateTime.now())
+            .dataFechamento(LocalDateTime.now().plusMinutes(5))
+            .build();
     }
     public static SessaoVotacao sessaoVotacaoInativa(Pauta pauta) {
-        return new SessaoVotacao(pauta, LocalDateTime.now(),
-                LocalDateTime.now());
+        return SessaoVotacao.builder()
+            .pauta(pauta)
+            .dataAbertura(LocalDateTime.now())
+            .dataFechamento(LocalDateTime.now())
+            .build();
     }
+
 
 }
