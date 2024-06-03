@@ -2,8 +2,6 @@ package com.dbserver.votacaoBackend.domain.voto;
 
 import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.validacoes.UsuarioValidacoes;
-import com.dbserver.votacaoBackend.utils.Utils;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

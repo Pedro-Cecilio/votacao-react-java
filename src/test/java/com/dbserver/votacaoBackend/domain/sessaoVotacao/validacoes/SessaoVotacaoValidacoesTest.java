@@ -27,14 +27,14 @@ class SessaoVotacaoValidacoesTest {
     @Test
     @DisplayName("Deve validar corretamente ao passar sessao votacao nao nula ")
     void dadoPossuoSessaoVotacaoNaoNulaQuandoTentoValidarEntaoRetornarValidarCorretamente() {
-        assertDoesNotThrow(() -> this.sessaoVotacaoValidacoes.validarSessaoVotacaoNaoNula(sessaoVotacaoMock));
+        assertDoesNotThrow(() -> SessaoVotacaoValidacoes.validarSessaoVotacaoNaoNula(sessaoVotacaoMock));
     }
 
     @Test
     @DisplayName("Deve retornar erro ao validar ao passar sessao votacao nula ")
     void dadoPossuoSessaoVotacaoNulaQuandoTentoValidarEntaoRetornarErro() {
         assertThrows(IllegalArgumentException.class,
-                () -> this.sessaoVotacaoValidacoes.validarSessaoVotacaoNaoNula(null));
+                () -> SessaoVotacaoValidacoes.validarSessaoVotacaoNaoNula(null));
     }
 
     @Test
@@ -42,7 +42,7 @@ class SessaoVotacaoValidacoesTest {
     void dadoPossuoSessaoVotacaoAtivaQuandoTentoValidarEntaoRetornarValidarCorretamente() {
         this.sessaoVotacaoMock = SessaoVotacaoFixture.sessaoVotacaoAtiva(pautaMock);
 
-        assertDoesNotThrow(() -> this.sessaoVotacaoValidacoes.validarSessaoVotacaoAtiva(sessaoVotacaoMock));
+        assertDoesNotThrow(() -> SessaoVotacaoValidacoes.validarSessaoVotacaoAtiva(sessaoVotacaoMock));
     }
 
     @Test
@@ -51,7 +51,7 @@ class SessaoVotacaoValidacoesTest {
         this.sessaoVotacaoMock = SessaoVotacaoFixture.sessaoVotacaoInativa(pautaMock);
 
         assertThrows(IllegalStateException.class,
-                () -> this.sessaoVotacaoValidacoes.validarSessaoVotacaoAtiva(sessaoVotacaoMock));
+                () -> SessaoVotacaoValidacoes.validarSessaoVotacaoAtiva(sessaoVotacaoMock));
     }
 
 }

@@ -2,7 +2,6 @@ package com.dbserver.votacaoBackend.domain.sessaoVotacao.dto;
 
 import java.time.LocalDateTime;
 
-import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
 
 public record RespostaSessaoVotacaoDto(
 

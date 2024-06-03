@@ -1,12 +1,8 @@
 package com.dbserver.votacaoBackend.domain.sessaoVotacao.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
-import com.dbserver.votacaoBackend.domain.autenticacao.validacoes.AutenticacaoValidacoes;
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
 import com.dbserver.votacaoBackend.domain.pauta.service.PautaServiceImpl;
 import com.dbserver.votacaoBackend.domain.sessaoVotacao.SessaoVotacao;
@@ -22,19 +18,16 @@ import com.dbserver.votacaoBackend.domain.usuario.Usuario;
 import com.dbserver.votacaoBackend.domain.usuario.service.UsuarioServiceImpl;
 import com.dbserver.votacaoBackend.domain.voto.Voto;
 import com.dbserver.votacaoBackend.domain.voto.mapper.VotoMapper;
-import com.dbserver.votacaoBackend.domain.voto.validacoes.VotoValidacoes;
 import com.dbserver.votacaoBackend.utils.Utils;
 
 @Service
 public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
     private SessaoVotacaoRepository sessaoVotacaoRepository;
     private UsuarioServiceImpl usuarioService;
-    private AutenticacaoValidacoes autenticacaoValidacoes;
     private PautaServiceImpl pautaService;
     private Utils utils;
     private SessaoVotacaoMapper sessaoVotacaoMapper;
     private SessaoVotacaoValidacoes sessaoVotacaoValidacoes;
-    private VotoValidacoes votoValidacoes;
     private VotoMapper votoMapper;
 
     public SessaoVotacaoServiceImpl(SessaoVotacaoRepository sessaoVotacaoRepository,
@@ -43,7 +36,6 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
             PautaServiceImpl pautaService,
             SessaoVotacaoMapper sessaoVotacaoMapper,
             SessaoVotacaoValidacoes sessaoVotacaoValidacoes,
-            VotoValidacoes votoValidacoes,
             VotoMapper votoMapper) {
         this.sessaoVotacaoRepository = sessaoVotacaoRepository;
         this.usuarioService = usuarioService;
@@ -51,7 +43,6 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
         this.pautaService = pautaService;
         this.sessaoVotacaoMapper = sessaoVotacaoMapper;
         this.sessaoVotacaoValidacoes = sessaoVotacaoValidacoes;
-        this.votoValidacoes = votoValidacoes;
         this.votoMapper = votoMapper;
     }
 
@@ -96,7 +87,7 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
     private RespostaSessaoVotacaoDto inserirVoto(String cpf, Usuario usuario, SessaoVotacao sessaoVotacao, TipoDeVotoEnum tipoDeVoto){
         Voto voto = votoMapper.toVoto(cpf, usuario);
 
-        this.verificarSeUsuarioPodeVotarSessaoVotacao(sessaoVotacao, voto);
+        SessaoVotacaoValidacoes.validarSeUsuarioPodeVotarSessaoVotacao(sessaoVotacao, voto);
 
         inserirVotoPorTipoDeVoto(sessaoVotacao, voto, tipoDeVoto);
 
@@ -105,30 +96,16 @@ public class SessaoVotacaoServiceImpl implements SessaoVotacaoService {
         return sessaoVotacaoMapper.toRespostaSessaoVotacaoDto(sessaoVotacao);
     }
 
-    private SessaoVotacao buscarSessaoVotacaoAtivaPorPautaId(Long pautaId) {
+    @Override
+    public SessaoVotacao buscarSessaoVotacaoAtivaPorPautaId(Long pautaId) {
         LocalDateTime dataAtual = utils.obterDataAtual();
 
         return this.sessaoVotacaoRepository.findByPautaIdAndSessaoVotacaoAtiva(pautaId, dataAtual)
                 .orElseThrow(() -> new IllegalArgumentException("Pauta não possui sessão ativa."));
     }
 
-    private void verificarSeUsuarioPodeVotarSessaoVotacao(SessaoVotacao sessaoVotacao, Voto voto) {
-        this.sessaoVotacaoValidacoes.validarSessaoVotacaoNaoNula(sessaoVotacao);
-        this.votoValidacoes.validarVotoNaoNulo(voto);
-        this.sessaoVotacaoValidacoes.validarSessaoVotacaoAtiva(sessaoVotacao);
-
-        if (sessaoVotacao.getPauta().getUsuario().getCpf().equals(voto.getCpf()))
-            throw new IllegalArgumentException("O criador não pode votar na pauta criada.");
-
-        List<Voto> todosVotantes = new ArrayList<>(sessaoVotacao.getVotosPositivos());
-
-        todosVotantes.addAll(sessaoVotacao.getVotosNegativos());
-
-        if (todosVotantes.contains(voto))
-            throw new IllegalStateException("Não é possível votar duas vezes.");
-    }
-
-    private SessaoVotacao inserirVotoPorTipoDeVoto(SessaoVotacao sessaoVotacao, Voto voto, TipoDeVotoEnum tipoDeVoto) {
+    @Override
+    public SessaoVotacao inserirVotoPorTipoDeVoto(SessaoVotacao sessaoVotacao, Voto voto, TipoDeVotoEnum tipoDeVoto) {
         if (tipoDeVoto == null)
             throw new IllegalArgumentException("O tipo do voto deve ser informado.");
 

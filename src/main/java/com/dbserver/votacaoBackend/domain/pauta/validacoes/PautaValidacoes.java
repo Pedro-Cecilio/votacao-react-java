@@ -1,7 +1,5 @@
 package com.dbserver.votacaoBackend.domain.pauta.validacoes;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Component;
 
 import com.dbserver.votacaoBackend.domain.pauta.Pauta;
